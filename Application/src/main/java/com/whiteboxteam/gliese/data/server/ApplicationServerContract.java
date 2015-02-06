@@ -24,14 +24,20 @@ public final class ApplicationServerContract {
         private static final String INITIAL_SYNC_URL = SYNC_SERVER_URL + "/i";
         private static final String DELTA_SYNC_URL = SYNC_SERVER_URL + "/d";
 
-        private static String getDensityValue(Context context) {
-            // TODO: Сделать нормальный выбор в зависимости от layout.
-            return "x300";
+        public static String getSyncUrl(Context context) {
+            String lastSyncDate = PreferenceManager.getDefaultSharedPreferences(context).getString(StorageContract
+                    .LAST_SYNC_DATE, "");
+            if (Strings.isNullOrEmpty(lastSyncDate)) {
+                return getInitialSyncUrl(context);
+            } else {
+                return getDeltaSyncUrl(context, lastSyncDate);
+            }
         }
 
         private static String getInitialSyncUrl(Context context) {
             Joiner joiner = Joiner.on("&k[]=");
-            return INITIAL_SYNC_URL + "/?k[]=" + joiner.join(ApplicationContentContract.TopicGroup.KeyValues.getKeys()) +
+            return INITIAL_SYNC_URL + "/?k[]=" + joiner.join(ApplicationContentContract.TopicGroup.KeyValues.getKeys
+                    ()) +
                     "&q=" + getDensityValue(context);
         }
 
@@ -41,13 +47,9 @@ public final class ApplicationServerContract {
                     "&q=" + getDensityValue(context) + "&u=" + lastSyncDate;
         }
 
-        public static String getSyncUrl(Context context) {
-            String lastSyncDate = PreferenceManager.getDefaultSharedPreferences(context).getString(StorageContract.LAST_SYNC_DATE, "");
-            if (Strings.isNullOrEmpty(lastSyncDate)) {
-                return getInitialSyncUrl(context);
-            } else {
-                return getDeltaSyncUrl(context, lastSyncDate);
-            }
+        private static String getDensityValue(Context context) {
+            // TODO: Сделать нормальный выбор в зависимости от layout.
+            return "x300";
         }
 
         public static String getImageUrl(String imagePostfix) {

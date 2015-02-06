@@ -22,18 +22,16 @@ public final class PromoProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Promo.PROMO_BASE_PATH, PROMO_LIST_URI);
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Promo.PROMO_BASE_PATH + "/#", PROMO_ITEM_URI);
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Value.VALUE_BASE_PATH + "/#/" +
-                        ApplicationContentContract.Promo.PROMO_BASE_PATH, VALUE_PROMO_LIST_URI
-        );
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Value.VALUE_BASE_PATH + "/#/" +
-                        ApplicationContentContract.Promo.PROMO_BASE_PATH + "/#", VALUE_PROMO_ITEM_URI
-        );
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Promo
+                .PROMO_BASE_PATH, PROMO_LIST_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Promo
+                .PROMO_BASE_PATH + "/#", PROMO_ITEM_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Value
+                .VALUE_BASE_PATH + "/#/" +
+                ApplicationContentContract.Promo.PROMO_BASE_PATH, VALUE_PROMO_LIST_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Value
+                .VALUE_BASE_PATH + "/#/" +
+                ApplicationContentContract.Promo.PROMO_BASE_PATH + "/#", VALUE_PROMO_ITEM_URI);
     }
 
 
@@ -47,31 +45,6 @@ public final class PromoProviderHelper extends BaseProviderHelper {
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public String getType(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case PROMO_LIST_URI:
-            case VALUE_PROMO_LIST_URI:
-                return ApplicationContentContract.Promo.CONTENT_TYPE_LIST;
-            case PROMO_ITEM_URI:
-            case VALUE_PROMO_ITEM_URI:
-                return ApplicationContentContract.Promo.CONTENT_TYPE_ITEM;
-        }
-        return null;
-    }
-
-    @Override
-    public ContentValues getExtraValuesFromUri(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case VALUE_PROMO_LIST_URI:
-            case VALUE_PROMO_ITEM_URI:
-                ContentValues result = new ContentValues();
-                result.put(ApplicationContentContract.Promo.VALUE_ID, getParentIdFromUri(uri));
-                return result;
-        }
-        return new ContentValues();
     }
 
     @Override
@@ -99,5 +72,30 @@ public final class PromoProviderHelper extends BaseProviderHelper {
     @Override
     public String getTableName() {
         return ApplicationDatabaseContract.PromoEntry.TABLE_NAME;
+    }
+
+    @Override
+    public ContentValues getExtraValuesFromUri(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case VALUE_PROMO_LIST_URI:
+            case VALUE_PROMO_ITEM_URI:
+                ContentValues result = new ContentValues();
+                result.put(ApplicationContentContract.Promo.VALUE_ID, getParentIdFromUri(uri));
+                return result;
+        }
+        return new ContentValues();
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case PROMO_LIST_URI:
+            case VALUE_PROMO_LIST_URI:
+                return ApplicationContentContract.Promo.CONTENT_TYPE_LIST;
+            case PROMO_ITEM_URI:
+            case VALUE_PROMO_ITEM_URI:
+                return ApplicationContentContract.Promo.CONTENT_TYPE_ITEM;
+        }
+        return null;
     }
 }

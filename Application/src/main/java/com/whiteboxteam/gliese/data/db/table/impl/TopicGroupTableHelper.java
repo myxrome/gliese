@@ -12,7 +12,8 @@ import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
 
 public final class TopicGroupTableHelper extends BaseTableHelper {
 
-    private static final String CREATE_TABLE_SQL = CREATE_TABLE + ApplicationDatabaseContract.TopicGroupEntry.TABLE_NAME + COLUMNS_BEGIN +
+    private static final String CREATE_TABLE_SQL = CREATE_TABLE + ApplicationDatabaseContract.TopicGroupEntry
+            .TABLE_NAME + COLUMNS_BEGIN +
             ApplicationDatabaseContract.TopicGroupEntry.ID + INTEGER_PK_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.TopicGroupEntry.ORDER + INTEGER_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.TopicGroupEntry.ACTIVE + INTEGER_TYPE + COLUMNS_SEPARATOR +
@@ -21,7 +22,8 @@ public final class TopicGroupTableHelper extends BaseTableHelper {
             ApplicationDatabaseContract.TopicGroupEntry.UPDATED_AT + TEXT_TYPE +
             COLUMNS_END;
 
-    private static final String CREATE_INDEX_1_SQL = CREATE_INDEX + ApplicationDatabaseContract.TopicGroupEntry.TABLE_NAME + INDEX_SUFFIX + "1" +
+    private static final String CREATE_INDEX_1_SQL = CREATE_INDEX + ApplicationDatabaseContract.TopicGroupEntry
+            .TABLE_NAME + INDEX_SUFFIX + "1" +
             INDEX_FOR_TABLE + ApplicationDatabaseContract.TopicGroupEntry.TABLE_NAME + COLUMNS_BEGIN +
             ApplicationDatabaseContract.TopicGroupEntry.ACTIVE +
             COLUMNS_END;

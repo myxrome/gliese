@@ -25,8 +25,10 @@ public final class StatisticContentContract {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(SESSIONS_BASE_PATH).build();
 
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.sessions";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.session";
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.sessions";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.session";
 
     }
 
@@ -40,13 +42,14 @@ public final class StatisticContentContract {
         public static final String EVENT = StatisticDatabaseContract.FactEntry.EVENT;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(FACTS_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.facts";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.fact";
 
         public static Uri getContentUriBySession(Uri sessionUri) {
             return sessionUri.buildUpon().appendPath(FACTS_BASE_PATH).build();
         }
-
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.facts";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.fact";
 
     }
 
@@ -59,14 +62,15 @@ public final class StatisticContentContract {
         public static final String HAPPENED_AT = StatisticDatabaseContract.FactDetailEntry.HAPPENED_AT;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(FACT_DETAILS_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.fact-details";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.fact-detail";
 
         public static Uri getContentUriByFact(Uri factUri) {
             return ContentUris.withAppendedId(Facts.CONTENT_URI, Long.parseLong(factUri.getLastPathSegment())).
                     buildUpon().appendPath(FACT_DETAILS_BASE_PATH).build();
         }
-
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.fact-details";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.fact-detail";
 
     }
 

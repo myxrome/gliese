@@ -18,9 +18,12 @@ public final class DescriptionMergeHelper extends BaseMergeHelper {
     public DescriptionMergeHelper(Context context, SyncResult syncResult, Uri uri) {
         super(context, syncResult, uri);
 
-        nameMapping.put(ApplicationContentContract.Description.VALUE_ID, ApplicationServerContract.DescriptionRecord.VALUE_ID);
-        nameMapping.put(ApplicationContentContract.Description.ORDER, ApplicationServerContract.DescriptionRecord.ORDER);
-        nameMapping.put(ApplicationContentContract.Description.CAPTION, ApplicationServerContract.DescriptionRecord.CAPTION);
+        nameMapping.put(ApplicationContentContract.Description.VALUE_ID, ApplicationServerContract.DescriptionRecord
+                .VALUE_ID);
+        nameMapping.put(ApplicationContentContract.Description.ORDER, ApplicationServerContract.DescriptionRecord
+                .ORDER);
+        nameMapping.put(ApplicationContentContract.Description.CAPTION, ApplicationServerContract.DescriptionRecord
+                .CAPTION);
         nameMapping.put(ApplicationContentContract.Description.TEXT, ApplicationServerContract.DescriptionRecord.TEXT);
         nameMapping.put(ApplicationContentContract.Description.RED, ApplicationServerContract.DescriptionRecord.RED);
         nameMapping.put(ApplicationContentContract.Description.BOLD, ApplicationServerContract.DescriptionRecord.BOLD);

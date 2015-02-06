@@ -19,7 +19,8 @@ public final class TopicMergeHelper extends BaseMergeHelper {
     public TopicMergeHelper(Context context, SyncResult syncResult, Uri uri) {
         super(context, syncResult, uri);
 
-        nameMapping.put(ApplicationContentContract.Topic.TOPIC_GROUP_ID, ApplicationServerContract.TopicRecord.TOPIC_GROUP_ID);
+        nameMapping.put(ApplicationContentContract.Topic.TOPIC_GROUP_ID, ApplicationServerContract.TopicRecord
+                .TOPIC_GROUP_ID);
         nameMapping.put(ApplicationContentContract.Topic.ORDER, ApplicationServerContract.TopicRecord.ORDER);
         nameMapping.put(ApplicationContentContract.Topic.NAME, ApplicationServerContract.TopicRecord.NAME);
 

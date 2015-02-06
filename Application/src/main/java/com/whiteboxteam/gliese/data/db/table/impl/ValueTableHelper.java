@@ -11,7 +11,8 @@ import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
  */
 public final class ValueTableHelper extends BaseTableHelper {
 
-    private static final String CREATE_TABLE_SQL = CREATE_TABLE + ApplicationDatabaseContract.ValueEntry.TABLE_NAME + COLUMNS_BEGIN +
+    private static final String CREATE_TABLE_SQL = CREATE_TABLE + ApplicationDatabaseContract.ValueEntry.TABLE_NAME +
+            COLUMNS_BEGIN +
             ApplicationDatabaseContract.ValueEntry.ID + INTEGER_PK_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.ValueEntry.CATEGORY_ID + INTEGER_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.ValueEntry.ACTIVE + INTEGER_TYPE + COLUMNS_SEPARATOR +
@@ -23,11 +24,14 @@ public final class ValueTableHelper extends BaseTableHelper {
             ApplicationDatabaseContract.ValueEntry.NEW_PRICE + INTEGER_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.ValueEntry.URL + TEXT_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.ValueEntry.UPDATED_AT + TEXT_TYPE + COLUMNS_SEPARATOR +
-            FOREIGN_KEY + COLUMNS_BEGIN + ApplicationDatabaseContract.ValueEntry.CATEGORY_ID + COLUMNS_END + REFERENCES +
-            ApplicationDatabaseContract.CategoryEntry.TABLE_NAME + COLUMNS_BEGIN + ApplicationDatabaseContract.CategoryEntry.ID + COLUMNS_END + ON_DELETE_CASCADE +
+            FOREIGN_KEY + COLUMNS_BEGIN + ApplicationDatabaseContract.ValueEntry.CATEGORY_ID + COLUMNS_END +
+            REFERENCES +
+            ApplicationDatabaseContract.CategoryEntry.TABLE_NAME + COLUMNS_BEGIN + ApplicationDatabaseContract
+            .CategoryEntry.ID + COLUMNS_END + ON_DELETE_CASCADE +
             COLUMNS_END;
 
-    private static final String CREATE_INDEX_1_SQL = CREATE_INDEX + ApplicationDatabaseContract.ValueEntry.TABLE_NAME + INDEX_SUFFIX + "1" +
+    private static final String CREATE_INDEX_1_SQL = CREATE_INDEX + ApplicationDatabaseContract.ValueEntry.TABLE_NAME
+            + INDEX_SUFFIX + "1" +
             INDEX_FOR_TABLE + ApplicationDatabaseContract.ValueEntry.TABLE_NAME + COLUMNS_BEGIN +
             ApplicationDatabaseContract.ValueEntry.CATEGORY_ID + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.ValueEntry.ACTIVE +

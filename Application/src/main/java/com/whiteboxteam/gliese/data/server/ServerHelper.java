@@ -49,36 +49,6 @@ public final class ServerHelper {
         return (JSONObject) JSONContentHandler.getContent(ByteStreams.toByteArray(inputStream));
     }
 
-    public static JSONArray downloadJSONArray(String url) throws IOException {
-        InputStream inputStream = getGetInputStream(url);
-        return (JSONArray) JSONContentHandler.getContent(ByteStreams.toByteArray(inputStream));
-    }
-
-    public static File downloadFile(Context context, String url) throws IOException {
-        InputStream inputStream = getGetInputStream(url);
-        return FileContentHandler.getContent(context, ByteStreams.toByteArray(inputStream));
-    }
-
-    public static JSONObject uploadJSONObject(Context context, String url, JSONObject json) throws IOException {
-        InputStream inputStream = getPostInputStream(context, url, json);
-        return (JSONObject) JSONContentHandler.getContent(ByteStreams.toByteArray(inputStream));
-    }
-
-    private static HttpPost getJSONHttpPost(Context context, String url, JSONObject json) throws IOException {
-        HttpPost request = new HttpPost(url);
-
-        byte[] content = json.toString().getBytes("UTF-8");
-        AbstractHttpEntity compressedEntity = AndroidHttpClient.getCompressedEntity(content, context
-                .getContentResolver());
-        request.setEntity(compressedEntity);
-
-        request.setHeader("Content-type", "application/json");
-        if (content.length > AndroidHttpClient.getMinGzipSize(context.getContentResolver())) {
-            request.setHeader("Content-Encoding", "gzip");
-        }
-        return request;
-    }
-
     private static InputStream getGetInputStream(String url) throws IOException {
         HttpEntity entity = getHttpGetEntity(url);
         InputStream stream = entity.getContent();
@@ -86,16 +56,6 @@ public final class ServerHelper {
             stream = new GZIPInputStream(stream);
         }
         return stream;
-    }
-
-    private static InputStream getPostInputStream(Context context, String url, JSONObject json) throws IOException {
-        HttpEntity entity = getHttpPostEntity(context, url, json);
-        return entity.getContent();
-    }
-
-    private static HttpEntity getHttpPostEntity(Context context, String url, JSONObject json) throws IOException {
-        HttpResponse response = getHttpPostResponse(context, url, json);
-        return response.getEntity();
     }
 
     private static HttpEntity getHttpGetEntity(String url) throws IOException {
@@ -109,12 +69,6 @@ public final class ServerHelper {
         HttpClient client = buildHttpClient();
         HttpGet request = new HttpGet(url);
         request.addHeader("Accept-Encoding", "gzip");
-        return client.execute(request);
-    }
-
-    private static HttpResponse getHttpPostResponse(Context context, String url, JSONObject json) throws IOException {
-        HttpPost request = getJSONHttpPost(context, url, json);
-        HttpClient client = buildHttpClient();
         return client.execute(request);
     }
 
@@ -142,6 +96,14 @@ public final class ServerHelper {
         return registry;
     }
 
+    private static KeyStore getMyAnkaaKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
+            CertificateException {
+        KeyStore serverRootCert = KeyStore.getInstance("BKS");
+        serverRootCert.load(new ByteArrayInputStream(MyAnkaaKeyStore.MYANKAA_KEY_STORE), MyAnkaaKeyStore
+                .MYANKAA_KEY_STORE_PASSWORD);
+        return serverRootCert;
+    }
+
     private static KeyStore getClientKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
             CertificateException {
         KeyStore clientCert = KeyStore.getInstance("pkcs12");
@@ -150,12 +112,50 @@ public final class ServerHelper {
         return clientCert;
     }
 
-    private static KeyStore getMyAnkaaKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
-            CertificateException {
-        KeyStore serverRootCert = KeyStore.getInstance("BKS");
-        serverRootCert.load(new ByteArrayInputStream(MyAnkaaKeyStore.MYANKAA_KEY_STORE), MyAnkaaKeyStore
-                .MYANKAA_KEY_STORE_PASSWORD);
-        return serverRootCert;
+    public static JSONArray downloadJSONArray(String url) throws IOException {
+        InputStream inputStream = getGetInputStream(url);
+        return (JSONArray) JSONContentHandler.getContent(ByteStreams.toByteArray(inputStream));
+    }
+
+    public static File downloadFile(Context context, String url) throws IOException {
+        InputStream inputStream = getGetInputStream(url);
+        return FileContentHandler.getContent(context, ByteStreams.toByteArray(inputStream));
+    }
+
+    public static JSONObject uploadJSONObject(Context context, String url, JSONObject json) throws IOException {
+        InputStream inputStream = getPostInputStream(context, url, json);
+        return (JSONObject) JSONContentHandler.getContent(ByteStreams.toByteArray(inputStream));
+    }
+
+    private static InputStream getPostInputStream(Context context, String url, JSONObject json) throws IOException {
+        HttpEntity entity = getHttpPostEntity(context, url, json);
+        return entity.getContent();
+    }
+
+    private static HttpEntity getHttpPostEntity(Context context, String url, JSONObject json) throws IOException {
+        HttpResponse response = getHttpPostResponse(context, url, json);
+        return response.getEntity();
+    }
+
+    private static HttpResponse getHttpPostResponse(Context context, String url, JSONObject json) throws IOException {
+        HttpPost request = getJSONHttpPost(context, url, json);
+        HttpClient client = buildHttpClient();
+        return client.execute(request);
+    }
+
+    private static HttpPost getJSONHttpPost(Context context, String url, JSONObject json) throws IOException {
+        HttpPost request = new HttpPost(url);
+
+        byte[] content = json.toString().getBytes("UTF-8");
+        AbstractHttpEntity compressedEntity = AndroidHttpClient.getCompressedEntity(content, context
+                .getContentResolver());
+        request.setEntity(compressedEntity);
+
+        request.setHeader("Content-type", "application/json");
+        if (content.length > AndroidHttpClient.getMinGzipSize(context.getContentResolver())) {
+            request.setHeader("Content-Encoding", "gzip");
+        }
+        return request;
     }
 
 }

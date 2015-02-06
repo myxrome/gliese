@@ -25,10 +25,9 @@ import java.util.Map;
 
 public abstract class BaseMergeHelper {
 
+    private static final int SQLITE_MAX_COMPOUND_SELECT = 500;
     protected Map<String, String> nameMapping = new HashMap<>();
     protected Context context;
-
-    private static final int SQLITE_MAX_COMPOUND_SELECT = 500;
     private SyncResult syncResult;
     private Uri uri;
     private SQLiteDatabase db;
@@ -74,8 +73,7 @@ public abstract class BaseMergeHelper {
             applyRowValues(remoteEntry, sql);
 
             startIndex++;
-            if (startIndex % SQLITE_MAX_COMPOUND_SELECT == 0)
-                break;
+            if (startIndex % SQLITE_MAX_COMPOUND_SELECT == 0) break;
         }
         db.execSQL(sql.toString());
 
@@ -83,6 +81,14 @@ public abstract class BaseMergeHelper {
     }
 
     protected abstract String getTableName();
+
+    private void applyColumnNames(StringBuilder sql) {
+        String delimiter = "";
+        for (String key : nameMapping.keySet()) {
+            sql.append(delimiter).append(key);
+            delimiter = ", ";
+        }
+    }
 
     private void applyRowValues(JSONObject remoteEntry, StringBuilder sql) throws JSONException {
         String delimiter = " ";
@@ -95,19 +101,9 @@ public abstract class BaseMergeHelper {
 
     private String getValue(String key, JSONObject remoteEntry) throws JSONException {
         String value = remoteEntry.getString(nameMapping.get(key));
-        if (value.equals("true"))
-            return "1";
-        if (value.equals("false"))
-            return "0";
+        if (value.equals("true")) return "1";
+        if (value.equals("false")) return "0";
         return value;
-    }
-
-    private void applyColumnNames(StringBuilder sql) {
-        String delimiter = "";
-        for (String key : nameMapping.keySet()) {
-            sql.append(delimiter).append(key);
-            delimiter = ", ";
-        }
     }
 
 }

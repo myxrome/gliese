@@ -22,18 +22,16 @@ public final class CategoryProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Category.CATEGORY_BASE_PATH, CATEGORY_LIST_URI);
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Category.CATEGORY_BASE_PATH + "/#", CATEGORY_ITEM_URI);
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Topic.TOPIC_BASE_PATH + "/#/" +
-                        ApplicationContentContract.Category.CATEGORY_BASE_PATH, TOPIC_CATEGORY_LIST_URI
-        );
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Topic.TOPIC_BASE_PATH + "/#/" +
-                        ApplicationContentContract.Category.CATEGORY_BASE_PATH + "/#", TOPIC_CATEGORY_ITEM_URI
-        );
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Category
+                .CATEGORY_BASE_PATH, CATEGORY_LIST_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Category
+                .CATEGORY_BASE_PATH + "/#", CATEGORY_ITEM_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Topic
+                .TOPIC_BASE_PATH + "/#/" +
+                        ApplicationContentContract.Category.CATEGORY_BASE_PATH, TOPIC_CATEGORY_LIST_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Topic
+                .TOPIC_BASE_PATH + "/#/" +
+                        ApplicationContentContract.Category.CATEGORY_BASE_PATH + "/#", TOPIC_CATEGORY_ITEM_URI);
     }
 
     @Override
@@ -46,31 +44,6 @@ public final class CategoryProviderHelper extends BaseProviderHelper {
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public String getType(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case CATEGORY_LIST_URI:
-            case TOPIC_CATEGORY_LIST_URI:
-                return ApplicationContentContract.Category.CONTENT_TYPE_LIST;
-            case CATEGORY_ITEM_URI:
-            case TOPIC_CATEGORY_ITEM_URI:
-                return ApplicationContentContract.Category.CONTENT_TYPE_ITEM;
-        }
-        return null;
-    }
-
-    @Override
-    public ContentValues getExtraValuesFromUri(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case TOPIC_CATEGORY_LIST_URI:
-            case TOPIC_CATEGORY_ITEM_URI:
-                ContentValues result = new ContentValues();
-                result.put(ApplicationContentContract.Category.TOPIC_ID, getParentIdFromUri(uri));
-                return result;
-        }
-        return new ContentValues();
     }
 
     @Override
@@ -98,5 +71,30 @@ public final class CategoryProviderHelper extends BaseProviderHelper {
     @Override
     public String getTableName() {
         return ApplicationDatabaseContract.CategoryEntry.TABLE_NAME;
+    }
+
+    @Override
+    public ContentValues getExtraValuesFromUri(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case TOPIC_CATEGORY_LIST_URI:
+            case TOPIC_CATEGORY_ITEM_URI:
+                ContentValues result = new ContentValues();
+                result.put(ApplicationContentContract.Category.TOPIC_ID, getParentIdFromUri(uri));
+                return result;
+        }
+        return new ContentValues();
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case CATEGORY_LIST_URI:
+            case TOPIC_CATEGORY_LIST_URI:
+                return ApplicationContentContract.Category.CONTENT_TYPE_LIST;
+            case CATEGORY_ITEM_URI:
+            case TOPIC_CATEGORY_ITEM_URI:
+                return ApplicationContentContract.Category.CONTENT_TYPE_ITEM;
+        }
+        return null;
     }
 }

@@ -15,11 +15,11 @@ public final class ApplicationContentContract {
     public static final String CONTENT_AUTHORITY = "com.whiteboxteam.gliese.data.content.provider";
 
     public static abstract class Base {
-        protected static final Uri BASE_CONTENT_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + CONTENT_AUTHORITY);
-
         public static final String ID = ApplicationDatabaseContract.BaseEntry.ID;
         public static final String ACTIVE = ApplicationDatabaseContract.BaseEntry.ACTIVE;
         public static final String UPDATED_AT = ApplicationDatabaseContract.CategoryEntry.UPDATED_AT;
+        protected static final Uri BASE_CONTENT_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" +
+                CONTENT_AUTHORITY);
 
     }
 
@@ -32,15 +32,14 @@ public final class ApplicationContentContract {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TOPIC_GROUP_BASE_PATH).build();
 
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.topic_groups";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.topic_group";
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.topic_groups";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.topic_group";
 
         public static abstract class KeyValues {
-            private static final String[] KEYS = new String[]{
-                    "da46a5a8de1577cecf9baed38d4fe65c",
-                    "009980d31a1931b2f6b363d8fdd36bba",
-                    "644827f93d7d92ccf25cf56fd63f3d42"
-            };
+            private static final String[] KEYS = new String[]{"da46a5a8de1577cecf9baed38d4fe65c",
+                    "009980d31a1931b2f6b363d8fdd36bba", "644827f93d7d92ccf25cf56fd63f3d42"};
 
             private static final int DEFAULT_KEY_INDEX = 0;
 
@@ -61,13 +60,14 @@ public final class ApplicationContentContract {
         public static final String NAME = ApplicationDatabaseContract.TopicEntry.NAME;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TOPIC_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.topics";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.topic";
 
         public static Uri getContentUriByTopicGroup(Uri topicGroupUri) {
             return topicGroupUri.buildUpon().appendPath(TOPIC_BASE_PATH).build();
         }
-
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.topics";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.topic";
 
     }
 
@@ -79,13 +79,14 @@ public final class ApplicationContentContract {
         public static final String NAME = ApplicationDatabaseContract.CategoryEntry.NAME;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(CATEGORY_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.categories";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.category";
 
         public static Uri getContentUriByTopic(Uri topicUri) {
             return topicUri.buildUpon().appendPath(CATEGORY_BASE_PATH).build();
         }
-
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.categories";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.category";
 
     }
 
@@ -102,13 +103,14 @@ public final class ApplicationContentContract {
         public static final String URL = ApplicationDatabaseContract.ValueEntry.URL;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(VALUE_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.values";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.value";
 
         public static Uri getContentUriByCategory(Uri categoryUri) {
             return categoryUri.buildUpon().appendPath(VALUE_BASE_PATH).build();
         }
-
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.values";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.value";
 
     }
 
@@ -123,13 +125,14 @@ public final class ApplicationContentContract {
         public static final String BOLD = ApplicationDatabaseContract.DescriptionEntry.BOLD;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(DESCRIPTION_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.descriptions";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.description";
 
         public static Uri getContentUriByValue(Uri valueUri) {
             return valueUri.buildUpon().appendPath(DESCRIPTION_BASE_PATH).build();
         }
-
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.descriptions";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.description";
     }
 
     public static final class Promo extends Base {
@@ -141,13 +144,14 @@ public final class ApplicationContentContract {
         public static final String LOCAL_IMAGE_URI = ApplicationDatabaseContract.PromoEntry.LOCAL_IMAGE_URI;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PROMO_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.promos";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.promo";
 
         public static Uri getContentUriByValue(Uri valueUri) {
             return valueUri.buildUpon().appendPath(PROMO_BASE_PATH).build();
         }
-
-        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.promos";
-        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam.gliese.promo";
     }
 
 }

@@ -12,17 +12,20 @@ import com.whiteboxteam.gliese.data.db.table.TableHelper;
  */
 public final class FactTableHelper extends BaseTableHelper implements TableHelper {
 
-    private static final String CREATE_TABLE_SQL = CREATE_TABLE + StatisticDatabaseContract.FactEntry.TABLE_NAME + COLUMNS_BEGIN +
+    private static final String CREATE_TABLE_SQL = CREATE_TABLE + StatisticDatabaseContract.FactEntry.TABLE_NAME +
+            COLUMNS_BEGIN +
             StatisticDatabaseContract.FactEntry.ID + INTEGER_PK_TYPE + AUTOINCREMENT + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.FactEntry.SESSION_ID + TEXT_TYPE + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.FactEntry.CONTEXT_ID + INTEGER_TYPE + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.FactEntry.CONTEXT_TYPE + TEXT_TYPE + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.FactEntry.EVENT + TEXT_TYPE + COLUMNS_SEPARATOR +
             FOREIGN_KEY + COLUMNS_BEGIN + StatisticDatabaseContract.FactEntry.SESSION_ID + COLUMNS_END + REFERENCES +
-            StatisticDatabaseContract.FactEntry.TABLE_NAME + COLUMNS_BEGIN + StatisticDatabaseContract.SessionEntry.ID + COLUMNS_END + ON_DELETE_CASCADE +
+            StatisticDatabaseContract.FactEntry.TABLE_NAME + COLUMNS_BEGIN + StatisticDatabaseContract.SessionEntry
+            .ID + COLUMNS_END + ON_DELETE_CASCADE +
             COLUMNS_END;
 
-    private static final String CREATE_INDEX_1_SQL = CREATE_INDEX + StatisticDatabaseContract.FactEntry.TABLE_NAME + INDEX_SUFFIX + "1" +
+    private static final String CREATE_INDEX_1_SQL = CREATE_INDEX + StatisticDatabaseContract.FactEntry.TABLE_NAME +
+            INDEX_SUFFIX + "1" +
             INDEX_FOR_TABLE + StatisticDatabaseContract.FactEntry.TABLE_NAME + COLUMNS_BEGIN +
             StatisticDatabaseContract.FactEntry.SESSION_ID +
             COLUMNS_END;

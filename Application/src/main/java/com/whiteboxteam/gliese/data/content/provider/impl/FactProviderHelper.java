@@ -22,18 +22,16 @@ public final class FactProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Facts.FACTS_BASE_PATH, FACT_LIST_URI);
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Facts.FACTS_BASE_PATH + "/#", FACT_ITEM_URI);
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Sessions.SESSIONS_BASE_PATH + "/#/" +
-                        StatisticContentContract.Facts.FACTS_BASE_PATH, SESSION_FACT_LIST_URI
-        );
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Sessions.SESSIONS_BASE_PATH + "/#/" +
-                        StatisticContentContract.Facts.FACTS_BASE_PATH + "/#", SESSION_FACT_ITEM_URI
-        );
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Facts
+                .FACTS_BASE_PATH, FACT_LIST_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Facts.FACTS_BASE_PATH
+                + "/#", FACT_ITEM_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Sessions
+                .SESSIONS_BASE_PATH + "/#/" +
+                        StatisticContentContract.Facts.FACTS_BASE_PATH, SESSION_FACT_LIST_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Sessions
+                .SESSIONS_BASE_PATH + "/#/" +
+                        StatisticContentContract.Facts.FACTS_BASE_PATH + "/#", SESSION_FACT_ITEM_URI);
     }
 
     @Override
@@ -46,23 +44,6 @@ public final class FactProviderHelper extends BaseProviderHelper {
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public String getTableName() {
-        return StatisticDatabaseContract.FactEntry.TABLE_NAME;
-    }
-
-    @Override
-    public ContentValues getExtraValuesFromUri(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case SESSION_FACT_LIST_URI:
-            case SESSION_FACT_ITEM_URI:
-                ContentValues result = new ContentValues();
-                result.put(StatisticContentContract.Facts.SESSION_ID, getParentIdFromUri(uri));
-                return result;
-        }
-        return new ContentValues();
     }
 
     @Override
@@ -85,6 +66,23 @@ public final class FactProviderHelper extends BaseProviderHelper {
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
         return concatConditionAndSelection(condition, selection);
+    }
+
+    @Override
+    public String getTableName() {
+        return StatisticDatabaseContract.FactEntry.TABLE_NAME;
+    }
+
+    @Override
+    public ContentValues getExtraValuesFromUri(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case SESSION_FACT_LIST_URI:
+            case SESSION_FACT_ITEM_URI:
+                ContentValues result = new ContentValues();
+                result.put(StatisticContentContract.Facts.SESSION_ID, getParentIdFromUri(uri));
+                return result;
+        }
+        return new ContentValues();
     }
 
     @Override

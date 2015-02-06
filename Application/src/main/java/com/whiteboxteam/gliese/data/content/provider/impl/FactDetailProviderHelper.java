@@ -22,18 +22,16 @@ public final class FactDetailProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.FactDetails.FACT_DETAILS_BASE_PATH, FACT_DETAIL_LIST_URI);
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.FactDetails.FACT_DETAILS_BASE_PATH + "/#", FACT_DETAIL_ITEM_URI);
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Facts.FACTS_BASE_PATH + "/#/" +
-                        StatisticContentContract.FactDetails.FACT_DETAILS_BASE_PATH, FACT_FACT_DETAIL_LIST_URI
-        );
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Facts.FACTS_BASE_PATH + "/#/" +
-                        StatisticContentContract.FactDetails.FACT_DETAILS_BASE_PATH + "/#", FACT_FACT_DETAIL_ITEM_URI
-        );
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.FactDetails
+                .FACT_DETAILS_BASE_PATH, FACT_DETAIL_LIST_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.FactDetails
+                .FACT_DETAILS_BASE_PATH + "/#", FACT_DETAIL_ITEM_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Facts.FACTS_BASE_PATH
+                + "/#/" +
+                        StatisticContentContract.FactDetails.FACT_DETAILS_BASE_PATH, FACT_FACT_DETAIL_LIST_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Facts.FACTS_BASE_PATH
+                + "/#/" +
+                        StatisticContentContract.FactDetails.FACT_DETAILS_BASE_PATH + "/#", FACT_FACT_DETAIL_ITEM_URI);
     }
 
     @Override

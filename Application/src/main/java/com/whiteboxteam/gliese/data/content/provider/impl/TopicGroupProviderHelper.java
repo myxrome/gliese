@@ -20,10 +20,10 @@ public final class TopicGroupProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.TopicGroup.TOPIC_GROUP_BASE_PATH, TOPIC_GROUP_LIST_URI);
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.TopicGroup.TOPIC_GROUP_BASE_PATH + "/#", TOPIC_GROUP_ITEM_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.TopicGroup
+                .TOPIC_GROUP_BASE_PATH, TOPIC_GROUP_LIST_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.TopicGroup
+                .TOPIC_GROUP_BASE_PATH + "/#", TOPIC_GROUP_ITEM_URI);
     }
 
     @Override

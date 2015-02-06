@@ -20,10 +20,10 @@ public final class SessionProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Sessions.SESSIONS_BASE_PATH, SESSION_LIST_URI);
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY,
-                StatisticContentContract.Sessions.SESSIONS_BASE_PATH + "/#", SESSION_ITEM_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Sessions
+                .SESSIONS_BASE_PATH, SESSION_LIST_URI);
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Sessions
+                .SESSIONS_BASE_PATH + "/#", SESSION_ITEM_URI);
     }
 
     @Override

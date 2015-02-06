@@ -22,18 +22,16 @@ public final class ValueProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Value.VALUE_BASE_PATH, VALUE_LIST_URI);
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Value.VALUE_BASE_PATH + "/#", VALUE_ITEM_URI);
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Category.CATEGORY_BASE_PATH + "/#/" +
-                        ApplicationContentContract.Value.VALUE_BASE_PATH, CATEGORY_VALUE_LIST_URI
-        );
-        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY,
-                ApplicationContentContract.Category.CATEGORY_BASE_PATH + "/#/" +
-                        ApplicationContentContract.Value.VALUE_BASE_PATH + "/#", CATEGORY_VALUE_ITEM_URI
-        );
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Value
+                .VALUE_BASE_PATH, VALUE_LIST_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Value
+                .VALUE_BASE_PATH + "/#", VALUE_ITEM_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Category
+                .CATEGORY_BASE_PATH + "/#/" +
+                ApplicationContentContract.Value.VALUE_BASE_PATH, CATEGORY_VALUE_LIST_URI);
+        URI_MATCHER.addURI(ApplicationContentContract.CONTENT_AUTHORITY, ApplicationContentContract.Category
+                .CATEGORY_BASE_PATH + "/#/" +
+                ApplicationContentContract.Value.VALUE_BASE_PATH + "/#", CATEGORY_VALUE_ITEM_URI);
     }
 
     @Override
@@ -46,31 +44,6 @@ public final class ValueProviderHelper extends BaseProviderHelper {
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public String getType(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case VALUE_LIST_URI:
-            case CATEGORY_VALUE_LIST_URI:
-                return ApplicationContentContract.Category.CONTENT_TYPE_LIST;
-            case VALUE_ITEM_URI:
-            case CATEGORY_VALUE_ITEM_URI:
-                return ApplicationContentContract.Category.CONTENT_TYPE_ITEM;
-        }
-        return null;
-    }
-
-    @Override
-    public ContentValues getExtraValuesFromUri(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case CATEGORY_VALUE_LIST_URI:
-            case CATEGORY_VALUE_ITEM_URI:
-                ContentValues result = new ContentValues();
-                result.put(ApplicationContentContract.Value.CATEGORY_ID, getParentIdFromUri(uri));
-                return result;
-        }
-        return new ContentValues();
     }
 
     @Override
@@ -98,5 +71,30 @@ public final class ValueProviderHelper extends BaseProviderHelper {
     @Override
     public String getTableName() {
         return ApplicationDatabaseContract.ValueEntry.TABLE_NAME;
+    }
+
+    @Override
+    public ContentValues getExtraValuesFromUri(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case CATEGORY_VALUE_LIST_URI:
+            case CATEGORY_VALUE_ITEM_URI:
+                ContentValues result = new ContentValues();
+                result.put(ApplicationContentContract.Value.CATEGORY_ID, getParentIdFromUri(uri));
+                return result;
+        }
+        return new ContentValues();
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case VALUE_LIST_URI:
+            case CATEGORY_VALUE_LIST_URI:
+                return ApplicationContentContract.Category.CONTENT_TYPE_LIST;
+            case VALUE_ITEM_URI:
+            case CATEGORY_VALUE_ITEM_URI:
+                return ApplicationContentContract.Category.CONTENT_TYPE_ITEM;
+        }
+        return null;
     }
 }

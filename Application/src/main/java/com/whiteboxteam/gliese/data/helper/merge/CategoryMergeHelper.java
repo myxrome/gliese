@@ -19,7 +19,8 @@ public final class CategoryMergeHelper extends BaseMergeHelper {
     public CategoryMergeHelper(Context context, SyncResult syncResult, Uri uri) {
         super(context, syncResult, uri);
 
-        nameMapping.put(ApplicationContentContract.Category.TOPIC_ID, ApplicationServerContract.CategoryRecord.TOPIC_ID);
+        nameMapping.put(ApplicationContentContract.Category.TOPIC_ID, ApplicationServerContract.CategoryRecord
+                .TOPIC_ID);
         nameMapping.put(ApplicationContentContract.Category.ORDER, ApplicationServerContract.CategoryRecord.ORDER);
         nameMapping.put(ApplicationContentContract.Category.NAME, ApplicationServerContract.CategoryRecord.NAME);
 

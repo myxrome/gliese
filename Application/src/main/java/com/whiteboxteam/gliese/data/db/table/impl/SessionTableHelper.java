@@ -11,7 +11,8 @@ import com.whiteboxteam.gliese.data.db.StatisticDatabaseContract;
  */
 public final class SessionTableHelper extends BaseTableHelper {
 
-    private static final String CREATE_TABLE_SQL = CREATE_TABLE + StatisticDatabaseContract.SessionEntry.TABLE_NAME + COLUMNS_BEGIN +
+    private static final String CREATE_TABLE_SQL = CREATE_TABLE + StatisticDatabaseContract.SessionEntry.TABLE_NAME +
+            COLUMNS_BEGIN +
             StatisticDatabaseContract.SessionEntry.ID + INTEGER_PK_TYPE + AUTOINCREMENT + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.SessionEntry.STARTED_AT + TEXT_TYPE + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.SessionEntry.FINISHED_AT + TEXT_TYPE +

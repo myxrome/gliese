@@ -36,6 +36,15 @@ public abstract class BaseContentProvider extends ContentProvider {
     }
 
     @Override
+    public String getType(Uri uri) {
+        for (ProviderHelper helper : providerHelpers) {
+            String type = helper.getType(uri);
+            if (type != null) return type;
+        }
+        return null;
+    }
+
+    @Override
     public Uri insert(Uri uri, ContentValues values) {
         ProviderHelper helper = getProviderHelper(uri);
 
@@ -76,20 +85,9 @@ public abstract class BaseContentProvider extends ContentProvider {
         return count;
     }
 
-    @Override
-    public String getType(Uri uri) {
-        for (ProviderHelper helper : providerHelpers) {
-            String type = helper.getType(uri);
-            if (type != null)
-                return type;
-        }
-        return null;
-    }
-
     private ProviderHelper getProviderHelper(Uri uri) {
         for (ProviderHelper helper : providerHelpers)
-            if (helper.isUriMatched(uri))
-                return helper;
+            if (helper.isUriMatched(uri)) return helper;
         return null;
     }
 }

@@ -20,7 +20,8 @@ public final class PromoMergeHelper extends BaseMergeHelper {
 
         nameMapping.put(ApplicationContentContract.Promo.VALUE_ID, ApplicationServerContract.PromoRecord.VALUE_ID);
         nameMapping.put(ApplicationContentContract.Promo.ORDER, ApplicationServerContract.PromoRecord.ORDER);
-        nameMapping.put(ApplicationContentContract.Promo.REMOTE_IMAGE_URI, ApplicationServerContract.PromoRecord.REMOTE_IMAGE_URI);
+        nameMapping.put(ApplicationContentContract.Promo.REMOTE_IMAGE_URI, ApplicationServerContract.PromoRecord
+                .REMOTE_IMAGE_URI);
 
     }
 
