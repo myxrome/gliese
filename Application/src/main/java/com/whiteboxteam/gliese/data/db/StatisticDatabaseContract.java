@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
  */
 public final class StatisticDatabaseContract {
 
-    public static abstract class SessionEntry implements BaseColumns {
+    public static final class SessionEntry implements BaseColumns {
         public static final String TABLE_NAME = "session";
         public static final String ID = BaseColumns._ID;
         public static final String STARTED_AT = "_started_at";
@@ -18,7 +18,7 @@ public final class StatisticDatabaseContract {
 
     }
 
-    public static abstract class FactEntry implements BaseColumns {
+    public static final class FactEntry implements BaseColumns {
         public static final String TABLE_NAME = "fact";
         public static final String ID = BaseColumns._ID;
         public static final String SESSION_ID = "_session_id";
@@ -28,7 +28,7 @@ public final class StatisticDatabaseContract {
 
     }
 
-    public static abstract class FactDetailEntry implements BaseColumns {
+    public static final class FactDetailEntry implements BaseColumns {
         public static final String TABLE_NAME = "fact_detail";
         public static final String ID = BaseColumns._ID;
         public static final String FACT_ID = "_fact_id";

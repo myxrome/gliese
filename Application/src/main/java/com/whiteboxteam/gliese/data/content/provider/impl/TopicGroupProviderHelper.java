@@ -12,7 +12,7 @@ import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
  * Date: 22.12.2014
  * Time: 12:46
  */
-public class TopicGroupProviderHelper extends BaseProviderHelper {
+public final class TopicGroupProviderHelper extends BaseProviderHelper {
 
     private static final int TOPIC_GROUP_LIST_URI = 1;
     private static final int TOPIC_GROUP_ITEM_URI = 2;

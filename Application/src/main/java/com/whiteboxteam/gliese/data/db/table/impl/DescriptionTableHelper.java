@@ -9,7 +9,7 @@ import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
  * Date: 17.10.13
  * Time: 0:02
  */
-public class DescriptionTableHelper extends BaseTableHelper {
+public final class DescriptionTableHelper extends BaseTableHelper {
 
     private static final String CREATE_TABLE_SQL = CREATE_TABLE + ApplicationDatabaseContract.DescriptionEntry.TABLE_NAME + COLUMNS_BEGIN +
             ApplicationDatabaseContract.DescriptionEntry.ID + INTEGER_PK_TYPE + COLUMNS_SEPARATOR +

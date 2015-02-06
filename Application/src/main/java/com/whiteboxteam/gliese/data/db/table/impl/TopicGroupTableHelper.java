@@ -10,7 +10,7 @@ import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
  * Time: 13:07
  */
 
-public class TopicGroupTableHelper extends BaseTableHelper {
+public final class TopicGroupTableHelper extends BaseTableHelper {
 
     private static final String CREATE_TABLE_SQL = CREATE_TABLE + ApplicationDatabaseContract.TopicGroupEntry.TABLE_NAME + COLUMNS_BEGIN +
             ApplicationDatabaseContract.TopicGroupEntry.ID + INTEGER_PK_TYPE + COLUMNS_SEPARATOR +

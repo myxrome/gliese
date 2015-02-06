@@ -17,7 +17,7 @@ import java.util.Collection;
  * Date: 11.08.2014
  * Time: 21:09
  */
-public class StatisticDatabaseHelper extends SQLiteOpenHelper {
+public final class StatisticDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "statistics.db";
     private static final int DB_VERSION = 1;

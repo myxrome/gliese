@@ -16,7 +16,7 @@ public final class StatisticContentContract {
     public static final String CONTENT_AUTHORITY = "com.whiteboxteam.gliese.statistic.content.provider";
     private static final Uri BASE_CONTENT_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + CONTENT_AUTHORITY);
 
-    public static abstract class Sessions {
+    public static final class Sessions {
         public static final String SESSIONS_BASE_PATH = "sessions";
 
         public static final String ID = StatisticDatabaseContract.SessionEntry.ID;
@@ -30,7 +30,7 @@ public final class StatisticContentContract {
 
     }
 
-    public static abstract class Facts {
+    public static final class Facts {
         public static final String FACTS_BASE_PATH = "facts";
 
         public static final String ID = StatisticDatabaseContract.FactEntry.ID;
@@ -50,7 +50,7 @@ public final class StatisticContentContract {
 
     }
 
-    public static abstract class FactDetails {
+    public static final class FactDetails {
         public static final String FACT_DETAILS_BASE_PATH = "fact-details";
 
         public static final String ID = StatisticDatabaseContract.FactDetailEntry.ID;

@@ -10,7 +10,7 @@ import com.whiteboxteam.gliese.data.db.table.TableHelper;
  * Date: 11.08.2014
  * Time: 21:02
  */
-public class FactTableHelper extends BaseTableHelper implements TableHelper {
+public final class FactTableHelper extends BaseTableHelper implements TableHelper {
 
     private static final String CREATE_TABLE_SQL = CREATE_TABLE + StatisticDatabaseContract.FactEntry.TABLE_NAME + COLUMNS_BEGIN +
             StatisticDatabaseContract.FactEntry.ID + INTEGER_PK_TYPE + AUTOINCREMENT + COLUMNS_SEPARATOR +

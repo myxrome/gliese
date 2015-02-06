@@ -9,7 +9,7 @@ import com.whiteboxteam.gliese.data.db.StatisticDatabaseContract;
  * Date: 25.08.2014
  * Time: 23:39
  */
-public class FactDetailTableHelper extends BaseTableHelper {
+public final class FactDetailTableHelper extends BaseTableHelper {
 
     private static final String CREATE_TABLE_SQL = CREATE_TABLE + StatisticDatabaseContract.FactDetailEntry.TABLE_NAME + COLUMNS_BEGIN +
             StatisticDatabaseContract.FactDetailEntry.ID + INTEGER_PK_TYPE + AUTOINCREMENT + COLUMNS_SEPARATOR +

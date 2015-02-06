@@ -9,7 +9,7 @@ import com.whiteboxteam.gliese.data.db.StatisticDatabaseContract;
  * Date: 25.08.2014
  * Time: 23:35
  */
-public class SessionTableHelper extends BaseTableHelper {
+public final class SessionTableHelper extends BaseTableHelper {
 
     private static final String CREATE_TABLE_SQL = CREATE_TABLE + StatisticDatabaseContract.SessionEntry.TABLE_NAME + COLUMNS_BEGIN +
             StatisticDatabaseContract.SessionEntry.ID + INTEGER_PK_TYPE + AUTOINCREMENT + COLUMNS_SEPARATOR +

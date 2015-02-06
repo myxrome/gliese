@@ -12,7 +12,7 @@ import com.whiteboxteam.gliese.data.db.StatisticDatabaseContract;
  * Date: 26.08.2014
  * Time: 0:50
  */
-public class FactDetailProviderHelper extends BaseProviderHelper {
+public final class FactDetailProviderHelper extends BaseProviderHelper {
 
     private static final int FACT_DETAIL_LIST_URI = 1;
     private static final int FACT_DETAIL_ITEM_URI = 2;

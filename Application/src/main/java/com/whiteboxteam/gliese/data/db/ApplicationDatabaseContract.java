@@ -17,7 +17,7 @@ public final class ApplicationDatabaseContract {
         public static final String UPDATED_AT = "_updated_at";
     }
 
-    public static abstract class TopicGroupEntry extends BaseEntry {
+    public static final class TopicGroupEntry extends BaseEntry {
         public static final String TABLE_NAME = "topic_group";
 
         public static final String ORDER = "_order";
@@ -25,7 +25,7 @@ public final class ApplicationDatabaseContract {
         public static final String NAME = "_name";
     }
 
-    public static abstract class TopicEntry extends BaseEntry {
+    public static final class TopicEntry extends BaseEntry {
         public static final String TABLE_NAME = "topic";
 
         public static final String TOPIC_GROUP_ID = "_topic_group_id";
@@ -33,7 +33,7 @@ public final class ApplicationDatabaseContract {
         public static final String NAME = "_name";
     }
 
-    public static abstract class CategoryEntry extends BaseEntry {
+    public static final class CategoryEntry extends BaseEntry {
         public static final String TABLE_NAME = "category";
 
         public static final String TOPIC_ID = "_topic_id";
@@ -41,7 +41,7 @@ public final class ApplicationDatabaseContract {
         public static final String NAME = "_name";
     }
 
-    public static abstract class ValueEntry extends BaseEntry {
+    public static final class ValueEntry extends BaseEntry {
         public static final String TABLE_NAME = "value";
 
         public static final String CATEGORY_ID = "_category_id";
@@ -59,7 +59,7 @@ public final class ApplicationDatabaseContract {
         public static final String ORDER = "_order";
     }
 
-    public static abstract class DescriptionEntry extends ValueChildEntry {
+    public static final class DescriptionEntry extends ValueChildEntry {
         public static final String TABLE_NAME = "description";
 
         public static final String CAPTION = "_caption";
@@ -68,7 +68,7 @@ public final class ApplicationDatabaseContract {
         public static final String BOLD = "_bold";
     }
 
-    public static abstract class PromoEntry extends ValueChildEntry {
+    public static final class PromoEntry extends ValueChildEntry {
         public static final String TABLE_NAME = "promo";
 
         public static final String REMOTE_IMAGE_URI = "_remote_image_uri";

@@ -12,7 +12,7 @@ import com.whiteboxteam.gliese.data.db.StatisticDatabaseContract;
  * Date: 26.08.2014
  * Time: 0:34
  */
-public class SessionProviderHelper extends BaseProviderHelper {
+public final class SessionProviderHelper extends BaseProviderHelper {
 
     private static final int SESSION_LIST_URI = 1;
     private static final int SESSION_ITEM_URI = 2;
