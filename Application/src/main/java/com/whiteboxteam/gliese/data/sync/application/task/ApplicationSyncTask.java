@@ -14,6 +14,7 @@ import com.whiteboxteam.gliese.data.server.ApplicationServerContract;
 import com.whiteboxteam.gliese.data.server.ServerHelper;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
 import com.whiteboxteam.gliese.data.sync.application.ApplicationSyncService;
+import com.whiteboxteam.gliese.data.sync.image.ImageUploadService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +43,7 @@ public class ApplicationSyncTask implements Runnable {
         boolean result = performApplicationSync();
         if (result) {
             saveLastSyncDate();
+            startImageUpload();
         }
         sendSyncResultBroadcast(result);
     }
@@ -63,6 +65,10 @@ public class ApplicationSyncTask implements Runnable {
         String value = dateFormat.format(new Date());
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(StorageContract.LAST_SYNC_DATE,
                 value).apply();
+    }
+
+    private void startImageUpload() {
+        ImageUploadService.startBackgroundUpload(context);
     }
 
     private void sendSyncResultBroadcast(boolean result) {
