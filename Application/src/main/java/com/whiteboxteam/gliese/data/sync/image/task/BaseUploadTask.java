@@ -38,32 +38,36 @@ public abstract class BaseUploadTask implements Runnable {
     public void run() {
 
         if (UploadTaskLocker.lockTask(uri.toString())) {
-
-            Cursor entity = context.getContentResolver().query(uri, new String[]{getLocalImageKey(),
-                    getRemoteImageKey()}, null, null, null);
-            String localUri = "";
-            String remoteUri = "";
-            while (entity.moveToNext()) {
-                localUri = entity.getString(0);
-                remoteUri = entity.getString(1);
-            }
-            entity.close();
-
-            if (localUri == null || "".equals(localUri)) {
-                try {
-
-                    File file = uploadImageFile(remoteUri);
-                    if (file != null) {
-                        updateLocalUri(file.getAbsolutePath());
-                    }
-
-                } catch (IOException e) {
-                }
-            }
-
+            upload();
             UploadTaskLocker.unlockTask(uri.toString());
         }
 
+    }
+
+    private void upload() {
+        Cursor entity = context.getContentResolver().query(uri, new String[]{getLocalImageKey(), getRemoteImageKey()
+        }, null, null, null);
+        if (entity == null) return;
+
+        String localUri = "";
+        String remoteUri = "";
+        while (entity.moveToNext()) {
+            localUri = entity.getString(0);
+            remoteUri = entity.getString(1);
+        }
+        entity.close();
+
+        if (localUri == null || "".equals(localUri)) {
+            try {
+
+                File file = uploadImageFile(remoteUri);
+                if (file != null) {
+                    updateLocalUri(file.getAbsolutePath());
+                }
+
+            } catch (IOException e) {
+            }
+        }
     }
 
     protected abstract String getLocalImageKey();

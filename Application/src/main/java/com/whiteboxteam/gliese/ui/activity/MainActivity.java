@@ -4,19 +4,15 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.*;
 import com.whiteboxteam.gliese.R;
-import com.whiteboxteam.gliese.data.sync.application.ApplicationSyncService;
 import com.whiteboxteam.gliese.ui.fragment.NavigationDrawerFragment;
 
 
@@ -33,6 +29,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private CharSequence mTitle;
     private BroadcastReceiver receiver;
 
+    public static Intent createIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,22 +48,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getExtras();
-                boolean result = bundle.getBoolean(ApplicationSyncService.SyncResultBroadcast.Parameters.RESULT);
-                Log.d("[SYNC]", "receive sync result with value " + String.valueOf(result));
-            }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(ApplicationSyncService.SyncResultBroadcast.ACTION));
-        ApplicationSyncService.startApplicationSync(this);
     }
 
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
     }
 

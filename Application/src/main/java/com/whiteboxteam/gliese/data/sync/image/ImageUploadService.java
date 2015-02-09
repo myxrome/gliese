@@ -103,18 +103,24 @@ public class ImageUploadService extends Service {
                         String[]{ApplicationContentContract.Value.ID, ApplicationContentContract.Value
                         .REMOTE_THUMB_URI}, ApplicationContentContract.Value.LOCAL_THUMB_URI + " IS NULL", null, null);
 
-                while (values.moveToNext()) {
-                    Runnable task = new ValueThumbUploadTask(this, values.getLong(0), DEFAULT_UPLOAD_PRIORITY);
-                    thumbBackgroundPool.execute(task);
+                if (values != null) {
+                    while (values.moveToNext()) {
+                        Runnable task = new ValueThumbUploadTask(this, values.getLong(0), DEFAULT_UPLOAD_PRIORITY);
+                        thumbBackgroundPool.execute(task);
+                    }
+                    values.close();
                 }
 
                 Cursor promos = getContentResolver().query(ApplicationContentContract.Promo.CONTENT_URI, new
                         String[]{ApplicationContentContract.Promo.ID, ApplicationContentContract.Promo
                         .REMOTE_IMAGE_URI}, ApplicationContentContract.Promo.LOCAL_IMAGE_URI + " IS NULL", null, null);
 
-                while (promos.moveToNext()) {
-                    Runnable task = new PromoImageUploadTask(this, promos.getLong(0), DEFAULT_UPLOAD_PRIORITY);
-                    imageBackgroundPool.execute(task);
+                if (promos != null) {
+                    while (promos.moveToNext()) {
+                        Runnable task = new PromoImageUploadTask(this, promos.getLong(0), DEFAULT_UPLOAD_PRIORITY);
+                        imageBackgroundPool.execute(task);
+                    }
+                    promos.close();
                 }
             }
         }
