@@ -2,7 +2,6 @@ package com.whiteboxteam.gliese.data.helper.merge;
 
 import android.content.Context;
 import android.content.OperationApplicationException;
-import android.content.SyncResult;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.RemoteException;
@@ -28,13 +27,11 @@ public abstract class BaseMergeHelper {
     private static final int SQLITE_MAX_COMPOUND_SELECT = 500;
     protected Map<String, String> nameMapping = new HashMap<>();
     protected Context context;
-    private SyncResult syncResult;
     private Uri uri;
     private SQLiteDatabase db;
 
-    public BaseMergeHelper(Context context, SyncResult syncResult, Uri uri) {
+    public BaseMergeHelper(Context context, Uri uri) {
         this.context = context;
-        this.syncResult = syncResult;
         this.uri = uri;
 
         ApplicationDatabaseHelper dbHelper = new ApplicationDatabaseHelper(context);
@@ -53,7 +50,6 @@ public abstract class BaseMergeHelper {
                 index = applyBatch(json, index);
             }
         }
-        syncResult.stats.numEntries += json.length();
         context.getContentResolver().notifyChange(uri, null, false);
     }
 

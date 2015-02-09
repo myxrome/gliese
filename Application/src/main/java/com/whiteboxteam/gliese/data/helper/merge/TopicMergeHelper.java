@@ -1,7 +1,6 @@
 package com.whiteboxteam.gliese.data.helper.merge;
 
 import android.content.Context;
-import android.content.SyncResult;
 import android.net.Uri;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
@@ -15,9 +14,8 @@ import com.whiteboxteam.gliese.data.server.ApplicationServerContract;
  */
 public final class TopicMergeHelper extends BaseMergeHelper {
 
-
-    public TopicMergeHelper(Context context, SyncResult syncResult, Uri uri) {
-        super(context, syncResult, uri);
+    public TopicMergeHelper(Context context, Uri uri) {
+        super(context, uri);
 
         nameMapping.put(ApplicationContentContract.Topic.TOPIC_GROUP_ID, ApplicationServerContract.TopicRecord
                 .TOPIC_GROUP_ID);
