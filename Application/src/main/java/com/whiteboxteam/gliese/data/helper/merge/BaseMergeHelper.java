@@ -46,7 +46,7 @@ public abstract class BaseMergeHelper {
 
     }
 
-    public void reconcile(JSONArray json) throws JSONException, RemoteException, OperationApplicationException {
+    public void merge(JSONArray json) throws JSONException, RemoteException, OperationApplicationException {
         if (json.length() > 0) {
             int index = 0;
             while (index < json.length()) {

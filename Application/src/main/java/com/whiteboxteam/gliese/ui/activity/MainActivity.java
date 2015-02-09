@@ -1,4 +1,4 @@
-package com.whiteboxteam.gliese;
+package com.whiteboxteam.gliese.ui.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.*;
+import com.whiteboxteam.gliese.R;
+import com.whiteboxteam.gliese.ui.fragment.NavigationDrawerFragment;
 
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
