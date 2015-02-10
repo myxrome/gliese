@@ -36,6 +36,7 @@ public abstract class BaseMergeHelper {
 
         ApplicationDatabaseHelper dbHelper = new ApplicationDatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
+        db.execSQL("PRAGMA foreign_keys = OFF");
 
         nameMapping.put(ApplicationContentContract.Base.ID, ApplicationServerContract.BaseRecord.ID);
         nameMapping.put(ApplicationContentContract.Base.ACTIVE, ApplicationServerContract.BaseRecord.ACTIVE);
