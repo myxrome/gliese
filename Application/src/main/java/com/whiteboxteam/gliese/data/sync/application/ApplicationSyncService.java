@@ -22,7 +22,6 @@ public class ApplicationSyncService extends Service {
 
     private static final int CORE_POOL_SIZE = 4;
     private static final long KEEP_ALIVE_TIME = 0L;
-    private static final long SYNC_INTERVAL_IN_MILLISECONDS = 10800000L; // 3 hr
     private ThreadPoolExecutor executorService;
 
     public static void startApplicationSync(Context context) {
@@ -50,7 +49,7 @@ public class ApplicationSyncService extends Service {
         Intent serviceIntent = new Intent(context, ApplicationSyncService.class);
         PendingIntent intent = PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + SYNC_INTERVAL_IN_MILLISECONDS, intent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, AlarmManager.INTERVAL_HOUR * 3, intent);
     }
 
     @Override

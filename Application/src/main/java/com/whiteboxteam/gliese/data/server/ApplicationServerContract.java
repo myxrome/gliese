@@ -94,7 +94,7 @@ public final class ApplicationServerContract {
     public static abstract class ValueRecord extends BaseRecord {
         public static final String CATEGORY_ID = "_id";
         public static final String NAME = "n";
-        public static final String THUMB_REMOTE_URI = "t";
+        public static final String THUMB_URI = "t";
         public static final String OLD_PRICE = "op";
         public static final String DISCOUNT = "ds";
         public static final String NEW_PRICE = "np";
@@ -115,7 +115,7 @@ public final class ApplicationServerContract {
     public static abstract class PromoRecord extends BaseRecord {
         public static final String VALUE_ID = "_id";
         public static final String ORDER = "o";
-        public static final String REMOTE_IMAGE_URI = "l";
+        public static final String IMAGE_URI = "l";
     }
 
 }

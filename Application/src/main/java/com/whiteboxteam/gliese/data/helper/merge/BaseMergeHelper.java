@@ -6,13 +6,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.RemoteException;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
 import com.whiteboxteam.gliese.data.db.ApplicationDatabaseHelper;
 import com.whiteboxteam.gliese.data.server.ApplicationServerContract;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +29,7 @@ public abstract class BaseMergeHelper {
 
     private static final int SQLITE_MAX_COMPOUND_SELECT = 500;
     protected Map<String, String> nameMapping = new HashMap<>();
+    protected List<String> nullColumns = new ArrayList<>();
     protected Context context;
     private Uri uri;
     private SQLiteDatabase db;
@@ -85,19 +89,27 @@ public abstract class BaseMergeHelper {
             sql.append(delimiter).append(key);
             delimiter = ", ";
         }
+        for (String column : nullColumns) {
+            sql.append(delimiter).append(column);
+        }
     }
 
     private void applyRowValues(JSONObject remoteEntry, StringBuilder sql) throws JSONException {
         String delimiter = " ";
         for (String key : nameMapping.keySet()) {
-            String value = getValue(key, remoteEntry).replaceAll("'", "''");
+            String value = getValue(key, remoteEntry);
             sql.append(delimiter).append("'").append(value).append("'");
             delimiter = ", ";
+        }
+        for (String column : nullColumns) {
+            sql.append(delimiter).append("(SELECT ").append(column).append(" FROM ").append(getTableName()).append(" " +
+                    "" + "WHERE ").append(ApplicationDatabaseContract.BaseEntry.ID).append(" = ").append(remoteEntry
+                    .get(ApplicationServerContract.BaseRecord.ID)).append(")");
         }
     }
 
     private String getValue(String key, JSONObject remoteEntry) throws JSONException {
-        String value = remoteEntry.getString(nameMapping.get(key));
+        String value = remoteEntry.getString(nameMapping.get(key)).replaceAll("'", "''");
         if (value.equals("true")) return "1";
         if (value.equals("false")) return "0";
         return value;
