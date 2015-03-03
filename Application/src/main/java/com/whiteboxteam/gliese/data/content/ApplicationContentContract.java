@@ -1,6 +1,8 @@
 package com.whiteboxteam.gliese.data.content;
 
 import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import com.whiteboxteam.gliese.data.db.ApplicationDatabaseContract;
 
@@ -67,6 +69,11 @@ public final class ApplicationContentContract {
 
         public static Uri getContentUriByTopicGroup(Uri topicGroupUri) {
             return topicGroupUri.buildUpon().appendPath(TOPIC_BASE_PATH).build();
+        }
+
+        public static boolean isExist(Context context, Uri topicUri) {
+            Cursor cursor = context.getContentResolver().query(topicUri, new String[]{Topic.ID}, null, null, null);
+            return cursor.getCount() > 0;
         }
 
     }

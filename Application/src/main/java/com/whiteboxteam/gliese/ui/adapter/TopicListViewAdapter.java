@@ -1,14 +1,19 @@
 package com.whiteboxteam.gliese.ui.adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
+import android.support.v4.util.Pair;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.storage.StorageContract;
 
 /**
  * Gliese Project.
@@ -16,162 +21,243 @@ import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
  * Date: 13.02.2015
  * Time: 15:16
  */
-public abstract class TopicListViewAdapter extends BaseExpandableListAdapter {
+public abstract class TopicListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Cursor groupCursor;
-    private SparseArray<Cursor> childrenCursors = new SparseArray<>();
+    private static final int TOPIC_GROUP_VIEW_TYPE = 0;
+    private static final int TOPIC_VIEW_TYPE = 1;
+
+    private Cursor topicGroupCursor = null;
+    private SparseArray<Cursor> topicCursors = new SparseArray<>();
+
+    private int topicGroupIdColumnIndex = -1;
+    private int topicIdColumnIndex = -1;
+
     private LayoutInflater inflater;
-    private int groupIdColumnIndex;
-    private int childIdColumnIndex;
+    private SharedPreferences preferences;
+
+    private TopicViewHolder selected = null;
 
     public TopicListViewAdapter(Context context) {
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = LayoutInflater.from(context);
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    @Override
-    public int getGroupCount() {
-        return groupCursor == null ? 0 : groupCursor.getCount();
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        Cursor children = childrenCursors.get(groupPosition);
-        return children == null ? 0 : children.getCount();
-    }
-
-    public Cursor getGroup(int groupPosition) {
-        if (groupCursor != null) {
-            groupCursor.moveToPosition(groupPosition);
-            return groupCursor;
+    private void onTopicItemClick(TopicViewHolder viewHolder) {
+        if (selected != viewHolder) {
+            setSelectedTopic(viewHolder);
         }
-        return null;
     }
 
-    public Cursor getChild(int groupPosition, int childPosition) {
-        if (groupCursor != null) {
-            Cursor children = childrenCursors.get(groupPosition);
-            if (children != null) {
-                children.moveToPosition(childPosition);
-                return children;
+    private void setSelectedTopic(TopicViewHolder viewHolder) {
+        if (selected != null) {
+            selected.setActivated(false);
+        }
+
+        selected = viewHolder;
+
+        selected.setActivated(true);
+        preferences.edit().putLong(StorageContract.LAST_TOPIC_INDEX, selected.id).apply();
+        onTopicSelected(selected.id);
+    }
+
+    protected abstract void onTopicSelected(long id);
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        switch (viewType) {
+            case TOPIC_GROUP_VIEW_TYPE:
+                return new TopicGroupViewHolder(inflater.inflate(R.layout.drawer_item_subheader, viewGroup, false));
+            case TOPIC_VIEW_TYPE:
+                return new TopicViewHolder(inflater.inflate(R.layout.drawer_item, viewGroup, false));
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        Pair<Integer, Integer> coordinate = getCoordinate(position);
+        if (coordinate.second < 0) {
+            topicGroupCursor.moveToPosition(coordinate.first);
+            bindTopicGroupViewHolder((TopicGroupViewHolder) viewHolder, topicGroupCursor, position == 0);
+        } else {
+            Cursor topicCursor = topicCursors.get(coordinate.first);
+            topicCursor.moveToPosition(coordinate.second);
+            bindTopicViewHolder((TopicViewHolder) viewHolder, topicCursor);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Pair<Integer, Integer> coordinate = getCoordinate(position);
+        if (coordinate.second < 0) {
+            return TOPIC_GROUP_VIEW_TYPE;
+        } else {
+            return TOPIC_VIEW_TYPE;
+        }
+    }
+
+    @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        Pair<Integer, Integer> coordinate = getCoordinate(position);
+        if (coordinate.second < 0) {
+            topicGroupCursor.moveToPosition(coordinate.first);
+            return topicGroupCursor.getLong(topicGroupIdColumnIndex);
+        } else {
+            Cursor topicCursor = topicCursors.get(coordinate.first);
+            topicCursor.moveToPosition(coordinate.second);
+            return 1000 * coordinate.first + topicCursor.getLong(topicIdColumnIndex);
+        }
+    }
+
+    private Pair<Integer, Integer> getCoordinate(int position) {
+        if (topicGroupCursor != null) {
+            int seed = 0;
+            for (int i = 0; i < topicGroupCursor.getCount(); ++i) {
+
+                if (seed == position) return new Pair<>(i, -1);
+
+                Cursor cursor = topicCursors.get(i);
+                int topicCount = cursor == null ? 0 : cursor.getCount();
+                seed += topicCount + 1;
+                if (position < seed) return new Pair<>(i, topicCount - (seed - position));
             }
         }
-
-        return null;
+        return new Pair<>(-1, -1);
     }
 
     @Override
-    public long getGroupId(int groupPosition) {
-        return getGroup(groupPosition).getLong(groupIdColumnIndex);
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return getChild(groupPosition, childPosition).getLong(childIdColumnIndex);
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        Cursor cursor = getGroup(groupPosition);
-        View v;
-        if (convertView == null) {
-            v = newGroupView(parent);
-        } else {
-            v = convertView;
+    public int getItemCount() {
+        if (topicGroupCursor == null) return 0;
+        int count = topicGroupCursor.getCount();
+        for (int i = 0; i < topicCursors.size(); ++i) {
+            int key = topicCursors.keyAt(i);
+            Cursor cursor = topicCursors.get(key);
+            count += cursor.getCount();
         }
-        bindGroupView(v, cursor);
-        return v;
+        return count;
     }
 
-    private View newGroupView(ViewGroup parent) {
-        return inflater.inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
+    private void bindTopicGroupViewHolder(TopicGroupViewHolder viewHolder, Cursor topicGroupCursor, boolean isFirst) {
+        viewHolder.name.setText(topicGroupCursor.getString(topicGroupCursor.getColumnIndex(ApplicationContentContract
+                .TopicGroup.NAME)));
+        int visibility = isFirst ? View.GONE : View.VISIBLE;
+        viewHolder.divider.setVisibility(visibility);
     }
 
-    private void bindGroupView(View v, Cursor cursor) {
-        TextView textView = (TextView) v.findViewById(android.R.id.text1);
-        textView.setText(cursor.getString(cursor.getColumnIndex(ApplicationContentContract.TopicGroup.NAME)));
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup
-            parent) {
-        Cursor cursor = getChild(groupPosition, childPosition);
-        View v;
-        if (convertView == null) {
-            v = newChildView(parent);
-        } else {
-            v = convertView;
+    private void bindTopicViewHolder(TopicViewHolder viewHolder, Cursor topicCursor) {
+        viewHolder.id = topicCursor.getLong(topicIdColumnIndex);
+        viewHolder.name.setText(topicCursor.getString(topicCursor.getColumnIndex(ApplicationContentContract.Topic
+                .NAME)));
+        if (viewHolder.id == preferences.getLong(StorageContract.LAST_TOPIC_INDEX, -1)) {
+            setSelectedTopic(viewHolder);
         }
-        bindChildView(v, cursor);
-        return v;
     }
 
-    private View newChildView(ViewGroup parent) {
-        return inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-    }
-
-    private void bindChildView(View v, Cursor cursor) {
-        TextView textView = (TextView) v.findViewById(android.R.id.text1);
-        textView.setText(cursor.getString(cursor.getColumnIndex(ApplicationContentContract.Topic.NAME)));
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
-    }
-
-    public void setGroupCursor(Cursor cursor) {
-        if (groupCursor == cursor) return;
-        if (groupCursor != null) {
-            releaseChildrenCursors();
-            groupCursor.close();
+    public void changeTopicGroupCursor(Cursor cursor) {
+        Cursor old = swapTopicGroupCursor(cursor);
+        if (old != null) {
+            old.close();
         }
-        groupCursor = cursor;
+    }
 
-        if (groupCursor != null) {
-            groupIdColumnIndex = groupCursor.getColumnIndex("_id");
-            initChildrenCursorLoaders();
+    public Cursor swapTopicGroupCursor(Cursor cursor) {
+        if (topicGroupCursor == cursor) return null;
+        if (topicGroupCursor != null) {
+            releaseTopicCursors();
+        }
+        final Cursor old = topicGroupCursor;
+        topicGroupCursor = cursor;
+        if (topicGroupCursor != null) {
+            topicGroupIdColumnIndex = topicGroupCursor.getColumnIndex("_id");
+            initTopicCursorLoaders();
         }
         notifyDataSetChanged();
+        return old;
     }
 
-    private void releaseChildrenCursors() {
-        for (int i = 0; i < childrenCursors.size(); i++) {
-            int key = childrenCursors.keyAt(i);
-            Cursor child = childrenCursors.get(key);
-            child.close();
+    private void releaseTopicCursors() {
+        for (int i = 0; i < topicCursors.size(); ++i) {
+            int key = topicCursors.keyAt(i);
+            Cursor cursor = topicCursors.get(key);
+            cursor.close();
         }
-        childrenCursors.clear();
+        topicCursors.clear();
     }
 
-    private void initChildrenCursorLoaders() {
-        groupCursor.moveToPosition(-1);
-        while (groupCursor.moveToNext()) {
-            initChildrenCursorLoader(groupCursor);
+    private void initTopicCursorLoaders() {
+        topicGroupCursor.moveToPosition(-1);
+        while (topicGroupCursor.moveToNext()) {
+            initTopicCursorLoader(topicGroupCursor);
         }
     }
 
-    protected abstract void initChildrenCursorLoader(Cursor groupCursor);
+    protected abstract void initTopicCursorLoader(Cursor topicGroupCursor);
 
-    public void setChildrenCursor(int groupPosition, Cursor cursor) {
-        Cursor childrenCursor = childrenCursors.get(groupPosition);
-        if (childrenCursor == cursor) return;
-
-        if (childrenCursor != null) {
-            childrenCursors.remove(groupPosition);
-            childrenCursor.close();
+    public void changeTopicCursor(int position, Cursor cursor) {
+        Cursor old = swapTopicCursor(position, cursor);
+        if (old != null) {
+            old.close();
         }
+    }
 
+    private Cursor swapTopicCursor(int position, Cursor cursor) {
+        Cursor topicCursor = topicCursors.get(position);
+        if (topicCursor == cursor) return null;
+        if (topicCursor != null) {
+            int count = topicCursor.getCount();
+            topicCursors.remove(position);
+            topicCursor.close();
+            notifyItemRangeRemoved(position + 1, count);
+        }
         if (cursor != null) {
-            childrenCursors.append(groupPosition, cursor);
-            childIdColumnIndex = cursor.getColumnIndex("_id");
+            topicCursors.append(position, cursor);
+            topicIdColumnIndex = cursor.getColumnIndex("_id");
+            notifyItemRangeInserted(position + 1, cursor.getCount());
+        }
+        return topicCursor;
+    }
+
+    private class TopicGroupViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView name;
+        public View divider;
+
+        public TopicGroupViewHolder(View itemView) {
+            super(itemView);
+            name = (TextView) itemView.findViewById(R.id.drawer_subheader_title);
+            divider = itemView.findViewById(R.id.drawer_divider);
+        }
+    }
+
+    private class TopicViewHolder extends RecyclerView.ViewHolder {
+
+        private final View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTopicItemClick(TopicViewHolder.this);
+            }
+        };
+        public long id;
+        public TextView name;
+        public View icon;
+
+        public TopicViewHolder(final View itemView) {
+            super(itemView);
+            name = (TextView) itemView.findViewById(R.id.drawer_title);
+            icon = itemView.findViewById(R.id.drawer_icon);
+            itemView.setOnClickListener(clickListener);
         }
 
-        notifyDataSetChanged();
+        public void setActivated(boolean activated) {
+            itemView.setActivated(activated);
+            icon.setActivated(activated);
+        }
     }
 
 }
