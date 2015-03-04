@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,18 +16,23 @@ import android.support.v7.widget.Toolbar;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
-import com.whiteboxteam.gliese.ui.adapter.TopicFragmentPageAdapter;
-import com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip;
+import com.whiteboxteam.gliese.ui.fragment.EmptyTopicFragment;
 import com.whiteboxteam.gliese.ui.fragment.TopicDrawerFragment;
+import com.whiteboxteam.gliese.ui.fragment.TopicFragment;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
+    private String title;
+    private FragmentManager fragmentManager;
     private TopicDrawerFragment.TopicFragmentListener drawerListener = new TopicDrawerFragment.TopicFragmentListener() {
         @Override
-        public void onTopicSelected(long id) {
+        public void onTopicSelected(long id, String name) {
+            setTitle(title + " - " + name);
+            TopicFragment fragment = TopicFragment.createFragment(id);
+            fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment).commit();
             drawerLayout.closeDrawer(GravityCompat.START);
         }
     };
@@ -44,21 +48,20 @@ public class MainActivity extends ActionBarActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        title = getTitle().toString();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
         drawerLayout.setDrawerListener(drawerToggle);
         if (!isLastTopicExist()) drawerLayout.openDrawer(GravityCompat.START);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         TopicDrawerFragment drawerFragment = (TopicDrawerFragment) fragmentManager.findFragmentById(R.id
                 .navigation_drawer);
         drawerFragment.setFragmentListener(drawerListener);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setAdapter(new TopicFragmentPageAdapter(getSupportFragmentManager()));
-        PagerSlidingTabStrip slidingTabStrip = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
-        slidingTabStrip.setViewPager(viewPager);
+        fragmentManager.beginTransaction().replace(R.id.topic_fragment, EmptyTopicFragment.createFragment()).commit();
+
     }
 
     private boolean isLastTopicExist() {

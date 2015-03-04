@@ -81,8 +81,10 @@ public class TopicDrawerFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         adapter = new TopicRecyclerViewAdapter(getActivity()) {
             @Override
-            protected void onTopicSelected(long id) {
-                if (fragmentListener != null) fragmentListener.onTopicSelected(id);
+            protected void onTopicSelected(long id, String name) {
+                if (fragmentListener != null) {
+                    fragmentListener.onTopicSelected(id, name);
+                }
             }
 
             @Override
@@ -106,7 +108,7 @@ public class TopicDrawerFragment extends Fragment {
     }
 
     public interface TopicFragmentListener {
-        public void onTopicSelected(long id);
+        public void onTopicSelected(long id, String name);
     }
 
 }

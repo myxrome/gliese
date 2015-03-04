@@ -61,10 +61,10 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
         selected.setActivated(true);
         preferences.edit().putLong(StorageContract.LAST_TOPIC_INDEX, selected.id).apply();
-        onTopicSelected(selected.id);
+        onTopicSelected(selected.id, selected.name.getText().toString());
     }
 
-    protected abstract void onTopicSelected(long id);
+    protected abstract void onTopicSelected(long id, String name);
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
