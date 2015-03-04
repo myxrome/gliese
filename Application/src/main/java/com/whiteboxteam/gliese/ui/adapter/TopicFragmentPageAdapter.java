@@ -16,10 +16,27 @@ import com.whiteboxteam.gliese.ui.fragment.CategoryFragment;
 public class TopicFragmentPageAdapter extends FragmentStatePagerAdapter {
 
     private Cursor data;
+    private int categoryIdColumnIndex;
     private int categoryNameColumnIndex;
 
     public TopicFragmentPageAdapter(FragmentManager fm) {
         super(fm);
+    }
+
+    public long getItemId(int position) {
+        if (data == null) return -1;
+        data.moveToPosition(position);
+        return data.getLong(categoryIdColumnIndex);
+    }
+
+    public int getPosition(long id) {
+        if (data != null) {
+            data.moveToPosition(-1);
+            while (data.moveToNext()) {
+                if (data.getLong(categoryIdColumnIndex) == id) return data.getPosition();
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -51,6 +68,7 @@ public class TopicFragmentPageAdapter extends FragmentStatePagerAdapter {
         final Cursor old = data;
         data = cursor;
         if (data != null) {
+            categoryIdColumnIndex = data.getColumnIndex(ApplicationContentContract.Category.ID);
             categoryNameColumnIndex = data.getColumnIndex(ApplicationContentContract.Category.NAME);
         }
         notifyDataSetChanged();

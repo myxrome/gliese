@@ -1,9 +1,12 @@
 package com.whiteboxteam.gliese.ui.fragment;
 
+import android.app.Activity;
 import android.content.ContentUris;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.storage.StorageContract;
 import com.whiteboxteam.gliese.ui.adapter.TopicFragmentPageAdapter;
 import com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip;
 
@@ -29,7 +33,8 @@ public class TopicFragment extends Fragment {
     private int loaderId;
     private long topicId;
     private TopicFragmentPageAdapter adapter;
-
+    private ViewPager viewPager;
+    private SharedPreferences preferences;
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -48,6 +53,11 @@ public class TopicFragment extends Fragment {
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (loader.getId() == loaderId) {
                 adapter.changeCursor(data);
+                int position = adapter.getPosition(preferences.getLong(StorageContract.LAST_CATEGORY_ID + String
+                        .valueOf(topicId), -1));
+                if (position > -1) {
+                    viewPager.setCurrentItem(position);
+                }
             }
         }
 
@@ -58,6 +68,23 @@ public class TopicFragment extends Fragment {
             }
         }
     };
+    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            long itemId = adapter.getItemId(position);
+            preferences.edit().putLong(StorageContract.LAST_CATEGORY_ID + String.valueOf(topicId), itemId).apply();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
 
     public static TopicFragment createFragment(long topicId) {
         TopicFragment fragment = new TopicFragment();
@@ -65,6 +92,12 @@ public class TopicFragment extends Fragment {
         bundle.putLong(Parameters.TOPIC_ID, topicId);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        preferences = PreferenceManager.getDefaultSharedPreferences(activity);
     }
 
     @Override
@@ -80,10 +113,11 @@ public class TopicFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
 
         adapter = new TopicFragmentPageAdapter(getActivity().getSupportFragmentManager());
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.view_pager);
+        viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
         PagerSlidingTabStrip slidingTabStrip = (PagerSlidingTabStrip) view.findViewById(R.id.sliding_tabs);
         slidingTabStrip.setViewPager(viewPager);
+        slidingTabStrip.setOnPageChangeListener(pageChangeListener);
 
         return view;
     }
@@ -91,7 +125,7 @@ public class TopicFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().getSupportLoaderManager().initLoader(loaderId, null, loaderCallbacks);
+        getLoaderManager().initLoader(loaderId, null, loaderCallbacks);
     }
 
     private static final class Parameters {

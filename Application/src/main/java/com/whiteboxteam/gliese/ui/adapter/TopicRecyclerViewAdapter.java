@@ -60,7 +60,7 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         selected = viewHolder;
 
         selected.setActivated(true);
-        preferences.edit().putLong(StorageContract.LAST_TOPIC_INDEX, selected.id).apply();
+        preferences.edit().putLong(StorageContract.LAST_TOPIC_ID, selected.id).apply();
         onTopicSelected(selected.id, selected.name.getText().toString());
     }
 
@@ -158,7 +158,7 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         viewHolder.id = topicCursor.getLong(topicIdColumnIndex);
         viewHolder.name.setText(topicCursor.getString(topicCursor.getColumnIndex(ApplicationContentContract.Topic
                 .NAME)));
-        if (viewHolder.id == preferences.getLong(StorageContract.LAST_TOPIC_INDEX, -1)) {
+        if (viewHolder.id == preferences.getLong(StorageContract.LAST_TOPIC_ID, -1)) {
             setSelectedTopic(viewHolder);
         }
     }

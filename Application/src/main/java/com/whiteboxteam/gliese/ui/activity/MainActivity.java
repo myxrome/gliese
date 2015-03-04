@@ -65,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private boolean isLastTopicExist() {
-        long topicId = PreferenceManager.getDefaultSharedPreferences(this).getLong(StorageContract.LAST_TOPIC_INDEX,
+        long topicId = PreferenceManager.getDefaultSharedPreferences(this).getLong(StorageContract.LAST_TOPIC_ID,
                 10000l);
         Uri topicUri = ContentUris.withAppendedId(ApplicationContentContract.Topic.CONTENT_URI, topicId);
         return ApplicationContentContract.Topic.isExist(this, topicUri);
