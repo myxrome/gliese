@@ -16,4 +16,6 @@
     <dimen name="drawer_divider_height">1dp</dimen>
     <dimen name="drawer_divider_vertical_margin">8dp</dimen>
     <dimen name="drawer_subheader_text_size">16sp</dimen>
+    <dimen name="sliding_tab_height">48dp</dimen>
+    <dimen name="sliding_tab_horizontal_padding">48dp</dimen>
 </resources>

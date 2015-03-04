@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,6 +17,8 @@ import android.support.v7.widget.Toolbar;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
+import com.whiteboxteam.gliese.ui.adapter.TopicFragmentPageAdapter;
+import com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip;
 import com.whiteboxteam.gliese.ui.fragment.TopicDrawerFragment;
 
 
@@ -51,6 +54,11 @@ public class MainActivity extends ActionBarActivity {
         TopicDrawerFragment drawerFragment = (TopicDrawerFragment) fragmentManager.findFragmentById(R.id
                 .navigation_drawer);
         drawerFragment.setFragmentListener(drawerListener);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setAdapter(new TopicFragmentPageAdapter(getSupportFragmentManager()));
+        PagerSlidingTabStrip slidingTabStrip = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
+        slidingTabStrip.setViewPager(viewPager);
     }
 
     private boolean isLastTopicExist() {

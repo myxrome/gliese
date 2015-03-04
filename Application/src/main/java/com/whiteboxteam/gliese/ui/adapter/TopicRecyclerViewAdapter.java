@@ -21,7 +21,7 @@ import com.whiteboxteam.gliese.data.storage.StorageContract;
  * Date: 13.02.2015
  * Time: 15:16
  */
-public abstract class TopicListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TOPIC_GROUP_VIEW_TYPE = 0;
     private static final int TOPIC_VIEW_TYPE = 1;
@@ -36,10 +36,14 @@ public abstract class TopicListViewAdapter extends RecyclerView.Adapter<Recycler
     private SharedPreferences preferences;
 
     private TopicViewHolder selected = null;
+    private int activeTextColor;
+    private int inactiveTextColor;
 
-    public TopicListViewAdapter(Context context) {
+    public TopicRecyclerViewAdapter(Context context) {
         inflater = LayoutInflater.from(context);
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        activeTextColor = context.getResources().getColor(R.color.primary);
+        inactiveTextColor = context.getResources().getColor(R.color.drawer_title_text_color);
     }
 
     private void onTopicItemClick(TopicViewHolder viewHolder) {
@@ -115,6 +119,18 @@ public abstract class TopicListViewAdapter extends RecyclerView.Adapter<Recycler
         }
     }
 
+    @Override
+    public int getItemCount() {
+        if (topicGroupCursor == null) return 0;
+        int count = topicGroupCursor.getCount();
+        for (int i = 0; i < topicCursors.size(); ++i) {
+            int key = topicCursors.keyAt(i);
+            Cursor cursor = topicCursors.get(key);
+            count += cursor.getCount();
+        }
+        return count;
+    }
+
     private Pair<Integer, Integer> getCoordinate(int position) {
         if (topicGroupCursor != null) {
             int seed = 0;
@@ -129,18 +145,6 @@ public abstract class TopicListViewAdapter extends RecyclerView.Adapter<Recycler
             }
         }
         return new Pair<>(-1, -1);
-    }
-
-    @Override
-    public int getItemCount() {
-        if (topicGroupCursor == null) return 0;
-        int count = topicGroupCursor.getCount();
-        for (int i = 0; i < topicCursors.size(); ++i) {
-            int key = topicCursors.keyAt(i);
-            Cursor cursor = topicCursors.get(key);
-            count += cursor.getCount();
-        }
-        return count;
     }
 
     private void bindTopicGroupViewHolder(TopicGroupViewHolder viewHolder, Cursor topicGroupCursor, boolean isFirst) {
@@ -256,6 +260,7 @@ public abstract class TopicListViewAdapter extends RecyclerView.Adapter<Recycler
 
         public void setActivated(boolean activated) {
             itemView.setActivated(activated);
+            name.setTextColor(activated ? activeTextColor : inactiveTextColor);
             icon.setActivated(activated);
         }
     }

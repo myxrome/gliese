@@ -22,10 +22,26 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <FrameLayout
-            android:id="@+id/container"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip
+                android:id="@+id/sliding_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sliding_tab_height"
+                android:background="?attr/colorPrimary"
+                android:paddingLeft="@dimen/sliding_tab_horizontal_padding"
+                android:paddingRight="@dimen/sliding_tab_horizontal_padding"/>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
 
         <fragment
             android:id="@+id/navigation_drawer"

@@ -15,4 +15,6 @@
     <color name="drawer_divider_color">#b6b6b6</color>
     <color name="drawer_subheader_text_color">@color/secondary_text_default_material_light</color>
 
+    <color name="psts_background_tab_pressed">#1affffff</color>
+
 </resources>

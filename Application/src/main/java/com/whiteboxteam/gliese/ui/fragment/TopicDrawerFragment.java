@@ -16,12 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
-import com.whiteboxteam.gliese.ui.adapter.TopicListViewAdapter;
+import com.whiteboxteam.gliese.ui.adapter.TopicRecyclerViewAdapter;
 
 public class TopicDrawerFragment extends Fragment {
 
     private static final int TOPIC_GROUP_LOADER_ID = -1;
-    private TopicListViewAdapter adapter;
+    private TopicRecyclerViewAdapter adapter;
     private TopicFragmentListener fragmentListener;
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
@@ -79,7 +79,7 @@ public class TopicDrawerFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.drawer_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new TopicListViewAdapter(getActivity()) {
+        adapter = new TopicRecyclerViewAdapter(getActivity()) {
             @Override
             protected void onTopicSelected(long id) {
                 if (fragmentListener != null) fragmentListener.onTopicSelected(id);
