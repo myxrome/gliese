@@ -108,8 +108,6 @@ public final class ApplicationServerContract {
         public static final String ORDER = "o";
         public static final String CAPTION = "c";
         public static final String TEXT = "t";
-        public static final String RED = "r";
-        public static final String BOLD = "b";
     }
 
     public static abstract class PromoRecord extends BaseRecord {

@@ -19,8 +19,6 @@ public final class DescriptionTableHelper extends BaseTableHelper {
             ApplicationDatabaseContract.DescriptionEntry.ACTIVE + INTEGER_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.DescriptionEntry.CAPTION + TEXT_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.DescriptionEntry.TEXT + TEXT_TYPE + COLUMNS_SEPARATOR +
-            ApplicationDatabaseContract.DescriptionEntry.RED + INTEGER_TYPE + COLUMNS_SEPARATOR +
-            ApplicationDatabaseContract.DescriptionEntry.BOLD + INTEGER_TYPE + COLUMNS_SEPARATOR +
             ApplicationDatabaseContract.DescriptionEntry.UPDATED_AT + TEXT_TYPE + COLUMNS_SEPARATOR +
             FOREIGN_KEY + COLUMNS_BEGIN + ApplicationDatabaseContract.DescriptionEntry.VALUE_ID + COLUMNS_END +
             REFERENCES +

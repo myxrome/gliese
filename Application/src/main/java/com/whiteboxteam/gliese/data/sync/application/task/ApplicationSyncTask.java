@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.helper.cleanup.*;
 import com.whiteboxteam.gliese.data.helper.merge.*;
@@ -40,12 +41,14 @@ public class ApplicationSyncTask implements Runnable {
 
     @Override
     public void run() {
+        Log.d("[SYNC]", "start application sync");
         boolean result = performApplicationSync();
         if (result) {
             saveLastSyncDate();
             startImageUpload();
         }
         sendSyncResultBroadcast(result);
+        Log.d("[SYNC]", "finish application sync");
     }
 
     private boolean performApplicationSync() {

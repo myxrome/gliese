@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import com.whiteboxteam.gliese.data.sync.application.task.ApplicationSyncTask;
 
+import java.util.Calendar;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -48,8 +49,13 @@ public class ApplicationSyncService extends Service {
     public static void scheduleNextApplicationSync(Context context) {
         Intent serviceIntent = new Intent(context, ApplicationSyncService.class);
         PendingIntent intent = PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.HOUR, 3);
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, AlarmManager.INTERVAL_HOUR * 3, intent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intent);
     }
 
     @Override

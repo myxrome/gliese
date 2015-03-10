@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 import com.whiteboxteam.gliese.data.server.ApplicationServerContract;
 import com.whiteboxteam.gliese.data.server.ServerHelper;
 
@@ -38,7 +39,9 @@ public abstract class BaseUploadTask implements Runnable {
     public void run() {
 
         if (UploadTaskLocker.lockTask(uri.toString())) {
+            Log.d("[SYNC]", "start image uploading with uri " + uri.toString());
             upload();
+            Log.d("[SYNC]", "finish image uploading with uri " + uri.toString());
             UploadTaskLocker.unlockTask(uri.toString());
         }
 
@@ -62,6 +65,7 @@ public abstract class BaseUploadTask implements Runnable {
 
                 File file = uploadImageFile(remoteUri);
                 if (file != null) {
+                    Log.d("[SYNC]", "OK upload image " + file.getAbsolutePath() + " with uri " + uri.toString());
                     updateLocalUri(file.getAbsolutePath());
                 }
 

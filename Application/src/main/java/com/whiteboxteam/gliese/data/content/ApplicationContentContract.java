@@ -128,8 +128,6 @@ public final class ApplicationContentContract {
         public static final String ORDER = ApplicationDatabaseContract.DescriptionEntry.ORDER;
         public static final String CAPTION = ApplicationDatabaseContract.DescriptionEntry.CAPTION;
         public static final String TEXT = ApplicationDatabaseContract.DescriptionEntry.TEXT;
-        public static final String RED = ApplicationDatabaseContract.DescriptionEntry.RED;
-        public static final String BOLD = ApplicationDatabaseContract.DescriptionEntry.BOLD;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(DESCRIPTION_BASE_PATH).build();
         public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +

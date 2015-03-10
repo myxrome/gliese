@@ -24,8 +24,6 @@ public final class DescriptionMergeHelper extends BaseMergeHelper {
         nameMapping.put(ApplicationContentContract.Description.CAPTION, ApplicationServerContract.DescriptionRecord
                 .CAPTION);
         nameMapping.put(ApplicationContentContract.Description.TEXT, ApplicationServerContract.DescriptionRecord.TEXT);
-        nameMapping.put(ApplicationContentContract.Description.RED, ApplicationServerContract.DescriptionRecord.RED);
-        nameMapping.put(ApplicationContentContract.Description.BOLD, ApplicationServerContract.DescriptionRecord.BOLD);
 
     }
 

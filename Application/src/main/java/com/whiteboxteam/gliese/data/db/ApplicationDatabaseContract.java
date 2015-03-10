@@ -64,8 +64,6 @@ public final class ApplicationDatabaseContract {
 
         public static final String CAPTION = "_caption";
         public static final String TEXT = "_text";
-        public static final String RED = "_red";
-        public static final String BOLD = "_bold";
     }
 
     public static final class PromoEntry extends ValueChildEntry {
