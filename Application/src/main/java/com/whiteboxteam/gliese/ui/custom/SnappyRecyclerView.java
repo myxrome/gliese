@@ -30,8 +30,8 @@ public final class SnappyRecyclerView extends RecyclerView {
         final LayoutManager lm = getLayoutManager();
 
         if (lm instanceof SnappyLayoutManager) {
-            super.smoothScrollToPosition(((SnappyLayoutManager) getLayoutManager())
-                    .getPositionForVelocity(velocityX, velocityY));
+            super.smoothScrollToPosition(((SnappyLayoutManager) getLayoutManager()).getPositionForVelocity(velocityX,
+                    velocityY));
             return true;
         }
         return super.fling(velocityX, velocityY);
@@ -44,10 +44,8 @@ public final class SnappyRecyclerView extends RecyclerView {
         final boolean ret = super.onTouchEvent(e);
         final LayoutManager lm = getLayoutManager();
 
-        if (lm instanceof SnappyLayoutManager
-                && (e.getAction() == MotionEvent.ACTION_UP ||
-                e.getAction() == MotionEvent.ACTION_CANCEL)
-                && getScrollState() == SCROLL_STATE_IDLE) {
+        if (lm instanceof SnappyLayoutManager && (e.getAction() == MotionEvent.ACTION_UP || e.getAction() ==
+                MotionEvent.ACTION_CANCEL) && getScrollState() == SCROLL_STATE_IDLE) {
             // The layout manager is a SnappyLayoutManager, which means that the
             // children should be snapped to a grid at the end of a drag or
             // fling. The motion event is either a user lifting their finger or

@@ -31,11 +31,6 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements Sn
         calculateDeceleration(context);
     }
 
-    public SnappyLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
-        super(context, orientation, reverseLayout);
-        calculateDeceleration(context);
-    }
-
     private void calculateDeceleration(Context context) {
         deceleration = SensorManager.GRAVITY_EARTH // g (m/s^2)
                 * 39.3700787 // inches per meter
@@ -44,17 +39,22 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements Sn
                 * context.getResources().getDisplayMetrics().density * 160.0f * FRICTION;
     }
 
+    public SnappyLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+        super(context, orientation, reverseLayout);
+        calculateDeceleration(context);
+    }
+
     @Override
     public int getPositionForVelocity(int velocityX, int velocityY) {
         if (getChildCount() == 0) {
             return 0;
         }
         if (getOrientation() == HORIZONTAL) {
-            return calcPosForVelocity(velocityX, getChildAt(0).getLeft(), getChildAt(0).getWidth(),
-                    getPosition(getChildAt(0)));
+            return calcPosForVelocity(velocityX, getChildAt(0).getLeft(), getChildAt(0).getWidth(), getPosition
+                    (getChildAt(0)));
         } else {
-            return calcPosForVelocity(velocityY, getChildAt(0).getTop(), getChildAt(0).getHeight(),
-                    getPosition(getChildAt(0)));
+            return calcPosForVelocity(velocityY, getChildAt(0).getTop(), getChildAt(0).getHeight(), getPosition
+                    (getChildAt(0)));
         }
     }
 
@@ -66,49 +66,20 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements Sn
 
         if (velocity < 0) {
             // Not sure if I need to lower bound this here.
-            return (int) Math.max(currPos + tempScroll / childSize + 2 , 0);
+            return (int) Math.max(currPos + tempScroll / childSize + 2, 0);
         } else {
             return (int) (currPos + (tempScroll / childSize) + 1);
         }
     }
 
-    @Override
-    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        final LinearSmoothScroller linearSmoothScroller =
-                new LinearSmoothScroller(recyclerView.getContext()) {
-
-                    // I want a behavior where the scrolling always snaps to the beginning of
-                    // the list. Snapping to end is also trivial given the default implementation.
-                    // If you need a different behavior, you may need to override more
-                    // of the LinearSmoothScrolling methods.
-                    protected int getHorizontalSnapPreference() {
-                        return SNAP_TO_START;
-                    }
-
-                    protected int getVerticalSnapPreference() {
-                        return SNAP_TO_START;
-                    }
-
-                    @Override
-                    public PointF computeScrollVectorForPosition(int targetPosition) {
-                        return SnappyLinearLayoutManager.this
-                                .computeScrollVectorForPosition(targetPosition);
-                    }
-                };
-        linearSmoothScroller.setTargetPosition(position);
-        startSmoothScroll(linearSmoothScroller);
-    }
-
     private double getSplineFlingDistance(double velocity) {
         final double l = getSplineDeceleration(velocity);
         final double decelMinusOne = DECELERATION_RATE - 1.0;
-        return ViewConfiguration.getScrollFriction() * deceleration
-                * Math.exp(DECELERATION_RATE / decelMinusOne * l);
+        return ViewConfiguration.getScrollFriction() * deceleration * Math.exp(DECELERATION_RATE / decelMinusOne * l);
     }
 
     private double getSplineDeceleration(double velocity) {
-        return Math.log(INFLEXION * Math.abs(velocity)
-                / (ViewConfiguration.getScrollFriction() * deceleration));
+        return Math.log(INFLEXION * Math.abs(velocity) / (ViewConfiguration.getScrollFriction() * deceleration));
     }
 
     /**
@@ -125,16 +96,39 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements Sn
         final View child = getChildAt(0);
         final int childPos = getPosition(child);
 
-        if (getOrientation() == HORIZONTAL
-                && Math.abs(child.getLeft()) > child.getMeasuredWidth() / 2) {
+        if (getOrientation() == HORIZONTAL && Math.abs(child.getLeft()) > child.getMeasuredWidth() / 2) {
             // Scrolled first view more than halfway offscreen
             return childPos + 1;
-        } else if (getOrientation() == VERTICAL
-                && Math.abs(child.getTop()) > child.getMeasuredWidth() / 2) {
+        } else if (getOrientation() == VERTICAL && Math.abs(child.getTop()) > child.getMeasuredWidth() / 2) {
             // Scrolled first view more than halfway offscreen
             return childPos + 1;
         }
         return childPos;
+    }
+
+    @Override
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        final LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
+
+            // I want a behavior where the scrolling always snaps to the beginning of
+            // the list. Snapping to end is also trivial given the default implementation.
+            // If you need a different behavior, you may need to override more
+            // of the LinearSmoothScrolling methods.
+            protected int getHorizontalSnapPreference() {
+                return SNAP_TO_START;
+            }
+
+            protected int getVerticalSnapPreference() {
+                return SNAP_TO_START;
+            }
+
+            @Override
+            public PointF computeScrollVectorForPosition(int targetPosition) {
+                return SnappyLinearLayoutManager.this.computeScrollVectorForPosition(targetPosition);
+            }
+        };
+        linearSmoothScroller.setTargetPosition(position);
+        startSmoothScroll(linearSmoothScroller);
     }
 
 }

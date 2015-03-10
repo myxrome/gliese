@@ -6,6 +6,7 @@ package com.whiteboxteam.gliese.ui.custom;
  * Date: 10.03.2015
  * Time: 13:43
  */
+
 /**
  * An interface that LayoutManagers that should snap to grid should implement.
  */
