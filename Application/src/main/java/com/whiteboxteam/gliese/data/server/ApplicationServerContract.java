@@ -49,7 +49,7 @@ public final class ApplicationServerContract {
 
         private static String getDensityValue(Context context) {
             // TODO: Сделать нормальный выбор в зависимости от layout.
-            return "x300";
+            return "x600";
         }
 
         public static String getImageUrl(String imagePostfix) {

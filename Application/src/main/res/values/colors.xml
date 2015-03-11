@@ -2,6 +2,7 @@
 <resources>
     <color name="primary">#009688</color>
     <color name="primary_dark">#004d40</color>
+    <color name="accent">#ff5252</color>
 
     <color name="drawer_background">#fff</color>
 
@@ -12,9 +13,13 @@
     <color name="drawer_item_background_inactive">@android:color/transparent</color>
 
     <color name="drawer_title_text_color">@color/primary_text_default_material_light</color>
-    <color name="drawer_divider_color">#b6b6b6</color>
+    <color name="drawer_divider_color">#1fb6b6b6</color>
     <color name="drawer_subheader_text_color">@color/secondary_text_default_material_light</color>
 
     <color name="psts_background_tab_pressed">#1affffff</color>
+
+    <color name="flat_pressed">#66999999</color>
+    <color name="flat_disabled_text">#40000000</color>
+    <color name="flat_normal_text">#000000</color>
 
 </resources>

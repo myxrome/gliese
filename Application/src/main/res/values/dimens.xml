@@ -18,4 +18,10 @@
     <dimen name="drawer_subheader_text_size">16sp</dimen>
     <dimen name="sliding_tab_height">48dp</dimen>
     <dimen name="sliding_tab_horizontal_padding">48dp</dimen>
+
+    <dimen name="btn_flat_corner_radius">1dp</dimen>
+    <dimen name="btn_flat_min_width">64dp</dimen>
+    <dimen name="btn_flat_min_height">36dp</dimen>
+    <dimen name="btn_flat_padding">8dp</dimen>
+    <dimen name="btn_flat_margin">4dp</dimen>
 </resources>
