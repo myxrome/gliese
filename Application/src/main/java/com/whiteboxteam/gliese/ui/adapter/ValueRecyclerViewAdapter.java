@@ -1,12 +1,14 @@
 package com.whiteboxteam.gliese.ui.adapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.whiteboxteam.gliese.R;
+import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 
 /**
  * Gliese Project.
@@ -16,6 +18,9 @@ import com.whiteboxteam.gliese.R;
  */
 public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private Cursor valueCursor;
+    private int valueIdColumnIndex;
+    private int valueNameColumnIndex;
     private LayoutInflater inflater;
 
     public ValueRecyclerViewAdapter(Context context) {
@@ -30,12 +35,50 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ValueViewHolder valueViewHolder = (ValueViewHolder) holder;
-        valueViewHolder.name.setText(String.valueOf(position));
+        valueCursor.moveToPosition(position);
+        valueViewHolder.name.setText(valueCursor.getString(valueNameColumnIndex));
+    }
+
+    @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        if (valueCursor == null) return RecyclerView.NO_ID;
+        valueCursor.moveToPosition(position);
+        return valueCursor.getLong(valueIdColumnIndex);
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return valueCursor == null ? 0 : valueCursor.getCount();
+    }
+
+    public void changeCursor(Cursor cursor) {
+        Cursor old = swapCursor(cursor);
+        if (old != null) {
+            old.close();
+        }
+    }
+
+    public Cursor swapCursor(Cursor newCursor) {
+        if (newCursor == valueCursor) {
+            return null;
+        }
+        final Cursor oldCursor = valueCursor;
+        valueCursor = newCursor;
+        if (valueCursor != null) {
+            valueIdColumnIndex = valueCursor.getColumnIndexOrThrow(ApplicationContentContract.Value.ID);
+            valueNameColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.NAME);
+            notifyDataSetChanged();
+        } else {
+            valueIdColumnIndex = -1;
+            valueNameColumnIndex = -1;
+            notifyDataSetChanged();
+        }
+        return oldCursor;
     }
 
     private class ValueViewHolder extends RecyclerView.ViewHolder {
