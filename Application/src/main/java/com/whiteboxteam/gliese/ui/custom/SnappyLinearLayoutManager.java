@@ -2,12 +2,11 @@ package com.whiteboxteam.gliese.ui.custom;
 
 import android.content.Context;
 import android.graphics.PointF;
-import android.hardware.SensorManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 /**
  * Gliese Project.
@@ -15,111 +14,76 @@ import android.view.ViewConfiguration;
  * Date: 10.03.2015
  * Time: 13:44
  */
-public class SnappyLinearLayoutManager extends LinearLayoutManager implements SnappyLayoutManager {
-    // These variables are from android.widget.Scroller, which is used, via ScrollerCompat, by
-    // Recycler View. The scrolling distance calculation logic originates from the same place. Want
-    // to use their variables so as to approximate the look of normal Android scrolling.
-    // Find the Scroller fling implementation in android.widget.Scroller.fling().
-    private static final float INFLEXION = 0.35f; // Tension lines cross at (INFLEXION, 1)
-    private static float DECELERATION_RATE = (float) (Math.log(0.78) / Math.log(0.9));
-    private static double FRICTION = 0.84;
+public class SnappyLinearLayoutManager extends LinearLayoutManager {
 
-    private double deceleration;
+    private static final int MIN_FLING_VELOCITY = 400; // dips
+    private int childHeightPX;
+    private int currentPosition;
+    private int minimumVelocity;
 
     public SnappyLinearLayoutManager(Context context) {
         super(context);
-        calculateDeceleration(context);
+        initLayoutManager(context);
     }
 
-    private void calculateDeceleration(Context context) {
-        deceleration = SensorManager.GRAVITY_EARTH // g (m/s^2)
-                * 39.3700787 // inches per meter
-                // pixels per inch. 160 is the "default" dpi, i.e. one dip is one pixel on a 160 dpi
-                // screen
-                * context.getResources().getDisplayMetrics().density * 160.0f * FRICTION;
+    private void initLayoutManager(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        childHeightPX = Math.round(400 * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        minimumVelocity = (int) (MIN_FLING_VELOCITY * displayMetrics.density);
+        currentPosition = 0;
     }
 
     public SnappyLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
-        calculateDeceleration(context);
+        initLayoutManager(context);
     }
 
-    @Override
-    public int getPositionForVelocity(int velocityX, int velocityY) {
-        if (getChildCount() == 0) {
-            return 0;
+    public int calcCurrentPosition(int velocity) {
+        int newPosition = calcCenterPosition(findFirstVisibleItemPosition(), findLastVisibleItemPosition());
+        currentPosition = correctNewPosition(velocity, newPosition);
+        return currentPosition;
+    }
+
+    private int calcCenterPosition(int first, int last) {
+        if (first == last) {
+            return first;
         }
-        if (getOrientation() == HORIZONTAL) {
-            return calcPosForVelocity(velocityX, getChildAt(0).getLeft(), getChildAt(0).getWidth(), getPosition
-                    (getChildAt(0)));
+
+        int distance = last - first;
+        if (distance % 2 == 0) {
+            return first + (distance / 2);
         } else {
-            return calcPosForVelocity(velocityY, getChildAt(0).getTop(), getChildAt(0).getHeight(), getPosition
-                    (getChildAt(0)));
-        }
-    }
-
-    private int calcPosForVelocity(int velocity, int scrollPos, int childSize, int currPos) {
-        final double v = Math.sqrt(velocity * velocity);
-        final double dist = getSplineFlingDistance(v);
-
-        final double tempScroll = scrollPos + (velocity > 0 ? dist : -dist);
-
-        if (velocity < 0) {
-            // Not sure if I need to lower bound this here.
-            return (int) Math.max(currPos + tempScroll / childSize + 2, 0);
-        } else {
-            return (int) (currPos + (tempScroll / childSize) + 1);
-        }
-    }
-
-    private double getSplineFlingDistance(double velocity) {
-        final double l = getSplineDeceleration(velocity);
-        final double decelMinusOne = DECELERATION_RATE - 1.0;
-        return ViewConfiguration.getScrollFriction() * deceleration * Math.exp(DECELERATION_RATE / decelMinusOne * l);
-    }
-
-    private double getSplineDeceleration(double velocity) {
-        return Math.log(INFLEXION * Math.abs(velocity) / (ViewConfiguration.getScrollFriction() * deceleration));
-    }
-
-    /**
-     * This implementation obviously doesn't take into account the direction of the
-     * that preceded it, but there is no easy way to get that information without more
-     * hacking than I was willing to put into it.
-     */
-    @Override
-    public int getFixScrollPos() {
-        if (this.getChildCount() == 0) {
-            return 0;
+            distance = (int) Math.floor(distance / 2);
+            return calcCenterViewPosition(first + distance, last - distance);
         }
 
-        final View child = getChildAt(0);
-        final int childPos = getPosition(child);
+    }
 
-        if (getOrientation() == HORIZONTAL && Math.abs(child.getLeft()) > child.getMeasuredWidth() / 2) {
-            // Scrolled first view more than halfway offscreen
-            return childPos + 1;
-        } else if (getOrientation() == VERTICAL && Math.abs(child.getTop()) > child.getMeasuredWidth() / 2) {
-            // Scrolled first view more than halfway offscreen
-            return childPos + 1;
+    private int correctNewPosition(int velocity, int newPosition) {
+        if (newPosition == currentPosition && Math.abs(velocity) > minimumVelocity) {
+            if (velocity > 0) return newPosition + 1;
+            else return Math.max(newPosition - 1, 0);
         }
-        return childPos;
+        return newPosition;
+    }
+
+    private int calcCenterViewPosition(int first, int last) {
+        View firstView = findViewByPosition(first);
+        View lastView = findViewByPosition(last);
+        return isFirstViewNearestToCenter(firstView, lastView) ? first : last;
+    }
+
+    private boolean isFirstViewNearestToCenter(View firstView, View lastView) {
+        return firstView.getTop() > (getHeight() - (lastView.getTop() + lastView.getHeight()));
     }
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
         final LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
 
-            // I want a behavior where the scrolling always snaps to the beginning of
-            // the list. Snapping to end is also trivial given the default implementation.
-            // If you need a different behavior, you may need to override more
-            // of the LinearSmoothScrolling methods.
-            protected int getHorizontalSnapPreference() {
-                return SNAP_TO_START;
-            }
-
-            protected int getVerticalSnapPreference() {
-                return SNAP_TO_START;
+            @Override
+            public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
+                return (((boxEnd - boxStart) / 2) - (childHeightPX / 2)) - viewStart;
             }
 
             @Override
