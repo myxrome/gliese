@@ -19,9 +19,7 @@ import com.whiteboxteam.gliese.ui.custom.CenterItemDecoration;
 import com.whiteboxteam.gliese.ui.custom.SnappyLinearLayoutManager;
 import com.whiteboxteam.gliese.ui.custom.SnappyRecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Gliese Project.
@@ -36,7 +34,7 @@ public class CategoryFragment extends Fragment {
     private long categoryId;
     private ValueRecyclerViewAdapter adapter;
     private List<RecyclerView> recyclerViews = new ArrayList<>();
-
+    private Timer timer = new Timer();
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -56,9 +54,8 @@ public class CategoryFragment extends Fragment {
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (loaderId == loader.getId()) {
                 adapter.changeCursor(data);
-                Random random = new Random(System.currentTimeMillis());
-                for (RecyclerView view : recyclerViews) {
-                    view.smoothScrollToPosition(random.nextInt(data.getCount()));
+                if (getUserVisibleHint()) {
+                    scheduleShuffleTimerTask();
                 }
             }
         }
@@ -77,6 +74,41 @@ public class CategoryFragment extends Fragment {
         bundle.putLong(Parameters.CATEGORY_ID, categoryId);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (getUserVisibleHint()) {
+            scheduleShuffleTimerTask();
+        }
+
+    }
+
+    private void scheduleShuffleTimerTask() {
+        if ((adapter != null) && (adapter.getItemCount() > 0)) {
+            long startTime = 500;
+            List<Integer> indexes = randomArray(recyclerViews.size(), adapter.getItemCount());
+            for (int i = 0; i < recyclerViews.size(); i++) {
+                timer.schedule(new ShuffleRecycleViewsTimerTask(recyclerViews.get(i), indexes.get(i)), startTime);
+                startTime += 200;
+            }
+
+        }
+    }
+
+    private List<Integer> randomArray(int limit, int size) {
+        List<Integer> cache = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            cache.add(i);
+        }
+        Collections.shuffle(cache);
+        List<Integer> result = new ArrayList<>();
+        for (int j = 0; j < limit; j++) {
+            result.add(cache.get(Math.min(j, cache.size() - 1)));
+        }
+        return result;
     }
 
     @Override
@@ -117,8 +149,30 @@ public class CategoryFragment extends Fragment {
         getLoaderManager().initLoader(loaderId, null, loaderCallbacks);
     }
 
+    @Override
+    public void onDestroyView() {
+        timer.cancel();
+        super.onDestroyView();
+    }
+
     private static final class Parameters {
         public static final String CATEGORY_ID = "category-id";
+    }
+
+    private class ShuffleRecycleViewsTimerTask extends TimerTask {
+
+        private RecyclerView view;
+        private int position;
+
+        public ShuffleRecycleViewsTimerTask(RecyclerView view, int position) {
+            this.view = view;
+            this.position = position;
+        }
+
+        @Override
+        public void run() {
+            view.smoothScrollToPosition(position);
+        }
     }
 
 }

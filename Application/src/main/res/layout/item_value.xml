@@ -43,21 +43,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="12dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/text_old_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@android:color/black"
-                android:textSize="22sp"/>
+                android:gravity="right"
+                android:paddingRight="8dp"
+                android:textColor="@color/drawer_subheader_text_color"
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/text_new_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingLeft="8dp"
                 android:textColor="@android:color/black"
                 android:textSize="22sp"/>
 
