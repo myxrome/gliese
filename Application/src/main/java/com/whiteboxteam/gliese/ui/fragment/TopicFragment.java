@@ -115,6 +115,7 @@ public class TopicFragment extends Fragment {
         adapter = new TopicFragmentPageAdapter(getActivity().getSupportFragmentManager());
         viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(20);
         PagerSlidingTabStrip slidingTabStrip = (PagerSlidingTabStrip) view.findViewById(R.id.sliding_tabs);
         slidingTabStrip.setViewPager(viewPager);
         slidingTabStrip.setOnPageChangeListener(pageChangeListener);

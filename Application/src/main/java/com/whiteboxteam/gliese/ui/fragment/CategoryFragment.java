@@ -35,6 +35,8 @@ public class CategoryFragment extends Fragment {
     private ValueRecyclerViewAdapter adapter;
     private List<RecyclerView> recyclerViews = new ArrayList<>();
     private Timer timer = new Timer();
+    private boolean scheduled = false;
+
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -87,14 +89,14 @@ public class CategoryFragment extends Fragment {
     }
 
     private void scheduleShuffleTimerTask() {
-        if ((adapter != null) && (adapter.getItemCount() > 0)) {
+        if (!scheduled && (adapter != null) && (adapter.getItemCount() > 0)) {
             long startTime = 500;
             List<Integer> indexes = randomArray(recyclerViews.size(), adapter.getItemCount());
             for (int i = 0; i < recyclerViews.size(); i++) {
                 timer.schedule(new ShuffleRecycleViewsTimerTask(recyclerViews.get(i), indexes.get(i)), startTime);
                 startTime += 200;
             }
-
+            scheduled = true;
         }
     }
 
