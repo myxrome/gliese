@@ -1,18 +1,22 @@
 package com.whiteboxteam.gliese.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.google.common.base.Strings;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.ui.custom.RoubleTypefaceSpan;
@@ -32,6 +36,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private final DecimalFormat formatter;
     private final Typeface roubleSupportedTypeface;
+    private final Context context;
     private Cursor valueCursor;
     private int valueIdColumnIndex;
     private int valueNameColumnIndex;
@@ -39,9 +44,11 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     private int valueNewPriceColumnIndex;
     private int valueThumbColumnIndex;
     private int valueDiscountColumnIndex;
+    private int valueURLColumnIndex;
     private LayoutInflater inflater;
 
     public ValueRecyclerViewAdapter(Context context) {
+        this.context = context;
         inflater = LayoutInflater.from(context);
         formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
@@ -70,6 +77,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         valueViewHolder.thumb.setImageBitmap(image);
 
         valueViewHolder.discount.setText("-" + valueCursor.getString(valueDiscountColumnIndex) + "%");
+        valueViewHolder.url = valueCursor.getString(valueURLColumnIndex);
 
     }
 
@@ -118,6 +126,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             valueNewPriceColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.NEW_PRICE);
             valueThumbColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.LOCAL_THUMB_URI);
             valueDiscountColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.DISCOUNT);
+            valueURLColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.URL);
             notifyDataSetChanged();
         } else {
             valueIdColumnIndex = -1;
@@ -126,6 +135,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             valueNewPriceColumnIndex = -1;
             valueThumbColumnIndex = -1;
             valueDiscountColumnIndex = -1;
+            valueURLColumnIndex = -1;
             notifyDataSetChanged();
         }
         return oldCursor;
@@ -138,6 +148,8 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         TextView newPrice;
         ImageView thumb;
         TextView discount;
+        Button buy;
+        String url;
 
         public ValueViewHolder(View itemView) {
             super(itemView);
@@ -146,7 +158,14 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             newPrice = (TextView) itemView.findViewById(R.id.text_new_price);
             thumb = (ImageView) itemView.findViewById(R.id.image_thumb);
             discount = (TextView) itemView.findViewById(R.id.text_discount);
-//            name = (TextView) itemView.findViewById(R.id.text_value_name);
+            buy = (Button) itemView.findViewById(R.id.button_buy);
+            buy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!Strings.isNullOrEmpty(url))
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                }
+            });
         }
     }
 }

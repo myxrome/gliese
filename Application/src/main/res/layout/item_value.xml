@@ -83,6 +83,7 @@
                 android:textColor="@color/primary"/>
 
             <Button
+                android:id="@+id/button_buy"
                 style="@style/AppCompat.Button.Flat"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/btn_flat_min_height"
