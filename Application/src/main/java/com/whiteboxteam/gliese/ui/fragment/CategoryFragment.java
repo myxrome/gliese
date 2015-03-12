@@ -47,8 +47,7 @@ public class CategoryFragment extends Fragment {
                         (categoryUri), new String[]{ApplicationContentContract.Value.ID, ApplicationContentContract
                         .Value.NAME, ApplicationContentContract.Value.OLD_PRICE, ApplicationContentContract.Value
                         .DISCOUNT, ApplicationContentContract.Value.NEW_PRICE, ApplicationContentContract.Value
-                        .LOCAL_THUMB_URI, ApplicationContentContract.Value.URL}, ApplicationContentContract.Value
-                        .ACTIVE + " = ?", new String[]{"1"}, ApplicationContentContract.Value.DISCOUNT);
+                        .LOCAL_THUMB_URI, ApplicationContentContract.Value.URL}, ApplicationContentContract.Value.ACTIVE + " = ?", new String[]{"1"}, ApplicationContentContract.Value.DISCOUNT + " DESC");
             }
             return null;
         }
