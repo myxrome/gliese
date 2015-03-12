@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
 
     <com.whiteboxteam.gliese.ui.custom.SnappyRecyclerView
         android:id="@+id/recycler_view_1"
@@ -15,6 +15,12 @@
 
     <com.whiteboxteam.gliese.ui.custom.SnappyRecyclerView
         android:id="@+id/recycler_view_2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <com.whiteboxteam.gliese.ui.custom.SnappyRecyclerView
+        android:id="@+id/recycler_view_3"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"/>

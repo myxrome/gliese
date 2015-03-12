@@ -15,7 +15,7 @@ import com.whiteboxteam.gliese.ui.fragment.CategoryFragment;
  */
 public class TopicFragmentPageAdapter extends FragmentStatePagerAdapter {
 
-    private Cursor data;
+    private Cursor categoryCursor;
     private int categoryIdColumnIndex;
     private int categoryNameColumnIndex;
 
@@ -24,16 +24,16 @@ public class TopicFragmentPageAdapter extends FragmentStatePagerAdapter {
     }
 
     public long getItemId(int position) {
-        if (data == null) return -1;
-        data.moveToPosition(position);
-        return data.getLong(categoryIdColumnIndex);
+        if (categoryCursor == null) return -1;
+        categoryCursor.moveToPosition(position);
+        return categoryCursor.getLong(categoryIdColumnIndex);
     }
 
     public int getPosition(long id) {
-        if (data != null) {
-            data.moveToPosition(-1);
-            while (data.moveToNext()) {
-                if (data.getLong(categoryIdColumnIndex) == id) return data.getPosition();
+        if (categoryCursor != null) {
+            categoryCursor.moveToPosition(-1);
+            while (categoryCursor.moveToNext()) {
+                if (categoryCursor.getLong(categoryIdColumnIndex) == id) return categoryCursor.getPosition();
             }
         }
         return -1;
@@ -41,19 +41,20 @@ public class TopicFragmentPageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new CategoryFragment();
+        categoryCursor.moveToPosition(position);
+        return CategoryFragment.createFragment(categoryCursor.getLong(categoryIdColumnIndex));
     }
 
     @Override
     public int getCount() {
-        return data == null ? 0 : data.getCount();
+        return categoryCursor == null ? 0 : categoryCursor.getCount();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        if (data == null) return "";
-        data.moveToPosition(position);
-        return data.getString(categoryNameColumnIndex);
+        if (categoryCursor == null) return "";
+        categoryCursor.moveToPosition(position);
+        return categoryCursor.getString(categoryNameColumnIndex);
     }
 
     public void changeCursor(Cursor cursor) {
@@ -64,12 +65,12 @@ public class TopicFragmentPageAdapter extends FragmentStatePagerAdapter {
     }
 
     private Cursor swapCursor(Cursor cursor) {
-        if (data == cursor) return null;
-        final Cursor old = data;
-        data = cursor;
-        if (data != null) {
-            categoryIdColumnIndex = data.getColumnIndex(ApplicationContentContract.Category.ID);
-            categoryNameColumnIndex = data.getColumnIndex(ApplicationContentContract.Category.NAME);
+        if (categoryCursor == cursor) return null;
+        final Cursor old = categoryCursor;
+        categoryCursor = cursor;
+        if (categoryCursor != null) {
+            categoryIdColumnIndex = categoryCursor.getColumnIndex(ApplicationContentContract.Category.ID);
+            categoryNameColumnIndex = categoryCursor.getColumnIndex(ApplicationContentContract.Category.NAME);
         }
         notifyDataSetChanged();
         return old;
