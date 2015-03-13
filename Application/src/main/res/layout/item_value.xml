@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 />
 
             <TextView
@@ -48,27 +48,45 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/text_old_price"
-                android:layout_width="0dp"
+                android:id="@+id/text_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:paddingRight="8dp"
-                android:textColor="@color/drawer_subheader_text_color"
-                android:textSize="18sp"/>
-
-            <TextView
-                android:id="@+id/text_new_price"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingLeft="8dp"
+                android:layout_marginLeft="16dp"
+                android:singleLine="true"
                 android:textColor="@android:color/black"
-                android:textSize="22sp"/>
+                android:textSize="18sp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_old_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:paddingRight="8dp"
+                    android:textColor="@color/drawer_subheader_text_color"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:id="@+id/text_new_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
 
         </LinearLayout>
 
@@ -85,11 +103,14 @@
             android:paddingRight="12dp">
 
             <Button
+                android:id="@+id/button_info"
                 style="@style/AppCompat.Button.Flat"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/btn_flat_min_height"
                 android:text="Инфо"
-                android:textColor="@color/primary"/>
+                android:textColor="@color/primary"
+                android:visibility="gone"
+                />
 
             <Button
                 android:id="@+id/button_buy"

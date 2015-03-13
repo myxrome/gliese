@@ -73,7 +73,9 @@ public final class ApplicationContentContract {
 
         public static boolean isExist(Context context, Uri topicUri) {
             Cursor cursor = context.getContentResolver().query(topicUri, new String[]{Topic.ID}, null, null, null);
-            return cursor.getCount() > 0;
+            boolean result = cursor.getCount() > 0;
+            cursor.close();
+            return result;
         }
 
     }

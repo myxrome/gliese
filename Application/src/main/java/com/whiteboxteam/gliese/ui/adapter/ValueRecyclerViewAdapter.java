@@ -184,6 +184,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         public ValueViewHolder(View itemView) {
             super(itemView);
+            name = (TextView) itemView.findViewById(R.id.text_name);
             oldPrice = (TextView) itemView.findViewById(R.id.text_old_price);
             oldPrice.setPaintFlags(oldPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             newPrice = (TextView) itemView.findViewById(R.id.text_new_price);
@@ -206,13 +207,13 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         private void applyValueEntry() {
+            name.setText(valueEntity.name);
             oldPrice.setText(buildRoubleString(formatter.format(valueEntity.oldPrice)));
             newPrice.setText(buildRoubleString(formatter.format(valueEntity.newPrice)));
             discount.setText("-" + valueEntity.discount + "%");
 
             thumb.setImageBitmap(valueEntity.thumb);
             progressBar.setVisibility(valueEntity.thumb == null ? View.VISIBLE : View.INVISIBLE);
-
         }
 
         private SpannableStringBuilder buildRoubleString(String value) {
