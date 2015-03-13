@@ -1,5 +1,6 @@
 package com.whiteboxteam.gliese.ui.adapter;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +14,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,32 +50,32 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     private LayoutInflater inflater;
     private List<ValueEntity> valueEntities = new ArrayList<>();
     private SparseArray<ValueThumbObserver> thumbObservers = new SparseArray<>();
+
     private Handler handler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
 
             int position = msg.what;
-            ValueEntity entity = valueEntities.get(position);
-            Uri uri = ContentUris.withAppendedId(ApplicationContentContract.Value.CONTENT_URI, entity.id);
-            try {
-                Cursor result = context.getContentResolver().query(uri, new String[]{ApplicationContentContract.Value
-                        .LOCAL_THUMB_URI}, null, null, null);
-                if (result.moveToFirst()) {
-                    String localThumb = result.getString(result.getColumnIndex(ApplicationContentContract.Value
-                            .LOCAL_THUMB_URI));
-                    if (!Strings.isNullOrEmpty(localThumb)) {
-                        valueEntities.get(position).localThumbUri = localThumb;
-                        valueEntities.get(position).thumb = BitmapFactory.decodeFile(localThumb);
+            if (valueEntities.size() > position) {
+                ValueEntity entity = valueEntities.get(position);
+                Uri uri = ContentUris.withAppendedId(ApplicationContentContract.Value.CONTENT_URI, entity.id);
+                try {
+                    Cursor result = context.getContentResolver().query(uri, new String[]{ApplicationContentContract
+                            .Value.LOCAL_THUMB_URI}, null, null, null);
+                    if (result.moveToFirst()) {
+                        String localThumb = result.getString(result.getColumnIndex(ApplicationContentContract.Value
+                                .LOCAL_THUMB_URI));
+                        if (!Strings.isNullOrEmpty(localThumb)) {
+                            valueEntities.get(position).localThumbUri = localThumb;
+                            valueEntities.get(position).thumb = BitmapFactory.decodeFile(localThumb);
 
-                        notifyItemChanged(position);
-                        context.getContentResolver().unregisterContentObserver(thumbObservers.get(position));
-                        thumbObservers.remove(position);
+                            notifyItemChanged(position);
+                        }
                     }
+                    result.close();
+                } catch (Exception e) {
                 }
-                result.close();
-            } catch (Exception e) {
-                Log.d("[VIEW]", e.getMessage());
             }
 
 
@@ -130,6 +130,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             int valueDiscountColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.DISCOUNT);
             int valueURLColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.URL);
 
+            int position = 0;
             while (cursor.moveToNext()) {
                 ValueEntity entity = new ValueEntity();
                 entity.id = cursor.getLong(valueIdColumnIndex);
@@ -141,11 +142,32 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 entity.url = cursor.getString(valueURLColumnIndex);
                 entity.thumb = BitmapFactory.decodeFile(entity.localThumbUri);
 
+                if (entity.thumb == null) {
+                    if (thumbObservers.indexOfKey(position) < 0) {
+                        ValueThumbObserver observer = new ValueThumbObserver(position);
+                        thumbObservers.append(position, observer);
+                        Uri valueUri = ContentUris.withAppendedId(ApplicationContentContract.Value.CONTENT_URI,
+                                entity.id);
+                        context.getContentResolver().registerContentObserver(valueUri, false, observer);
+                    }
+                    ImageUploadService.startForegroundValueThumbUpload(context, entity.id, 1);
+                }
+
                 valueEntities.add(entity);
+                position += 1;
             }
 
         }
         notifyDataSetChanged();
+    }
+
+    public void unregisterObservers() {
+        ContentResolver contentResolver = context.getContentResolver();
+        for (int i = 0; i < thumbObservers.size(); i++) {
+            int key = thumbObservers.keyAt(i);
+            ValueThumbObserver observer = thumbObservers.get(key);
+            contentResolver.unregisterContentObserver(observer);
+        }
     }
 
     private class ValueViewHolder extends RecyclerView.ViewHolder {
@@ -159,7 +181,6 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         private Button buy;
 
         private ValueEntity valueEntity;
-        private int position;
 
         public ValueViewHolder(View itemView) {
             super(itemView);
@@ -181,7 +202,6 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         public void setValueEntity(ValueEntity entity) {
             valueEntity = entity;
-            position = valueEntities.indexOf(entity);
             applyValueEntry();
         }
 
@@ -192,17 +212,6 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             thumb.setImageBitmap(valueEntity.thumb);
             progressBar.setVisibility(valueEntity.thumb == null ? View.VISIBLE : View.INVISIBLE);
-
-            if (valueEntity.thumb == null) {
-                if (thumbObservers.indexOfKey(position) < 0) {
-                    ValueThumbObserver observer = new ValueThumbObserver(position);
-                    thumbObservers.append(position, observer);
-                    Uri valueUri = ContentUris.withAppendedId(ApplicationContentContract.Value.CONTENT_URI,
-                            valueEntity.id);
-                    context.getContentResolver().registerContentObserver(valueUri, false, observer);
-                }
-                ImageUploadService.startForegroundValueThumbUpload(context, valueEntity.id, 1);
-            }
 
         }
 

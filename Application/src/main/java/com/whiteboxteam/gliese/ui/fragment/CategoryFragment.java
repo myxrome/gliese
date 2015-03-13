@@ -157,6 +157,12 @@ public class CategoryFragment extends Fragment {
         super.onDestroyView();
     }
 
+    @Override
+    public void onDestroy() {
+        if (adapter != null) adapter.unregisterObservers();
+        super.onDestroy();
+    }
+
     private static final class Parameters {
         public static final String CATEGORY_ID = "category-id";
     }
