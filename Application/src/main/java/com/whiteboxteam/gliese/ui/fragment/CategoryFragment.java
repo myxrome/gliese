@@ -55,7 +55,7 @@ public class CategoryFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (loaderId == loader.getId()) {
-                adapter.changeCursor(data);
+                adapter.loadCursor(data);
                 if (getUserVisibleHint()) {
                     scheduleShuffleTimerTask();
                 }
@@ -65,7 +65,7 @@ public class CategoryFragment extends Fragment {
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
             if (loaderId == loader.getId()) {
-                adapter.changeCursor(null);
+                adapter.loadCursor(null);
             }
         }
     };

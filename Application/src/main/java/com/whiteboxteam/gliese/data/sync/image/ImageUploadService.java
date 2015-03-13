@@ -29,9 +29,8 @@ public class ImageUploadService extends Service {
     private static final long KEEP_ALIVE_TIME = 0L;
     private static final int DEFAULT_INITIAL_CAPACITY = 11;
     private static final int DEFAULT_UPLOAD_PRIORITY = 0;
-    private static final int MIN_BATTERY_LEVEL = 10;
+    private static final int MIN_BATTERY_LEVEL = 20;
 
-    //    private ThreadPoolExecutor imageBackgroundPool;
     private ThreadPoolExecutor imageForegroundPool;
     private ThreadPoolExecutor thumbBackgroundPool;
     private ThreadPoolExecutor thumbForegroundPool;
@@ -70,8 +69,6 @@ public class ImageUploadService extends Service {
     public void onCreate() {
         super.onCreate();
         UploadTaskComparator uploadTaskComparator = new UploadTaskComparator();
-//        imageBackgroundPool = new ThreadPoolExecutor(DOWNLOAD_POOL_SIZE, DOWNLOAD_POOL_SIZE, KEEP_ALIVE_TIME,
-//                TimeUnit.MILLISECONDS, new PriorityBlockingQueue<>(DEFAULT_INITIAL_CAPACITY, uploadTaskComparator));
         imageForegroundPool = new ThreadPoolExecutor(DOWNLOAD_POOL_SIZE * 2, DOWNLOAD_POOL_SIZE * 2, KEEP_ALIVE_TIME,
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue<>(DEFAULT_INITIAL_CAPACITY, uploadTaskComparator));
         thumbBackgroundPool = new ThreadPoolExecutor(DOWNLOAD_POOL_SIZE, DOWNLOAD_POOL_SIZE, KEEP_ALIVE_TIME,
@@ -117,18 +114,6 @@ public class ImageUploadService extends Service {
                     }
                 }
 
-//                Cursor promos = getContentResolver().query(ApplicationContentContract.Promo.CONTENT_URI, new
-//                        String[]{ApplicationContentContract.Promo.ID, ApplicationContentContract.Promo
-//                        .REMOTE_IMAGE_URI}, ApplicationContentContract.Promo.LOCAL_IMAGE_URI + " IS NULL", null,
-// null);
-//
-//                if (promos != null) {
-//                    while (promos.moveToNext()) {
-//                        Runnable task = new PromoImageUploadTask(this, promos.getLong(0), DEFAULT_UPLOAD_PRIORITY);
-//                        imageBackgroundPool.execute(task);
-//                    }
-//                    promos.close();
-//                }
             }
         }
 
@@ -140,7 +125,6 @@ public class ImageUploadService extends Service {
         thumbForegroundPool.shutdownNow();
         thumbBackgroundPool.shutdownNow();
         imageForegroundPool.shutdownNow();
-//        imageBackgroundPool.shutdownNow();
         super.onDestroy();
     }
 

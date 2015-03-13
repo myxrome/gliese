@@ -1,29 +1,39 @@
 package com.whiteboxteam.gliese.ui.adapter;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.google.common.base.Strings;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.entity.ValueEntity;
+import com.whiteboxteam.gliese.data.sync.image.ImageUploadService;
 import com.whiteboxteam.gliese.ui.custom.RoubleTypefaceSpan;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -34,18 +44,43 @@ import java.util.Locale;
  */
 public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final Context context;
     private final DecimalFormat formatter;
     private final Typeface roubleSupportedTypeface;
-    private final Context context;
-    private Cursor valueCursor;
-    private int valueIdColumnIndex;
-    private int valueNameColumnIndex;
-    private int valueOldPriceColumnIndex;
-    private int valueNewPriceColumnIndex;
-    private int valueThumbColumnIndex;
-    private int valueDiscountColumnIndex;
-    private int valueURLColumnIndex;
     private LayoutInflater inflater;
+    private List<ValueEntity> valueEntities = new ArrayList<>();
+    private SparseArray<ValueThumbObserver> thumbObservers = new SparseArray<>();
+    private Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            int position = msg.what;
+            ValueEntity entity = valueEntities.get(position);
+            Uri uri = ContentUris.withAppendedId(ApplicationContentContract.Value.CONTENT_URI, entity.id);
+            try {
+                Cursor result = context.getContentResolver().query(uri, new String[]{ApplicationContentContract.Value
+                        .LOCAL_THUMB_URI}, null, null, null);
+                if (result.moveToFirst()) {
+                    String localThumb = result.getString(result.getColumnIndex(ApplicationContentContract.Value
+                            .LOCAL_THUMB_URI));
+                    if (!Strings.isNullOrEmpty(localThumb)) {
+                        valueEntities.get(position).localThumbUri = localThumb;
+                        valueEntities.get(position).thumb = BitmapFactory.decodeFile(localThumb);
+
+                        notifyItemChanged(position);
+                        context.getContentResolver().unregisterContentObserver(thumbObservers.get(position));
+                        thumbObservers.remove(position);
+                    }
+                }
+                result.close();
+            } catch (Exception e) {
+                Log.d("[VIEW]", e.getMessage());
+            }
+
+
+        }
+    };
 
     public ValueRecyclerViewAdapter(Context context) {
         this.context = context;
@@ -65,28 +100,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ValueViewHolder valueViewHolder = (ValueViewHolder) holder;
-        valueCursor.moveToPosition(position);
-//        valueViewHolder.name.setText(valueCursor.getString(valueNameColumnIndex));
-
-        valueViewHolder.oldPrice.setText(buildRoubleString(formatter.format(valueCursor.getInt
-                (valueOldPriceColumnIndex))));
-        valueViewHolder.newPrice.setText(buildRoubleString(formatter.format(valueCursor.getInt
-                (valueNewPriceColumnIndex))));
-
-        Bitmap image = BitmapFactory.decodeFile(valueCursor.getString(valueThumbColumnIndex));
-        valueViewHolder.thumb.setImageBitmap(image);
-
-        valueViewHolder.discount.setText("-" + valueCursor.getString(valueDiscountColumnIndex) + "%");
-        valueViewHolder.url = valueCursor.getString(valueURLColumnIndex);
-
-    }
-
-    private SpannableStringBuilder buildRoubleString(String value) {
-        SpannableStringBuilder result = new SpannableStringBuilder(value + " " + '\u20BD');
-        RoubleTypefaceSpan typefaceSpan = new RoubleTypefaceSpan(roubleSupportedTypeface);
-        int position = value.length() + 1;
-        result.setSpan(typefaceSpan, position, position + 1, 0);
-        return result;
+        valueViewHolder.setValueEntity(valueEntities.get(position));
     }
 
     @Override
@@ -96,60 +110,56 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public long getItemId(int position) {
-        if (valueCursor == null) return RecyclerView.NO_ID;
-        valueCursor.moveToPosition(position);
-        return valueCursor.getLong(valueIdColumnIndex);
+        if (valueEntities.isEmpty()) return RecyclerView.NO_ID;
+        return valueEntities.get(position).id;
     }
 
     @Override
     public int getItemCount() {
-        return valueCursor == null ? 0 : valueCursor.getCount();
+        return valueEntities.size();
     }
 
-    public void changeCursor(Cursor cursor) {
-        Cursor old = swapCursor(cursor);
-        if (old != null) {
-            old.close();
-        }
-    }
+    public void loadCursor(Cursor cursor) {
+        valueEntities.clear();
+        if (cursor != null) {
+            int valueIdColumnIndex = cursor.getColumnIndexOrThrow(ApplicationContentContract.Value.ID);
+            int valueNameColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.NAME);
+            int valueOldPriceColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.OLD_PRICE);
+            int valueNewPriceColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.NEW_PRICE);
+            int valueThumbColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.LOCAL_THUMB_URI);
+            int valueDiscountColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.DISCOUNT);
+            int valueURLColumnIndex = cursor.getColumnIndex(ApplicationContentContract.Value.URL);
 
-    public Cursor swapCursor(Cursor newCursor) {
-        if (newCursor == valueCursor) {
-            return null;
+            while (cursor.moveToNext()) {
+                ValueEntity entity = new ValueEntity();
+                entity.id = cursor.getLong(valueIdColumnIndex);
+                entity.name = cursor.getString(valueNameColumnIndex);
+                entity.oldPrice = cursor.getInt(valueOldPriceColumnIndex);
+                entity.discount = cursor.getInt(valueDiscountColumnIndex);
+                entity.newPrice = cursor.getInt(valueNewPriceColumnIndex);
+                entity.localThumbUri = cursor.getString(valueThumbColumnIndex);
+                entity.url = cursor.getString(valueURLColumnIndex);
+                entity.thumb = BitmapFactory.decodeFile(entity.localThumbUri);
+
+                valueEntities.add(entity);
+            }
+
         }
-        final Cursor oldCursor = valueCursor;
-        valueCursor = newCursor;
-        if (valueCursor != null) {
-            valueIdColumnIndex = valueCursor.getColumnIndexOrThrow(ApplicationContentContract.Value.ID);
-            valueNameColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.NAME);
-            valueOldPriceColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.OLD_PRICE);
-            valueNewPriceColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.NEW_PRICE);
-            valueThumbColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.LOCAL_THUMB_URI);
-            valueDiscountColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.DISCOUNT);
-            valueURLColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.URL);
-            notifyDataSetChanged();
-        } else {
-            valueIdColumnIndex = -1;
-            valueNameColumnIndex = -1;
-            valueOldPriceColumnIndex = -1;
-            valueNewPriceColumnIndex = -1;
-            valueThumbColumnIndex = -1;
-            valueDiscountColumnIndex = -1;
-            valueURLColumnIndex = -1;
-            notifyDataSetChanged();
-        }
-        return oldCursor;
+        notifyDataSetChanged();
     }
 
     private class ValueViewHolder extends RecyclerView.ViewHolder {
 
-        TextView name;
-        TextView oldPrice;
-        TextView newPrice;
-        ImageView thumb;
-        TextView discount;
-        Button buy;
-        String url;
+        private TextView name;
+        private TextView oldPrice;
+        private TextView newPrice;
+        private ImageView thumb;
+        private ProgressBar progressBar;
+        private TextView discount;
+        private Button buy;
+
+        private ValueEntity valueEntity;
+        private int position;
 
         public ValueViewHolder(View itemView) {
             super(itemView);
@@ -157,15 +167,68 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             oldPrice.setPaintFlags(oldPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             newPrice = (TextView) itemView.findViewById(R.id.text_new_price);
             thumb = (ImageView) itemView.findViewById(R.id.image_thumb);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
             discount = (TextView) itemView.findViewById(R.id.text_discount);
             buy = (Button) itemView.findViewById(R.id.button_buy);
             buy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!Strings.isNullOrEmpty(url))
-                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    if ((valueEntity != null) && !Strings.isNullOrEmpty(valueEntity.url))
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(valueEntity.url)));
                 }
             });
         }
+
+        public void setValueEntity(ValueEntity entity) {
+            valueEntity = entity;
+            position = valueEntities.indexOf(entity);
+            applyValueEntry();
+        }
+
+        private void applyValueEntry() {
+            oldPrice.setText(buildRoubleString(formatter.format(valueEntity.oldPrice)));
+            newPrice.setText(buildRoubleString(formatter.format(valueEntity.newPrice)));
+            discount.setText("-" + valueEntity.discount + "%");
+
+            thumb.setImageBitmap(valueEntity.thumb);
+            progressBar.setVisibility(valueEntity.thumb == null ? View.VISIBLE : View.INVISIBLE);
+
+            if (valueEntity.thumb == null) {
+                if (thumbObservers.indexOfKey(position) < 0) {
+                    ValueThumbObserver observer = new ValueThumbObserver(position);
+                    thumbObservers.append(position, observer);
+                    Uri valueUri = ContentUris.withAppendedId(ApplicationContentContract.Value.CONTENT_URI,
+                            valueEntity.id);
+                    context.getContentResolver().registerContentObserver(valueUri, false, observer);
+                }
+                ImageUploadService.startForegroundValueThumbUpload(context, valueEntity.id, 1);
+            }
+
+        }
+
+        private SpannableStringBuilder buildRoubleString(String value) {
+            SpannableStringBuilder result = new SpannableStringBuilder(value + " " + '\u20BD');
+            RoubleTypefaceSpan typefaceSpan = new RoubleTypefaceSpan(roubleSupportedTypeface);
+            int position = value.length() + 1;
+            result.setSpan(typefaceSpan, position, position + 1, 0);
+            return result;
+        }
+
     }
+
+    private class ValueThumbObserver extends ContentObserver {
+
+        private int position;
+
+        public ValueThumbObserver(int position) {
+            super(null);
+            this.position = position;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            handler.sendEmptyMessage(position);
+        }
+    }
+
 }
