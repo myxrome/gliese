@@ -2,6 +2,7 @@ package com.whiteboxteam.gliese.data.server;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
@@ -48,8 +49,10 @@ public final class ApplicationServerContract {
         }
 
         private static String getDensityValue(Context context) {
-            // TODO: Сделать нормальный выбор в зависимости от layout.
-            return "x600";
+            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+            int width = Math.round(250 * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+            width = (((width + 50) / 100)) * 100;
+            return "x" + String.valueOf(width);
         }
 
         public static String getImageUrl(String imagePostfix) {
