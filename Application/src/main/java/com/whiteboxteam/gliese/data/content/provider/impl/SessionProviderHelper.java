@@ -20,9 +20,9 @@ public final class SessionProviderHelper extends BaseProviderHelper {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Sessions
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Session
                 .SESSIONS_BASE_PATH, SESSION_LIST_URI);
-        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Sessions
+        URI_MATCHER.addURI(StatisticContentContract.CONTENT_AUTHORITY, StatisticContentContract.Session
                 .SESSIONS_BASE_PATH + "/#", SESSION_ITEM_URI);
     }
 
@@ -65,10 +65,15 @@ public final class SessionProviderHelper extends BaseProviderHelper {
     public String getType(Uri uri) {
         switch (URI_MATCHER.match(uri)) {
             case SESSION_LIST_URI:
-                return StatisticContentContract.Sessions.CONTENT_TYPE_LIST;
+                return StatisticContentContract.Session.CONTENT_TYPE_LIST;
             case SESSION_ITEM_URI:
-                return StatisticContentContract.Sessions.CONTENT_TYPE_ITEM;
+                return StatisticContentContract.Session.CONTENT_TYPE_ITEM;
         }
         return null;
+    }
+
+    @Override
+    public Uri getRootUri(Uri uri) {
+        return uri;
     }
 }

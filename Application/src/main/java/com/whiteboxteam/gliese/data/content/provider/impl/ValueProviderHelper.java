@@ -1,5 +1,6 @@
 package com.whiteboxteam.gliese.data.content.provider.impl;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.net.Uri;
@@ -94,6 +95,20 @@ public final class ValueProviderHelper extends BaseProviderHelper {
             case VALUE_ITEM_URI:
             case CATEGORY_VALUE_ITEM_URI:
                 return ApplicationContentContract.Category.CONTENT_TYPE_ITEM;
+        }
+        return null;
+    }
+
+    @Override
+    public Uri getRootUri(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case VALUE_LIST_URI:
+            case CATEGORY_VALUE_LIST_URI:
+                return ApplicationContentContract.Value.CONTENT_URI;
+            case VALUE_ITEM_URI:
+            case CATEGORY_VALUE_ITEM_URI:
+                return ContentUris.withAppendedId(ApplicationContentContract.Value.CONTENT_URI, Long.parseLong(uri
+                        .getLastPathSegment()));
         }
         return null;
     }

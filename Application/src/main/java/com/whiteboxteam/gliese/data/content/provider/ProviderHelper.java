@@ -12,13 +12,10 @@ import android.net.Uri;
 public interface ProviderHelper {
 
     public boolean isUriMatched(Uri uri);
-
     public String buildSelectionFromUri(Uri uri, String selection);
-
     public String getTableName();
-
     public ContentValues getExtraValuesFromUri(Uri uri);
-
     public String getType(Uri uri);
+    public Uri getRootUri(Uri uri);
 
 }

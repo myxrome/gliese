@@ -55,7 +55,7 @@ public class CategoryFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (loaderId == loader.getId()) {
-                adapter.loadCursor(data);
+                adapter.changeCursor(data);
                 if (getUserVisibleHint()) {
                     scheduleShuffleTimerTask();
                 }
@@ -65,7 +65,7 @@ public class CategoryFragment extends Fragment {
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
             if (loaderId == loader.getId()) {
-                adapter.loadCursor(null);
+                adapter.changeCursor(null);
             }
         }
     };
@@ -131,6 +131,7 @@ public class CategoryFragment extends Fragment {
         initRecycleView(view.findViewById(R.id.recycler_view_1));
         initRecycleView(view.findViewById(R.id.recycler_view_2));
         initRecycleView(view.findViewById(R.id.recycler_view_3));
+//        initRecycleView(view.findViewById(R.id.recycler_view_4));
 
         return view;
     }
@@ -155,12 +156,6 @@ public class CategoryFragment extends Fragment {
     public void onDestroyView() {
         timer.cancel();
         super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (adapter != null) adapter.unregisterObservers();
-        super.onDestroy();
     }
 
     private static final class Parameters {

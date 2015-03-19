@@ -31,7 +31,7 @@ public abstract class BaseContentProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor result = db.query(tableName, projection, selection, selectionArgs, null, null, sortOrder);
-        result.setNotificationUri(getContext().getContentResolver(), uri);
+        result.setNotificationUri(getContext().getContentResolver(), helper.getRootUri(uri));
         return result;
     }
 

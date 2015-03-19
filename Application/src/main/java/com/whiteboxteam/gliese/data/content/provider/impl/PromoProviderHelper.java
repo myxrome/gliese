@@ -1,5 +1,6 @@
 package com.whiteboxteam.gliese.data.content.provider.impl;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.net.Uri;
@@ -98,4 +99,19 @@ public final class PromoProviderHelper extends BaseProviderHelper {
         }
         return null;
     }
+
+    @Override
+    public Uri getRootUri(Uri uri) {
+        switch (URI_MATCHER.match(uri)) {
+            case PROMO_LIST_URI:
+            case VALUE_PROMO_LIST_URI:
+                return ApplicationContentContract.Promo.CONTENT_URI;
+            case PROMO_ITEM_URI:
+            case VALUE_PROMO_ITEM_URI:
+                return ContentUris.withAppendedId(ApplicationContentContract.Promo.CONTENT_URI, Long.parseLong(uri
+                        .getLastPathSegment()));
+        }
+        return null;
+    }
+
 }

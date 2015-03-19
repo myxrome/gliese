@@ -71,4 +71,11 @@ public final class TopicGroupProviderHelper extends BaseProviderHelper {
         }
         return null;
     }
+
+
+    @Override
+    public Uri getRootUri(Uri uri) {
+        return uri;
+    }
+
 }
