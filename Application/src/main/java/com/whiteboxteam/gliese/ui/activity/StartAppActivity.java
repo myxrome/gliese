@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import com.whiteboxteam.gliese.R;
+import com.whiteboxteam.gliese.data.entity.FactEntity;
 import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
 import com.whiteboxteam.gliese.data.helper.statistic.SessionHelper;
 import com.whiteboxteam.gliese.data.sync.application.ApplicationSyncService;
@@ -20,7 +22,15 @@ import com.whiteboxteam.gliese.ui.dialog.PositiveNegativeButtonListener;
 public class StartAppActivity extends ActionBarActivity implements PositiveNegativeButtonListener {
 
     private static final String APPLICATION_START_COUNTER_EVENT = "APPLICATION_START_COUNTER";
+    private static final String UPLOAD_SCREEN_TIMER_EVENT = "UPLOAD_SCREEN_TIMER";
+    private static final String ORIENTATION_TIMER_EVENT = "ORIENTATION_TIMER";
     private static final int APPLICATION_ID = 1;
+    private static final int UPLOAD_SCREEN_ID = 1;
+    private static final int LANDSCAPE_ORIENTATION_ID = 1;
+    private static final int PORTRAIT_ORIENTATION_ID = 2;
+    private FactHelper factHelper;
+    private FactEntity uploadScreenTimer;
+    private FactEntity orientationTimer;
 
     private Handler handler = new Handler() {
 
@@ -54,6 +64,7 @@ public class StartAppActivity extends ActionBarActivity implements PositiveNegat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_app);
 
+        factHelper = FactHelper.getInstance(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(syncCompleteReceiver, new IntentFilter
                 (ApplicationSyncService.SyncResultBroadcast.ACTION));
     }
@@ -65,11 +76,22 @@ public class StartAppActivity extends ActionBarActivity implements PositiveNegat
     }
 
     @Override
+    protected void onPause() {
+        factHelper.finishTimer(orientationTimer);
+        factHelper.finishTimer(uploadScreenTimer);
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         SessionHelper.getInstance(this).start();
-        FactHelper.getInstance(this).increaseCounter(APPLICATION_ID, FactHelper.APPLICATION_CONTEXT,
-                APPLICATION_START_COUNTER_EVENT);
+        factHelper.increaseCounter(APPLICATION_ID, FactHelper.APPLICATION_CONTEXT, APPLICATION_START_COUNTER_EVENT);
+        uploadScreenTimer = factHelper.startTimer(UPLOAD_SCREEN_ID, FactHelper.SCREEN_CONTEXT,
+                UPLOAD_SCREEN_TIMER_EVENT);
+        int orientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
+                LANDSCAPE_ORIENTATION_ID : PORTRAIT_ORIENTATION_ID;
+        orientationTimer = factHelper.startTimer(orientation, FactHelper.ORIENTATION_CONTEXT, ORIENTATION_TIMER_EVENT);
         runApplicationSync();
     }
 
