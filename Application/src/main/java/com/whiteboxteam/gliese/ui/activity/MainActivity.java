@@ -15,6 +15,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.entity.FactEntity;
+import com.whiteboxteam.gliese.data.entity.TopicEntity;
+import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
+import com.whiteboxteam.gliese.data.helper.statistic.SessionHelper;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
 import com.whiteboxteam.gliese.ui.fragment.EmptyTopicFragment;
 import com.whiteboxteam.gliese.ui.fragment.TopicDrawerFragment;
@@ -23,17 +27,33 @@ import com.whiteboxteam.gliese.ui.fragment.TopicFragment;
 
 public class MainActivity extends ActionBarActivity {
 
+    private static final String COMPARE_SCREEN_TIMER_EVENT = "COMPARE_SCREEN_TIMER";
+    private static final String ORIENTATION_TIMER_EVENT = "ORIENTATION_TIMER";
+    private static final int COMPARE_SCREEN_ID = 1;
+    private static final int LANDSCAPE_ORIENTATION_ID = 1;
+    private static final int PORTRAIT_ORIENTATION_ID = 2;
+    private SessionHelper sessionHelper;
+    private FactHelper factHelper;
+    private FactEntity compareScreenTimer;
+    private FactEntity orientationTimer;
+
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
     private String title;
     private FragmentManager fragmentManager;
+    private TopicEntity currentTopic;
+
     private TopicDrawerFragment.TopicFragmentListener drawerListener = new TopicDrawerFragment.TopicFragmentListener() {
         @Override
-        public void onTopicSelected(long id, String name) {
-            setTitle(title + " - " + name);
-            TopicFragment fragment = TopicFragment.createFragment(id);
+        public void onTopicSelected(TopicEntity topic) {
+            setTitle(title + " - " + topic.name);
+            currentTopic = topic;
+//            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            TopicFragment fragment = TopicFragment.createFragment(topic);
             fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment).commit();
+//            }
             drawerLayout.closeDrawer(GravityCompat.START);
+
         }
     };
 
@@ -60,8 +80,13 @@ public class MainActivity extends ActionBarActivity {
                 .navigation_drawer);
         drawerFragment.setFragmentListener(drawerListener);
 
-        fragmentManager.beginTransaction().replace(R.id.topic_fragment, EmptyTopicFragment.createFragment()).commit();
+//        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+//        });
 
+        sessionHelper = SessionHelper.getInstance(this);
+        factHelper = FactHelper.getInstance(this);
+
+        fragmentManager.beginTransaction().replace(R.id.topic_fragment, EmptyTopicFragment.createFragment()).commit();
     }
 
     private boolean isLastTopicExist() {
@@ -75,6 +100,25 @@ public class MainActivity extends ActionBarActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onPause() {
+        factHelper.finishTimer(orientationTimer);
+        factHelper.finishTimer(compareScreenTimer);
+        sessionHelper.finish();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sessionHelper.getCurrent() == null) sessionHelper.start();
+        compareScreenTimer = factHelper.startTimer(COMPARE_SCREEN_ID, FactHelper.SCREEN_CONTEXT,
+                COMPARE_SCREEN_TIMER_EVENT);
+        int orientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
+                LANDSCAPE_ORIENTATION_ID : PORTRAIT_ORIENTATION_ID;
+        orientationTimer = factHelper.startTimer(orientation, FactHelper.ORIENTATION_CONTEXT, ORIENTATION_TIMER_EVENT);
     }
 
     @Override

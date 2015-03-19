@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.entity.TopicEntity;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
 
 /**
@@ -61,10 +62,10 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
         selected.setActivated(true);
         preferences.edit().putLong(StorageContract.LAST_TOPIC_ID, selected.id).apply();
-        onTopicSelected(selected.id, selected.name.getText().toString());
+        onTopicSelected(TopicEntity.newInstance(selected.id, selected.topicGroupId, selected.name.getText().toString()));
     }
 
-    protected abstract void onTopicSelected(long id, String name);
+    protected abstract void onTopicSelected(TopicEntity topic);
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -156,6 +157,7 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
     private void bindTopicViewHolder(TopicViewHolder viewHolder, Cursor topicCursor) {
         viewHolder.id = topicCursor.getLong(topicIdColumnIndex);
+        viewHolder.topicGroupId = topicCursor.getLong(topicCursor.getColumnIndex(ApplicationContentContract.Topic.TOPIC_GROUP_ID));
         viewHolder.name.setText(topicCursor.getString(topicCursor.getColumnIndex(ApplicationContentContract.Topic
                 .NAME)));
         if (viewHolder.id == preferences.getLong(StorageContract.LAST_TOPIC_ID, -1)) {
@@ -248,6 +250,7 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
             }
         };
         public long id;
+        public long topicGroupId;
         public TextView name;
         public View icon;
 

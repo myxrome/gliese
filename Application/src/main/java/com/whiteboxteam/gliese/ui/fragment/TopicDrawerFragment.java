@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.entity.TopicEntity;
 import com.whiteboxteam.gliese.ui.adapter.TopicRecyclerViewAdapter;
 
 public class TopicDrawerFragment extends Fragment {
@@ -36,7 +37,7 @@ public class TopicDrawerFragment extends Fragment {
                     Uri topicGroupUri = ContentUris.withAppendedId(ApplicationContentContract.TopicGroup.CONTENT_URI,
                             bundle.getLong(ApplicationContentContract.Topic.TOPIC_GROUP_ID));
                     return new CursorLoader(getActivity(), ApplicationContentContract.Topic.getContentUriByTopicGroup
-                            (topicGroupUri), new String[]{ApplicationContentContract.Topic.ID,
+                            (topicGroupUri), new String[]{ApplicationContentContract.Topic.ID, ApplicationContentContract.Topic.TOPIC_GROUP_ID,
                             ApplicationContentContract.Topic.NAME}, ApplicationContentContract.Topic.ACTIVE + " = ?",
                             new String[]{"1"}, ApplicationContentContract.Topic.ORDER);
             }
@@ -81,9 +82,9 @@ public class TopicDrawerFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         adapter = new TopicRecyclerViewAdapter(getActivity()) {
             @Override
-            protected void onTopicSelected(long id, String name) {
+            protected void onTopicSelected(TopicEntity topic) {
                 if (fragmentListener != null) {
-                    fragmentListener.onTopicSelected(id, name);
+                    fragmentListener.onTopicSelected(topic);
                 }
             }
 
@@ -108,7 +109,7 @@ public class TopicDrawerFragment extends Fragment {
     }
 
     public interface TopicFragmentListener {
-        public void onTopicSelected(long id, String name);
+        public void onTopicSelected(TopicEntity topic);
     }
 
 }

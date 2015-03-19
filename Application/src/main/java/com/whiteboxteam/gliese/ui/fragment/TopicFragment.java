@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.entity.FactEntity;
+import com.whiteboxteam.gliese.data.entity.TopicEntity;
+import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
 import com.whiteboxteam.gliese.ui.adapter.TopicFragmentPageAdapter;
 import com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip;
@@ -29,9 +32,15 @@ import com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip;
  */
 public class TopicFragment extends Fragment {
 
+    private static final String TOPIC_VIEW_TIMER_EVENT = "TOPIC_VIEW_TIMER";
+    private static final String TOPIC_GROUP_VIEW_TIMER_EVENT = "TOPIC_GROUP_VIEW_TIMER";
     private static final int CATEGORY_LOADER_ID = 15000;
+    private FactHelper factHelper;
+    private FactEntity topicGroupTimer;
+    private FactEntity topicTimer;
     private int loaderId;
     private long topicId;
+    private long topicGroupId;
     private TopicFragmentPageAdapter adapter;
     private ViewPager viewPager;
     private SharedPreferences preferences;
@@ -86,10 +95,11 @@ public class TopicFragment extends Fragment {
         }
     };
 
-    public static TopicFragment createFragment(long topicId) {
+    public static TopicFragment createFragment(TopicEntity topic) {
         TopicFragment fragment = new TopicFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(Parameters.TOPIC_ID, topicId);
+        bundle.putLong(Parameters.TOPIC_ID, topic.id);
+        bundle.putLong(Parameters.TOPIC_GROUP_ID, topic.topicGroupId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -98,6 +108,7 @@ public class TopicFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        factHelper = FactHelper.getInstance(activity);
     }
 
     @Override
@@ -105,14 +116,15 @@ public class TopicFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         topicId = bundle.getLong(Parameters.TOPIC_ID);
+        topicGroupId = bundle.getLong(Parameters.TOPIC_GROUP_ID);
         loaderId = CATEGORY_LOADER_ID + (int) topicId;
+        adapter = new TopicFragmentPageAdapter(getChildFragmentManager());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
 
-        adapter = new TopicFragmentPageAdapter(getActivity().getSupportFragmentManager());
         viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(20);
@@ -129,7 +141,23 @@ public class TopicFragment extends Fragment {
         getLoaderManager().initLoader(loaderId, null, loaderCallbacks);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        topicGroupTimer = factHelper.startTimer(topicGroupId, FactHelper.TOPIC_GROUP_CONTEXT,
+                TOPIC_GROUP_VIEW_TIMER_EVENT);
+        topicTimer = factHelper.startTimer(topicId, FactHelper.TOPIC_CONTEXT, TOPIC_VIEW_TIMER_EVENT);
+    }
+
+    @Override
+    public void onPause() {
+        factHelper.finishTimer(topicTimer);
+        factHelper.finishTimer(topicGroupTimer);
+        super.onPause();
+    }
+
     private static final class Parameters {
         public static final String TOPIC_ID = "topic-id";
+        public static final String TOPIC_GROUP_ID = "topic-group-id";
     }
 }

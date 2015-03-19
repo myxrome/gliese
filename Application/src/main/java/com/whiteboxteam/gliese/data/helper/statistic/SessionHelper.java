@@ -35,16 +35,14 @@ public final class SessionHelper {
         return current;
     }
 
-    Uri getOrCreateCurrent() {
-        if (current == null) start();
-        return current;
-    }
-
     public void start() {
-        if (current != null) finish();
         ContentValues contentValues = new ContentValues();
         contentValues.put(StatisticContentContract.Session.STARTED_AT, getCurrentDateTimeString());
         current = context.getContentResolver().insert(StatisticContentContract.Session.CONTENT_URI, contentValues);
+    }
+
+    private String getCurrentDateTimeString() {
+        return dateFormat.format(new Date());
     }
 
     public void finish() {
@@ -54,10 +52,6 @@ public final class SessionHelper {
         context.getContentResolver().update(current, contentValues, null, null);
         current = null;
 //        StatisticSyncService.runStatisticSync(context);
-    }
-
-    private String getCurrentDateTimeString() {
-        return dateFormat.format(new Date());
     }
 
 }

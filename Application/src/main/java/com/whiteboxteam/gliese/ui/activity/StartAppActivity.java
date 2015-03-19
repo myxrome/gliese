@@ -11,11 +11,16 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import com.whiteboxteam.gliese.R;
+import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
+import com.whiteboxteam.gliese.data.helper.statistic.SessionHelper;
 import com.whiteboxteam.gliese.data.sync.application.ApplicationSyncService;
 import com.whiteboxteam.gliese.ui.dialog.ConnectionErrorDialogFragment;
 import com.whiteboxteam.gliese.ui.dialog.PositiveNegativeButtonListener;
 
 public class StartAppActivity extends ActionBarActivity implements PositiveNegativeButtonListener {
+
+    private static final String APPLICATION_START_COUNTER_EVENT = "APPLICATION_START_COUNTER";
+    private static final int APPLICATION_ID = 1;
 
     private Handler handler = new Handler() {
 
@@ -62,6 +67,9 @@ public class StartAppActivity extends ActionBarActivity implements PositiveNegat
     @Override
     protected void onResume() {
         super.onResume();
+        SessionHelper.getInstance(this).start();
+        FactHelper.getInstance(this).increaseCounter(APPLICATION_ID, FactHelper.APPLICATION_CONTEXT,
+                APPLICATION_START_COUNTER_EVENT);
         runApplicationSync();
     }
 

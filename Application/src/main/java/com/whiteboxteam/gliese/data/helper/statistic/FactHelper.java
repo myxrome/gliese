@@ -25,6 +25,7 @@ public final class FactHelper {
     public static final String VALUE_CONTEXT = "Value";
 
     public static final String APPLICATION_CONTEXT = "Application";
+    public static final String SCREEN_CONTEXT = "Screen";
     public static final String BUTTON_CONTEXT = "Button";
     public static final String ORIENTATION_CONTEXT = "Orientation";
 
@@ -46,18 +47,18 @@ public final class FactHelper {
     }
 
     public FactEntity startTimer(long contextId, String contextType, String eventTag) {
-        Uri fact = addFact(contextId, contextType, eventTag);
+        Uri fact = addFact(contextId, contextType, eventTag, "");
         addFactDetail(fact, TIMER_START);
         return FactEntity.newInstance(Long.parseLong(fact.getLastPathSegment()));
     }
 
-    private Uri addFact(long contextId, String contextType, String eventTag) {
+    private Uri addFact(long contextId, String contextType, String eventTag, String externalContext) {
         ContentValues contentValues = new ContentValues();
+        contentValues.put(StatisticContentContract.Fact.EVENT, eventTag);
         contentValues.put(StatisticContentContract.Fact.CONTEXT_ID, contextId);
         contentValues.put(StatisticContentContract.Fact.CONTEXT_TYPE, contextType);
-        contentValues.put(StatisticContentContract.Fact.EVENT, eventTag);
-        return context.getContentResolver().insert(StatisticContentContract.Fact.getContentUriBySession(SessionHelper
-                .getInstance(context).getOrCreateCurrent()), contentValues);
+        contentValues.put(StatisticContentContract.Fact.EXTERNAL_CONTEXT, externalContext);
+        return context.getContentResolver().insert(StatisticContentContract.Fact.getContentUriBySession(SessionHelper.getInstance(context).getCurrent()), contentValues);
     }
 
     private void addFactDetail(Uri fact, int order) {
@@ -78,8 +79,12 @@ public final class FactHelper {
     }
 
     public void increaseCounter(long contextId, String contextType, String eventTag) {
-        Uri fact = addFact(contextId, contextType, eventTag);
+        Uri fact = addFact(contextId, contextType, eventTag, "");
         addFactDetail(fact, COUNTER);
     }
 
+    public void increaseCounter(long contextId, String contextType, String eventTag, String externalContext) {
+        Uri fact = addFact(contextId, contextType, eventTag, externalContext);
+        addFactDetail(fact, COUNTER);
+    }
 }

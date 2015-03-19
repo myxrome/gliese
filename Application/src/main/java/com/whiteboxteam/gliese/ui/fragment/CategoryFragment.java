@@ -1,5 +1,6 @@
 package com.whiteboxteam.gliese.ui.fragment;
 
+import android.app.Activity;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
+import com.whiteboxteam.gliese.data.entity.FactEntity;
+import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
 import com.whiteboxteam.gliese.ui.adapter.ValueRecyclerViewAdapter;
 import com.whiteboxteam.gliese.ui.custom.CenterItemDecoration;
 import com.whiteboxteam.gliese.ui.custom.SnappyLinearLayoutManager;
@@ -29,7 +32,10 @@ import java.util.*;
  */
 public class CategoryFragment extends Fragment {
 
+    private static final String CATEGORY_VIEW_TIMER_EVENT = "CATEGORY_VIEW_TIMER";
     private static final int VALUE_LOADER_ID = 18000;
+    private FactHelper factHelper;
+    private FactEntity categoryTimer;
     private int loaderId;
     private long categoryId;
     private ValueRecyclerViewAdapter adapter;
@@ -81,11 +87,10 @@ public class CategoryFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-
         if (getUserVisibleHint()) {
             scheduleShuffleTimerTask();
         }
-
+        switchCategoryTimer();
     }
 
     private void scheduleShuffleTimerTask() {
@@ -100,6 +105,14 @@ public class CategoryFragment extends Fragment {
         }
     }
 
+    private void switchCategoryTimer() {
+        if (getUserVisibleHint()) {
+            startCategoryTimer();
+        } else {
+            finishCategoryTimer();
+        }
+    }
+
     private List<Integer> randomArray(int limit, int size) {
         List<Integer> cache = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -111,6 +124,25 @@ public class CategoryFragment extends Fragment {
             result.add(cache.get(Math.min(j, cache.size() - 1)));
         }
         return result;
+    }
+
+    private void startCategoryTimer() {
+        if ((factHelper != null) && (categoryTimer == null)) {
+            categoryTimer = factHelper.startTimer(categoryId, FactHelper.CATEGORY_CONTEXT, CATEGORY_VIEW_TIMER_EVENT);
+        }
+    }
+
+    private void finishCategoryTimer() {
+        if ((factHelper != null) && (categoryTimer != null)) {
+            factHelper.finishTimer(categoryTimer);
+            categoryTimer = null;
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        factHelper = FactHelper.getInstance(activity);
     }
 
     @Override
@@ -131,7 +163,6 @@ public class CategoryFragment extends Fragment {
         initRecycleView(view.findViewById(R.id.recycler_view_1));
         initRecycleView(view.findViewById(R.id.recycler_view_2));
         initRecycleView(view.findViewById(R.id.recycler_view_3));
-//        initRecycleView(view.findViewById(R.id.recycler_view_4));
 
         return view;
     }
@@ -150,6 +181,18 @@ public class CategoryFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getLoaderManager().initLoader(loaderId, null, loaderCallbacks);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        switchCategoryTimer();
+    }
+
+    @Override
+    public void onPause() {
+        finishCategoryTimer();
+        super.onPause();
     }
 
     @Override

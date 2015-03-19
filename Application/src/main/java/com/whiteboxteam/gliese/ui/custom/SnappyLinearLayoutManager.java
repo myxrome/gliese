@@ -61,8 +61,10 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager {
 
     private int correctNewPosition(int velocity, int newPosition) {
         if (newPosition == currentPosition && Math.abs(velocity) > minimumVelocity) {
-            if (velocity > 0) return newPosition + 1;
-            else return Math.max(newPosition - 1, 0);
+            if (velocity > 0)
+                return newPosition + 1;
+            else
+                return Math.max(newPosition - 1, 0);
         }
         return newPosition;
     }

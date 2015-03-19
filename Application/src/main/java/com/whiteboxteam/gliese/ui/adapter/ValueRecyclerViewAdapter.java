@@ -17,9 +17,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.google.common.base.Strings;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.entity.ValueEntity;
+import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
 import com.whiteboxteam.gliese.data.sync.image.ImageUploadService;
 import com.whiteboxteam.gliese.ui.custom.RoubleTypefaceSpan;
 
@@ -29,6 +33,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * Gliese Project.
@@ -37,6 +42,10 @@ import java.util.Locale;
  * Time: 16:36
  */
 public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final String VALUE_CLICK_COUNTER_EVENT = "VALUE_CLICK_COUNTER";
+    private static final String BUY_BUTTON_CLICK_COUNTER_EVENT = "BUY_BUTTON_CLICK_COUNTER_COUNTER";
+    private static final int BUY_BUTTON_ID = 1;
 
     private final Context context;
     private final DecimalFormat formatter;
@@ -91,8 +100,9 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public Cursor swapCursor(Cursor cursor) {
-        if (cursor == valueCursor)
+        if (cursor == valueCursor) {
             return null;
+        }
 
         Cursor oldCursor = valueCursor;
         valueCursor = cursor;
@@ -107,7 +117,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             int valueDiscountColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.DISCOUNT);
             int valueURLColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.URL);
 
-            int position = 0;
+            valueCursor.moveToPosition(-1);
             while (valueCursor.moveToNext()) {
                 ValueEntity entity = new ValueEntity();
                 entity.id = valueCursor.getLong(valueIdColumnIndex);
@@ -124,7 +134,6 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
 
                 valueEntities.add(entity);
-                position += 1;
             }
         }
         notifyDataSetChanged();
@@ -156,8 +165,19 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             buy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if ((valueEntity != null) && !Strings.isNullOrEmpty(valueEntity.url))
-                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(valueEntity.url)));
+                    if ((valueEntity != null) && !Strings.isNullOrEmpty(valueEntity.url)) {
+                        int r = new Random(System.currentTimeMillis()).nextInt(Integer.MAX_VALUE);
+                        HashFunction hashFunction = Hashing.md5();
+                        HashCode hash = hashFunction.newHasher().putInt(r).hash();
+                        String subId = hash.toString().substring(0, 16).toUpperCase();
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(valueEntity.url + "&sub_id=" +
+                                subId)));
+                        FactHelper factHelper = FactHelper.getInstance(context);
+                        factHelper.increaseCounter(valueEntity.id, FactHelper.VALUE_CONTEXT,
+                                VALUE_CLICK_COUNTER_EVENT, subId);
+                        factHelper.increaseCounter(BUY_BUTTON_ID, FactHelper.BUTTON_CONTEXT,
+                                BUY_BUTTON_CLICK_COUNTER_EVENT);
+                    }
                 }
             });
         }
