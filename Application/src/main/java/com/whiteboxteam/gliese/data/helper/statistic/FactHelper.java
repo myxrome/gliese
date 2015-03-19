@@ -47,7 +47,7 @@ public final class FactHelper {
     }
 
     public FactEntity startTimer(long contextId, String contextType, String eventTag) {
-        Uri fact = addFact(contextId, contextType, eventTag, "");
+        Uri fact = addFact(contextId, contextType, eventTag, null);
         addFactDetail(fact, TIMER_START);
         return FactEntity.newInstance(Long.parseLong(fact.getLastPathSegment()));
     }
@@ -79,7 +79,7 @@ public final class FactHelper {
     }
 
     public void increaseCounter(long contextId, String contextType, String eventTag) {
-        Uri fact = addFact(contextId, contextType, eventTag, "");
+        Uri fact = addFact(contextId, contextType, eventTag, null);
         addFactDetail(fact, COUNTER);
     }
 
