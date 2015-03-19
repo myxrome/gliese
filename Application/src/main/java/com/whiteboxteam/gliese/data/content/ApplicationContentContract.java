@@ -43,8 +43,6 @@ public final class ApplicationContentContract {
             private static final String[] KEYS = new String[]{"da46a5a8de1577cecf9baed38d4fe65c",
                     "009980d31a1931b2f6b363d8fdd36bba", "644827f93d7d92ccf25cf56fd63f3d42"};
 
-            private static final int DEFAULT_KEY_INDEX = 0;
-
             public static String[] getKeys() {
                 return KEYS;
             }

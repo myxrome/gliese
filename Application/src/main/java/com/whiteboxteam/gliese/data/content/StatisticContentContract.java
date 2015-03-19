@@ -37,9 +37,10 @@ public final class StatisticContentContract {
 
         public static final String ID = StatisticDatabaseContract.FactEntry.ID;
         public static final String SESSION_ID = StatisticDatabaseContract.FactEntry.SESSION_ID;
+        public static final String EVENT = StatisticDatabaseContract.FactEntry.EVENT;
         public static final String CONTEXT_ID = StatisticDatabaseContract.FactEntry.CONTEXT_ID;
         public static final String CONTEXT_TYPE = StatisticDatabaseContract.FactEntry.CONTEXT_TYPE;
-        public static final String EVENT = StatisticDatabaseContract.FactEntry.EVENT;
+        public static final String EXTERNAL_CONTEXT = StatisticDatabaseContract.FactEntry.EXTERNAL_CONTEXT;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(FACTS_BASE_PATH).build();
         public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
