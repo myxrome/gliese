@@ -22,9 +22,10 @@ public final class StatisticDatabaseContract {
         public static final String TABLE_NAME = "fact";
         public static final String ID = BaseColumns._ID;
         public static final String SESSION_ID = "_session_id";
+        public static final String EVENT = "_event";
         public static final String CONTEXT_ID = "_context_id";
         public static final String CONTEXT_TYPE = "_context_type";
-        public static final String EVENT = "_event";
+        public static final String EXTERNAL_CONTEXT = "_external_context";
 
     }
 

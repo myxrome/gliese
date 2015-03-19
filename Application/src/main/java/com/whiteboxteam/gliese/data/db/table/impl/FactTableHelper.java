@@ -16,9 +16,10 @@ public final class FactTableHelper extends BaseTableHelper implements TableHelpe
             COLUMNS_BEGIN +
             StatisticDatabaseContract.FactEntry.ID + INTEGER_PK_TYPE + AUTOINCREMENT + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.FactEntry.SESSION_ID + TEXT_TYPE + COLUMNS_SEPARATOR +
+            StatisticDatabaseContract.FactEntry.EVENT + TEXT_TYPE + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.FactEntry.CONTEXT_ID + INTEGER_TYPE + COLUMNS_SEPARATOR +
             StatisticDatabaseContract.FactEntry.CONTEXT_TYPE + TEXT_TYPE + COLUMNS_SEPARATOR +
-            StatisticDatabaseContract.FactEntry.EVENT + TEXT_TYPE + COLUMNS_SEPARATOR +
+            StatisticDatabaseContract.FactEntry.EXTERNAL_CONTEXT + TEXT_TYPE + COLUMNS_SEPARATOR +
             FOREIGN_KEY + COLUMNS_BEGIN + StatisticDatabaseContract.FactEntry.SESSION_ID + COLUMNS_END + REFERENCES +
             StatisticDatabaseContract.FactEntry.TABLE_NAME + COLUMNS_BEGIN + StatisticDatabaseContract.SessionEntry
             .ID + COLUMNS_END + ON_DELETE_CASCADE +
