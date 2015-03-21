@@ -10,6 +10,7 @@ public final class StorageContract {
 
     public static final String LAST_APPLICATION_SYNC_DATE = "last-application-sync-date";
     public static final String LAST_STATISTIC_SYNC_DATE = "last-statistic-sync-date";
+    public static final String LAST_CRASH_REPORT_DATE = "last-crash-report-date";
     public static final String LAST_TOPIC_ID = "last-topic-id";
     public static final String LAST_CATEGORY_ID = "last-category-id-";
 

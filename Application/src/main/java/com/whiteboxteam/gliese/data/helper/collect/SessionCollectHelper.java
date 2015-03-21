@@ -23,12 +23,12 @@ import java.util.ArrayList;
  */
 public class SessionCollectHelper extends JSONArrayCollectHelper {
 
-    private FactCollectHelper factExtractor;
+    private FactCollectHelper factCollectHelper;
     private ArrayList<ContentProviderOperation> batch = new ArrayList<>();
 
     public SessionCollectHelper(Context context) {
         super(context);
-        factExtractor = new FactCollectHelper(context);
+        factCollectHelper = new FactCollectHelper(context);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SessionCollectHelper extends JSONArrayCollectHelper {
                 (StatisticContentContract.Session.STARTED_AT))).
                 put(StatisticServerContract.SessionData.FINISHED_AT, source.getString(source.getColumnIndex
                         (StatisticContentContract.Session.FINISHED_AT))).
-                put(StatisticServerContract.SessionData.FACT_LIST, factExtractor.extract(ContentUris.withAppendedId
+                put(StatisticServerContract.SessionData.FACT_LIST, factCollectHelper.extract(ContentUris.withAppendedId
                         (StatisticContentContract.Session.CONTENT_URI, source.getLong(source.getColumnIndex
                                 (StatisticContentContract.Session.ID)))));
 

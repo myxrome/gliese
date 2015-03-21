@@ -17,11 +17,11 @@ import org.json.JSONObject;
  */
 public class DeviceCollectHelper extends BaseCollectHelper<JSONObject> {
 
-    private SessionCollectHelper sessionExtractor;
+    private JSONArrayCollectHelper collectHelper;
 
-    public DeviceCollectHelper(Context context) {
+    public DeviceCollectHelper(Context context, JSONArrayCollectHelper collectHelper) {
         super(context);
-        sessionExtractor = new SessionCollectHelper(context);
+        this.collectHelper = collectHelper;
     }
 
     public JSONObject extract(Uri parentUri) throws JSONException {
@@ -31,12 +31,12 @@ public class DeviceCollectHelper extends BaseCollectHelper<JSONObject> {
                 put(StatisticServerContract.DeviceData.MODEL, DeviceHelper.getModel()).
                 put(StatisticServerContract.DeviceData.RELEASE, DeviceHelper.getRelease()).
                 put(StatisticServerContract.DeviceData.SDK, DeviceHelper.getSDK()).
-                put(StatisticServerContract.DeviceData.SESSION_LIST, sessionExtractor.collect());
+                put(StatisticServerContract.DeviceData.NESTED_LIST, collectHelper.collect());
         return result;
     }
 
     public void complete() throws RemoteException, OperationApplicationException {
-        sessionExtractor.complete();
+        collectHelper.complete();
     }
 
 }

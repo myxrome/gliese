@@ -14,6 +14,10 @@ public final class StatisticServerContract {
         public static String getStatisticSyncUrl() {
             return SYNC_SERVER_URL + "/s/";
         }
+
+        public static String getCrashReportUrl() {
+            return SYNC_SERVER_URL + "/c/";
+        }
     }
 
     public static abstract class StatisticData {
@@ -27,7 +31,7 @@ public final class StatisticServerContract {
         public static final String RELEASE = "r";
         public static final String SDK = "i";
 
-        public static final String SESSION_LIST = "s";
+        public static final String NESTED_LIST = "s";
     }
 
     public static abstract class SessionData {
@@ -48,6 +52,15 @@ public final class StatisticServerContract {
     public static abstract class FactDetailData {
         public static final String ORDER = "o";
         public static final String HAPPENED_AT = "ht";
+    }
+
+    public static abstract class CrashReportData {
+        public static final String NAME = "n";
+        public static final String VERSION = "v";
+        public static final String EXCEPTION = "e";
+        public static final String CAUSE = "c";
+        public static final String STACKTRACE = "s";
+        public static final String HAPPENED_AT = "h";
     }
 
 }

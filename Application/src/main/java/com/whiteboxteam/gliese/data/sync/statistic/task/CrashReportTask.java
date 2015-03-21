@@ -6,8 +6,8 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import com.whiteboxteam.gliese.data.helper.collect.BaseCollectHelper;
+import com.whiteboxteam.gliese.data.helper.collect.CrashReportCollectHelper;
 import com.whiteboxteam.gliese.data.helper.collect.DeviceCollectHelper;
-import com.whiteboxteam.gliese.data.helper.collect.SessionCollectHelper;
 import com.whiteboxteam.gliese.data.server.ServerHelper;
 import com.whiteboxteam.gliese.data.server.StatisticServerContract;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
@@ -23,53 +23,55 @@ import java.util.TimeZone;
 /**
  * Gliese Project.
  * User: Aleksey
- * Date: 09.02.2015
- * Time: 14:20
+ * Date: 21.03.2015
+ * Time: 14:51
  */
-public class StatisticSyncTask implements Runnable {
+public class CrashReportTask implements Runnable {
 
     private Context context;
 
-    public StatisticSyncTask(Context context) {
+    public CrashReportTask(Context context) {
         this.context = context;
     }
 
     @Override
     public void run() {
-        Log.d("[SYNC]", "start statistic sync");
-        if (performStatisticSync()) {
-            saveLastSyncDate();
+        Log.d("[SYNC]", "start crash report");
+        if (performCrashReport()) {
+            saveLastReportDate();
         }
-        Log.d("[SYNC]", "finish statistic sync");
+        Log.d("[SYNC]", "finish crash report");
     }
 
-    private boolean performStatisticSync() {
-        BaseCollectHelper<JSONObject> deviceCollectHelper = new DeviceCollectHelper(context, new SessionCollectHelper(context));
+    private boolean performCrashReport() {
+        BaseCollectHelper<JSONObject> deviceCollectHelper = new DeviceCollectHelper(context, new
+                CrashReportCollectHelper(context));
         try {
             JSONObject device = deviceCollectHelper.collect();
-            if (isContainSession(device)) {
+            if (isContainCrashReport(device)) {
                 JSONObject data = new JSONObject();
                 data.put(StatisticServerContract.StatisticData.DATA, device);
-                ServerHelper.uploadJSONObject(context, StatisticServerContract.Server.getStatisticSyncUrl(), data);
+                ServerHelper.uploadJSONObject(context, StatisticServerContract.Server.getCrashReportUrl(), data);
                 deviceCollectHelper.complete();
             }
         } catch (IOException | RemoteException | JSONException | OperationApplicationException e) {
+            Log.d("[SYNC]", e.toString());
             return false;
         }
         return true;
     }
 
-    private void saveLastSyncDate() {
+    private void saveLastReportDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
         String value = dateFormat.format(new Date());
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(StorageContract
-                .LAST_STATISTIC_SYNC_DATE, value).apply();
+                .LAST_CRASH_REPORT_DATE, value).apply();
     }
 
-    private boolean isContainSession(JSONObject device) throws JSONException {
-        JSONArray sessions = device.getJSONArray(StatisticServerContract.DeviceData.NESTED_LIST);
-        return sessions.length() > 0;
+    private boolean isContainCrashReport(JSONObject device) throws JSONException {
+        JSONArray crash = device.getJSONArray(StatisticServerContract.DeviceData.NESTED_LIST);
+        return crash.length() > 0;
     }
 
 }

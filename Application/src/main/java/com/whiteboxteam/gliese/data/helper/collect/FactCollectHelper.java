@@ -17,11 +17,11 @@ import org.json.JSONObject;
  */
 public class FactCollectHelper extends JSONArrayCollectHelper {
 
-    private FactDetailCollectHelper factDetailExtractor;
+    private FactDetailCollectHelper factDetailCollectHelper;
 
     public FactCollectHelper(Context context) {
         super(context);
-        factDetailExtractor = new FactDetailCollectHelper(context);
+        factDetailCollectHelper = new FactDetailCollectHelper(context);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class FactCollectHelper extends JSONArrayCollectHelper {
                         (StatisticContentContract.Fact.CONTEXT_TYPE))).
                 put(StatisticServerContract.FactData.EXTERNAL_CONTEXT, source.getString(source.getColumnIndex
                         (StatisticContentContract.Fact.EXTERNAL_CONTEXT))).
-                put(StatisticServerContract.FactData.FACT_DETAIL_LIST, factDetailExtractor.extract(ContentUris
+                put(StatisticServerContract.FactData.FACT_DETAIL_LIST, factDetailCollectHelper.extract(ContentUris
                         .withAppendedId(StatisticContentContract.Fact.CONTENT_URI, source.getLong(source
                                 .getColumnIndex(StatisticContentContract.Fact.ID)))));
         return item;
