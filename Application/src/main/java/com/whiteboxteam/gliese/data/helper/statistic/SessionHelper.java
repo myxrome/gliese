@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import com.whiteboxteam.gliese.data.content.StatisticContentContract;
+import com.whiteboxteam.gliese.data.sync.statistic.StatisticSyncService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,7 +52,7 @@ public final class SessionHelper {
         contentValues.put(StatisticContentContract.Session.FINISHED_AT, getCurrentDateTimeString());
         context.getContentResolver().update(current, contentValues, null, null);
         current = null;
-//        StatisticSyncService.runStatisticSync(context);
+        StatisticSyncService.startStatisticSync(context);
     }
 
 }

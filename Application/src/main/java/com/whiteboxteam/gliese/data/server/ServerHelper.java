@@ -122,19 +122,11 @@ public final class ServerHelper {
         return FileContentHandler.getContent(context, ByteStreams.toByteArray(inputStream));
     }
 
-    public static JSONObject uploadJSONObject(Context context, String url, JSONObject json) throws IOException {
-        InputStream inputStream = getPostInputStream(context, url, json);
-        return (JSONObject) JSONContentHandler.getContent(ByteStreams.toByteArray(inputStream));
-    }
-
-    private static InputStream getPostInputStream(Context context, String url, JSONObject json) throws IOException {
-        HttpEntity entity = getHttpPostEntity(context, url, json);
-        return entity.getContent();
-    }
-
-    private static HttpEntity getHttpPostEntity(Context context, String url, JSONObject json) throws IOException {
+    public static void uploadJSONObject(Context context, String url, JSONObject json) throws IOException {
         HttpResponse response = getHttpPostResponse(context, url, json);
-        return response.getEntity();
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != HttpStatus.SC_OK)
+            throw new IOException("Wrong Status Code returned from server: " + String.valueOf(statusCode));
     }
 
     private static HttpResponse getHttpPostResponse(Context context, String url, JSONObject json) throws IOException {
