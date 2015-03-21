@@ -16,7 +16,7 @@ import android.view.View;
  */
 public class SnappyLinearLayoutManager extends LinearLayoutManager {
 
-    private static final int MIN_FLING_VELOCITY = 400; // dips
+    private static final int MIN_FLING_VELOCITY = 350; // dips
     private int childHeightPX;
     private int currentPosition;
     private int minimumVelocity;
