@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.whiteboxteam.gliese.data.db.table.TableHelper;
+import com.whiteboxteam.gliese.data.db.table.impl.CrashReportTableHelper;
 import com.whiteboxteam.gliese.data.db.table.impl.FactDetailTableHelper;
 import com.whiteboxteam.gliese.data.db.table.impl.FactTableHelper;
 import com.whiteboxteam.gliese.data.db.table.impl.SessionTableHelper;
@@ -27,6 +28,7 @@ public final class StatisticDatabaseHelper extends SQLiteOpenHelper {
         TABLE_HELPERS.add(new SessionTableHelper());
         TABLE_HELPERS.add(new FactTableHelper());
         TABLE_HELPERS.add(new FactDetailTableHelper());
+        TABLE_HELPERS.add(new CrashReportTableHelper());
     }
 
     public StatisticDatabaseHelper(Context context) {

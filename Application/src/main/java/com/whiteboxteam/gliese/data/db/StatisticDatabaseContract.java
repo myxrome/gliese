@@ -38,4 +38,16 @@ public final class StatisticDatabaseContract {
 
     }
 
+    public static final class CrashReportEntry implements BaseColumns {
+        public static final String TABLE_NAME = "crash_report";
+        public static final String ID = BaseColumns._ID;
+        public static final String NAME = "_name";
+        public static final String VERSION = "_version";
+        public static final String EXCEPTION = "_exception";
+        public static final String CAUSE = "_cause";
+        public static final String STACKTRACE = "_stacktrace";
+        public static final String HAPPENED_AT = "_happened_at";
+
+    }
+
 }
