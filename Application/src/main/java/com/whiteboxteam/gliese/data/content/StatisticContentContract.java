@@ -75,4 +75,23 @@ public final class StatisticContentContract {
 
     }
 
+    public static final class CrashReport {
+        public static final String CRASH_REPORTS_BASE_PATH = "crash-reports";
+
+        public static final String ID = StatisticDatabaseContract.CrashReportEntry.ID;
+        public static final String NAME = StatisticDatabaseContract.CrashReportEntry.NAME;
+        public static final String VERSION = StatisticDatabaseContract.CrashReportEntry.VERSION;
+        public static final String EXCEPTION = StatisticDatabaseContract.CrashReportEntry.EXCEPTION;
+        public static final String CAUSE = StatisticDatabaseContract.CrashReportEntry.CAUSE;
+        public static final String STACKTRACE = StatisticDatabaseContract.CrashReportEntry.STACKTRACE;
+        public static final String HAPPENED_AT = StatisticDatabaseContract.CrashReportEntry.HAPPENED_AT;
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(CRASH_REPORTS_BASE_PATH).build();
+        public static final String CONTENT_TYPE_LIST = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.crash-reports";
+        public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.whiteboxteam" +
+                ".gliese.crash-report";
+
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.whiteboxteam.gliese.data.content.provider;
 
+import com.whiteboxteam.gliese.data.content.provider.impl.CrashReportProviderHelper;
 import com.whiteboxteam.gliese.data.content.provider.impl.FactDetailProviderHelper;
 import com.whiteboxteam.gliese.data.content.provider.impl.FactProviderHelper;
 import com.whiteboxteam.gliese.data.content.provider.impl.SessionProviderHelper;
@@ -20,6 +21,7 @@ public class StatisticsContentProvider extends BaseContentProvider {
         providerHelpers.add(new SessionProviderHelper());
         providerHelpers.add(new FactProviderHelper());
         providerHelpers.add(new FactDetailProviderHelper());
+        providerHelpers.add(new CrashReportProviderHelper());
 
         return true;
     }
