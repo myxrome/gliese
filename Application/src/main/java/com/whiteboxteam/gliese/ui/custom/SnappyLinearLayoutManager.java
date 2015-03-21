@@ -38,9 +38,9 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager {
         initLayoutManager(context);
     }
 
-    public int calcCurrentPosition(int velocity) {
+    public int calcCurrentPosition(int velocity, int itemCount) {
         int newPosition = calcCenterPosition(findFirstVisibleItemPosition(), findLastVisibleItemPosition());
-        currentPosition = correctNewPosition(velocity, newPosition);
+        currentPosition = correctNewPosition(velocity, newPosition, itemCount);
         return currentPosition;
     }
 
@@ -59,12 +59,11 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager {
 
     }
 
-    private int correctNewPosition(int velocity, int newPosition) {
+    private int correctNewPosition(int velocity, int newPosition, int itemCount) {
         if (newPosition == currentPosition && Math.abs(velocity) > minimumVelocity) {
-            if (velocity > 0)
-                return newPosition + 1;
-            else
-                return Math.max(newPosition - 1, 0);
+            if (velocity > 0) {
+                return Math.min(newPosition + 1, itemCount - 1);
+            } else return Math.max(newPosition - 1, 0);
         }
         return newPosition;
     }

@@ -27,7 +27,8 @@ public final class SnappyRecyclerView extends RecyclerView {
     @Override
     public boolean fling(int velocityX, int velocityY) {
         if (getAdapter().getItemCount() > 0) {
-            int position = ((SnappyLinearLayoutManager) getLayoutManager()).calcCurrentPosition(velocityY);
+            int position = ((SnappyLinearLayoutManager) getLayoutManager()).calcCurrentPosition(velocityY, getAdapter
+                    ().getItemCount());
             super.smoothScrollToPosition(position);
         }
         return true;
