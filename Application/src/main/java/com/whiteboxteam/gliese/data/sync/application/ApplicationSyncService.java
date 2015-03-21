@@ -6,9 +6,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.SystemClock;
 import com.whiteboxteam.gliese.data.sync.application.task.ApplicationSyncTask;
 
-import java.util.Calendar;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -50,12 +50,10 @@ public class ApplicationSyncService extends Service {
         Intent serviceIntent = new Intent(context, ApplicationSyncService.class);
         PendingIntent intent = PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.HOUR, 3);
-
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intent);
+        alarmManager.cancel(intent);
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
+                AlarmManager.INTERVAL_HOUR, AlarmManager.INTERVAL_HOUR, intent);
     }
 
     @Override

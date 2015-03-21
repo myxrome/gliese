@@ -8,8 +8,8 @@ package com.whiteboxteam.gliese.data.storage;
  */
 public final class StorageContract {
 
-    public static final String APPLICATION_SYNC_STATE = "application-sync-state";
-    public static final String LAST_SYNC_DATE = "last-sync-date";
+    public static final String LAST_APPLICATION_SYNC_DATE = "last-application-sync-date";
+    public static final String LAST_STATISTIC_SYNC_DATE = "last-statistic-sync-date";
     public static final String LAST_TOPIC_ID = "last-topic-id";
     public static final String LAST_CATEGORY_ID = "last-category-id-";
 

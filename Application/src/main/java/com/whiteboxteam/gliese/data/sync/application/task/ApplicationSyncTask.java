@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -63,10 +64,11 @@ public class ApplicationSyncTask implements Runnable {
     }
 
     private void saveLastSyncDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
         String value = dateFormat.format(new Date());
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(StorageContract.LAST_SYNC_DATE,
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(StorageContract
+                        .LAST_APPLICATION_SYNC_DATE,
                 value).apply();
     }
 

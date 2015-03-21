@@ -10,6 +10,7 @@ import com.whiteboxteam.gliese.data.entity.FactEntity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Gliese Project.
@@ -35,10 +36,12 @@ public final class FactHelper {
 
     private static FactHelper instance = null;
     private final Context context;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+    private SimpleDateFormat dateFormat;
 
     private FactHelper(Context context) {
         this.context = context;
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
     }
 
     public static FactHelper getInstance(Context context) {

@@ -27,7 +27,7 @@ public final class ApplicationServerContract {
 
         public static String getSyncUrl(Context context) {
             String lastSyncDate = PreferenceManager.getDefaultSharedPreferences(context).getString(StorageContract
-                    .LAST_SYNC_DATE, "");
+                    .LAST_APPLICATION_SYNC_DATE, "");
             if (Strings.isNullOrEmpty(lastSyncDate)) {
                 return getInitialSyncUrl(context);
             } else {
