@@ -32,7 +32,6 @@ import java.util.*;
  */
 public class CategoryFragment extends Fragment {
 
-    private static final String CATEGORY_VIEW_TIMER_EVENT = "CATEGORY_VIEW_TIMER";
     private static final int VALUE_LOADER_ID = 18000;
     private FactHelper factHelper;
     private FactEntity categoryTimer;
@@ -128,7 +127,8 @@ public class CategoryFragment extends Fragment {
 
     private void startCategoryTimer() {
         if ((factHelper != null) && (categoryTimer == null)) {
-            categoryTimer = factHelper.startTimer(categoryId, FactHelper.CATEGORY_CONTEXT, CATEGORY_VIEW_TIMER_EVENT);
+            categoryTimer = factHelper.startTimer(categoryId, FactHelper.ContextType.CATEGORY_CONTEXT, FactHelper
+                    .EventTag.CATEGORY_VIEW_TIMER_EVENT);
         }
     }
 

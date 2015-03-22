@@ -33,9 +33,7 @@ import com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip;
  */
 public class TopicFragment extends Fragment {
 
-    private static final String TOPIC_VIEW_TIMER_EVENT       = "TOPIC_VIEW_TIMER";
-    private static final String TOPIC_GROUP_VIEW_TIMER_EVENT = "TOPIC_GROUP_VIEW_TIMER";
-    private static final int    CATEGORY_LOADER_ID           = 15000;
+    private static final int CATEGORY_LOADER_ID = 15000;
     private FactHelper               factHelper;
     private FactEntity               topicGroupTimer;
     private FactEntity               topicTimer;
@@ -149,9 +147,10 @@ public class TopicFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        topicGroupTimer = factHelper.startTimer(topicGroupId, FactHelper.TOPIC_GROUP_CONTEXT,
-                TOPIC_GROUP_VIEW_TIMER_EVENT);
-        topicTimer = factHelper.startTimer(topicId, FactHelper.TOPIC_CONTEXT, TOPIC_VIEW_TIMER_EVENT);
+        topicGroupTimer = factHelper.startTimer(topicGroupId, FactHelper.ContextType.TOPIC_GROUP_CONTEXT, FactHelper
+                .EventTag.TOPIC_GROUP_VIEW_TIMER_EVENT);
+        topicTimer = factHelper.startTimer(topicId, FactHelper.ContextType.TOPIC_CONTEXT, FactHelper.EventTag
+                .TOPIC_VIEW_TIMER_EVENT);
     }
 
     @Override

@@ -28,11 +28,6 @@ import com.whiteboxteam.gliese.ui.fragment.TopicFragment;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final String COMPARE_SCREEN_TIMER_EVENT = "COMPARE_SCREEN_TIMER";
-    private static final String ORIENTATION_TIMER_EVENT    = "ORIENTATION_TIMER";
-    private static final int    COMPARE_SCREEN_ID          = 1;
-    private static final int    LANDSCAPE_ORIENTATION_ID   = 1;
-    private static final int    PORTRAIT_ORIENTATION_ID    = 2;
     private SessionHelper sessionHelper;
     private FactHelper    factHelper;
     private FactEntity    compareScreenTimer;
@@ -141,11 +136,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         if (sessionHelper.getCurrent() == null) sessionHelper.start();
-        compareScreenTimer = factHelper.startTimer(COMPARE_SCREEN_ID, FactHelper.SCREEN_CONTEXT,
-                COMPARE_SCREEN_TIMER_EVENT);
-        int orientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
-                LANDSCAPE_ORIENTATION_ID : PORTRAIT_ORIENTATION_ID;
-        orientationTimer = factHelper.startTimer(orientation, FactHelper.ORIENTATION_CONTEXT, ORIENTATION_TIMER_EVENT);
+        compareScreenTimer = factHelper.startTimer(FactHelper.VirtualContext.COMPARE_SCREEN_ID, FactHelper
+                .ContextType.VIRTUAL_CONTEXT, FactHelper.EventTag.COMPARE_SCREEN_TIMER_EVENT);
+        int orientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? FactHelper.VirtualContext.LANDSCAPE_ORIENTATION_ID : FactHelper.VirtualContext.PORTRAIT_ORIENTATION_ID;
+        orientationTimer = factHelper.startTimer(orientation, FactHelper.ContextType.VIRTUAL_CONTEXT, FactHelper
+                .EventTag.ORIENTATION_TIMER_EVENT);
     }
 
     @Override

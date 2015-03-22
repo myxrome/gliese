@@ -21,13 +21,6 @@ import com.whiteboxteam.gliese.ui.dialog.PositiveNegativeButtonListener;
 
 public class StartAppActivity extends ActionBarActivity implements PositiveNegativeButtonListener {
 
-    private static final String APPLICATION_START_COUNTER_EVENT = "APPLICATION_START_COUNTER";
-    private static final String UPLOAD_SCREEN_TIMER_EVENT = "UPLOAD_SCREEN_TIMER";
-    private static final String ORIENTATION_TIMER_EVENT = "ORIENTATION_TIMER";
-    private static final int APPLICATION_ID = 1;
-    private static final int UPLOAD_SCREEN_ID = 1;
-    private static final int LANDSCAPE_ORIENTATION_ID = 1;
-    private static final int PORTRAIT_ORIENTATION_ID = 2;
     private FactHelper factHelper;
     private FactEntity uploadScreenTimer;
     private FactEntity orientationTimer;
@@ -86,12 +79,14 @@ public class StartAppActivity extends ActionBarActivity implements PositiveNegat
     protected void onResume() {
         super.onResume();
         SessionHelper.getInstance(this).start();
-        factHelper.increaseCounter(APPLICATION_ID, FactHelper.APPLICATION_CONTEXT, APPLICATION_START_COUNTER_EVENT);
-        uploadScreenTimer = factHelper.startTimer(UPLOAD_SCREEN_ID, FactHelper.SCREEN_CONTEXT,
-                UPLOAD_SCREEN_TIMER_EVENT);
+        factHelper.increaseCounter(FactHelper.VirtualContext.APPLICATION_ID, FactHelper.ContextType.VIRTUAL_CONTEXT,
+                FactHelper.EventTag.APPLICATION_START_COUNTER_EVENT);
+        uploadScreenTimer = factHelper.startTimer(FactHelper.VirtualContext.UPLOAD_SCREEN_ID, FactHelper.ContextType
+                .VIRTUAL_CONTEXT, FactHelper.EventTag.UPLOAD_SCREEN_TIMER_EVENT);
         int orientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
-                LANDSCAPE_ORIENTATION_ID : PORTRAIT_ORIENTATION_ID;
-        orientationTimer = factHelper.startTimer(orientation, FactHelper.ORIENTATION_CONTEXT, ORIENTATION_TIMER_EVENT);
+                FactHelper.VirtualContext.LANDSCAPE_ORIENTATION_ID : FactHelper.VirtualContext.PORTRAIT_ORIENTATION_ID;
+        orientationTimer = factHelper.startTimer(orientation, FactHelper.ContextType.VIRTUAL_CONTEXT, FactHelper
+                .EventTag.ORIENTATION_TIMER_EVENT);
         runApplicationSync();
     }
 

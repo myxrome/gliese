@@ -43,10 +43,6 @@ import java.util.Random;
  */
 public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String VALUE_CLICK_COUNTER_EVENT = "VALUE_CLICK_COUNTER";
-    private static final String BUY_BUTTON_CLICK_COUNTER_EVENT = "BUY_BUTTON_CLICK_COUNTER_COUNTER";
-    private static final int BUY_BUTTON_ID = 1;
-
     private final Context context;
     private final DecimalFormat formatter;
     private final Typeface roubleSupportedTypeface;
@@ -173,10 +169,10 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(valueEntity.url + "&sub_id=" +
                                 subId)));
                         FactHelper factHelper = FactHelper.getInstance(context);
-                        factHelper.increaseCounter(valueEntity.id, FactHelper.VALUE_CONTEXT,
-                                VALUE_CLICK_COUNTER_EVENT, subId);
-                        factHelper.increaseCounter(BUY_BUTTON_ID, FactHelper.BUTTON_CONTEXT,
-                                BUY_BUTTON_CLICK_COUNTER_EVENT);
+                        factHelper.increaseCounter(valueEntity.id, FactHelper.ContextType.VALUE_CONTEXT, FactHelper
+                                .EventTag.VALUE_CLICK_COUNTER_EVENT, subId);
+                        factHelper.increaseCounter(FactHelper.VirtualContext.BUY_BUTTON_ID, FactHelper.ContextType
+                                .VIRTUAL_CONTEXT, FactHelper.EventTag.BUY_BUTTON_CLICK_COUNTER_EVENT);
                     }
                 }
             });
