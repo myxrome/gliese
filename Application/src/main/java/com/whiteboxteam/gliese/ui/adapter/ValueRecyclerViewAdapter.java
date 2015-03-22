@@ -194,7 +194,10 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             discount.setText("-" + valueEntity.discount + "%");
 
             thumb.setImageBitmap(valueEntity.thumb);
-            progressBar.setVisibility(valueEntity.thumb == null ? View.VISIBLE : View.INVISIBLE);
+            int visibility = valueEntity.thumb == null ? View.VISIBLE : View.INVISIBLE;
+            if (visibility != progressBar.getVisibility()) {
+                progressBar.setVisibility(visibility);
+            }
         }
 
         private SpannableStringBuilder buildRoubleString(String value) {

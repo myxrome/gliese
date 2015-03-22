@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.entity.FactEntity;
@@ -32,19 +33,20 @@ import com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip;
  */
 public class TopicFragment extends Fragment {
 
-    private static final String TOPIC_VIEW_TIMER_EVENT = "TOPIC_VIEW_TIMER";
+    private static final String TOPIC_VIEW_TIMER_EVENT       = "TOPIC_VIEW_TIMER";
     private static final String TOPIC_GROUP_VIEW_TIMER_EVENT = "TOPIC_GROUP_VIEW_TIMER";
-    private static final int CATEGORY_LOADER_ID = 15000;
-    private FactHelper factHelper;
-    private FactEntity topicGroupTimer;
-    private FactEntity topicTimer;
-    private int loaderId;
-    private long topicId;
-    private long topicGroupId;
+    private static final int    CATEGORY_LOADER_ID           = 15000;
+    private FactHelper               factHelper;
+    private FactEntity               topicGroupTimer;
+    private FactEntity               topicTimer;
+    private int                      loaderId;
+    private long                     topicId;
+    private long                     topicGroupId;
     private TopicFragmentPageAdapter adapter;
-    private ViewPager viewPager;
-    private SharedPreferences preferences;
-    private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private ViewPager                viewPager;
+    private ProgressBar              progressBar;
+    private SharedPreferences        preferences;
+    private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks    = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             if (id == loaderId) {
@@ -61,6 +63,7 @@ public class TopicFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (loader.getId() == loaderId) {
+                progressBar.setVisibility(View.INVISIBLE);
                 adapter.changeCursor(data);
                 int position = adapter.getPosition(preferences.getLong(StorageContract.LAST_CATEGORY_ID + String
                         .valueOf(topicId), -1));
@@ -73,11 +76,12 @@ public class TopicFragment extends Fragment {
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
             if (loader.getId() == loaderId) {
+                progressBar.setVisibility(View.VISIBLE);
                 adapter.changeCursor(null);
             }
         }
     };
-    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+    private ViewPager.OnPageChangeListener        pageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -125,6 +129,7 @@ public class TopicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
 
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(20);

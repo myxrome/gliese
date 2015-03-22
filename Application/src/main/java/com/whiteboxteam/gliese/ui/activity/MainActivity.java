@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.entity.FactEntity;
@@ -28,32 +29,61 @@ import com.whiteboxteam.gliese.ui.fragment.TopicFragment;
 public class MainActivity extends ActionBarActivity {
 
     private static final String COMPARE_SCREEN_TIMER_EVENT = "COMPARE_SCREEN_TIMER";
-    private static final String ORIENTATION_TIMER_EVENT = "ORIENTATION_TIMER";
-    private static final int COMPARE_SCREEN_ID = 1;
-    private static final int LANDSCAPE_ORIENTATION_ID = 1;
-    private static final int PORTRAIT_ORIENTATION_ID = 2;
+    private static final String ORIENTATION_TIMER_EVENT    = "ORIENTATION_TIMER";
+    private static final int    COMPARE_SCREEN_ID          = 1;
+    private static final int    LANDSCAPE_ORIENTATION_ID   = 1;
+    private static final int    PORTRAIT_ORIENTATION_ID    = 2;
     private SessionHelper sessionHelper;
-    private FactHelper factHelper;
-    private FactEntity compareScreenTimer;
-    private FactEntity orientationTimer;
+    private FactHelper    factHelper;
+    private FactEntity    compareScreenTimer;
+    private FactEntity    orientationTimer;
 
     private ActionBarDrawerToggle drawerToggle;
-    private DrawerLayout drawerLayout;
-    private String title;
-    private FragmentManager fragmentManager;
-    private TopicEntity currentTopic;
+    private DrawerLayout          drawerLayout;
+    private String                title;
+    private FragmentManager       fragmentManager;
+    private TopicEntity           currentTopic;
+    private boolean topicChanged = false;
 
-    private TopicDrawerFragment.TopicFragmentListener drawerListener = new TopicDrawerFragment.TopicFragmentListener() {
+    private TopicDrawerFragment.TopicFragmentListener fragmentListener = new TopicDrawerFragment
+            .TopicFragmentListener() {
         @Override
         public void onTopicSelected(TopicEntity topic) {
             setTitle(title + " - " + topic.name);
             currentTopic = topic;
-//            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            TopicFragment fragment = TopicFragment.createFragment(topic);
-            fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment).commit();
-//            }
-            drawerLayout.closeDrawer(GravityCompat.START);
+            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                TopicFragment fragment = TopicFragment.createFragment(currentTopic);
+                fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment).commit();
+            } else {
+                topicChanged = true;
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        }
+    };
+    private DrawerLayout.DrawerListener               drawerListener   = new DrawerLayout.DrawerListener() {
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            drawerToggle.onDrawerSlide(drawerView, slideOffset);
+        }
 
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            drawerToggle.onDrawerOpened(drawerView);
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            if (topicChanged) {
+                TopicFragment fragment = TopicFragment.createFragment(currentTopic);
+                fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment).commit();
+                topicChanged = false;
+            }
+            drawerToggle.onDrawerClosed(drawerView);
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            drawerToggle.onDrawerStateChanged(newState);
         }
     };
 
@@ -72,16 +102,13 @@ public class MainActivity extends ActionBarActivity {
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
-        drawerLayout.setDrawerListener(drawerToggle);
         if (!isLastTopicExist()) drawerLayout.openDrawer(GravityCompat.START);
+        drawerLayout.setDrawerListener(drawerListener);
 
         fragmentManager = getSupportFragmentManager();
         TopicDrawerFragment drawerFragment = (TopicDrawerFragment) fragmentManager.findFragmentById(R.id
                 .navigation_drawer);
-        drawerFragment.setFragmentListener(drawerListener);
-
-//        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
-//        });
+        drawerFragment.setFragmentListener(fragmentListener);
 
         sessionHelper = SessionHelper.getInstance(this);
         factHelper = FactHelper.getInstance(this);

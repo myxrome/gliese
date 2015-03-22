@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class ImageUploadService extends Service {
 
-    private static final int DOWNLOAD_POOL_SIZE = Runtime.getRuntime().availableProcessors();
     private static final long KEEP_ALIVE_TIME = 0L;
     private static final int DEFAULT_INITIAL_CAPACITY = 11;
     private static final int DEFAULT_UPLOAD_PRIORITY = 0;
@@ -69,11 +68,11 @@ public class ImageUploadService extends Service {
     public void onCreate() {
         super.onCreate();
         UploadTaskComparator uploadTaskComparator = new UploadTaskComparator();
-        imageForegroundPool = new ThreadPoolExecutor(DOWNLOAD_POOL_SIZE * 2, DOWNLOAD_POOL_SIZE * 2, KEEP_ALIVE_TIME,
+        imageForegroundPool = new ThreadPoolExecutor(1, 1, KEEP_ALIVE_TIME,
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue<>(DEFAULT_INITIAL_CAPACITY, uploadTaskComparator));
-        thumbBackgroundPool = new ThreadPoolExecutor(DOWNLOAD_POOL_SIZE, DOWNLOAD_POOL_SIZE, KEEP_ALIVE_TIME,
+        thumbBackgroundPool = new ThreadPoolExecutor(1, 1, KEEP_ALIVE_TIME,
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue<>(DEFAULT_INITIAL_CAPACITY, uploadTaskComparator));
-        thumbForegroundPool = new ThreadPoolExecutor(DOWNLOAD_POOL_SIZE * 2, DOWNLOAD_POOL_SIZE * 2, KEEP_ALIVE_TIME,
+        thumbForegroundPool = new ThreadPoolExecutor(2, 2, KEEP_ALIVE_TIME,
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue<>(DEFAULT_INITIAL_CAPACITY, uploadTaskComparator));
     }
 
