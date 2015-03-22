@@ -50,7 +50,7 @@ public final class ApplicationServerContract {
 
         private static String getDensityValue(Context context) {
             DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-            int width = Math.round(250 * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+            int width = Math.round(250 * displayMetrics.scaledDensity);
             width = (((width + 50) / 100)) * 100;
             return "x" + String.valueOf(width);
         }

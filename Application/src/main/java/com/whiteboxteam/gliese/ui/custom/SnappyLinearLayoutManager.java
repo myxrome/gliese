@@ -84,7 +84,7 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager {
 
             @Override
             public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
-                return (((boxEnd - boxStart) / 2) - (childHeightPX / 2)) - viewStart;
+                return (((boxEnd - boxStart) / 2) - ((viewEnd - viewStart) / 2)) - viewStart;
             }
 
             @Override

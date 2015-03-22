@@ -2,7 +2,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="navigation_drawer_width">320dp</dimen>
+    <dimen name="navigation_drawer_width">240dp</dimen>
 
     <dimen name="start_app_text_size">48sp</dimen>
 
@@ -24,4 +24,6 @@
     <dimen name="btn_flat_min_height">36dp</dimen>
     <dimen name="btn_flat_padding">8dp</dimen>
     <dimen name="btn_flat_margin">4dp</dimen>
+    <dimen name="bottom_margin_item">0dp</dimen>
+    <dimen name="item_horizontal_margin">8dp</dimen>
 </resources>
