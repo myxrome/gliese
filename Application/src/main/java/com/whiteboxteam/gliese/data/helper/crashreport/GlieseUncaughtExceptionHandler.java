@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import com.whiteboxteam.gliese.data.content.StatisticContentContract;
-import com.whiteboxteam.gliese.data.sync.statistic.CrashReportService;
+import com.whiteboxteam.gliese.data.sync.statistic.CrashReportSyncService;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -53,7 +53,7 @@ public class GlieseUncaughtExceptionHandler implements Thread.UncaughtExceptionH
 
         contentValues.put(StatisticContentContract.CrashReport.HAPPENED_AT, dateFormat.format(new Date()));
         context.getContentResolver().insert(StatisticContentContract.CrashReport.CONTENT_URI, contentValues);
-        CrashReportService.startCrashReport(context);
+        CrashReportSyncService.startCrashReportSync(context);
         if (oldHandler != null) {
             oldHandler.uncaughtException(thread, ex);
         }

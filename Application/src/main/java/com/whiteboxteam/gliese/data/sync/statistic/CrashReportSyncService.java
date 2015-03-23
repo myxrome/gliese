@@ -7,20 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.SystemClock;
-import com.whiteboxteam.gliese.data.sync.statistic.task.CrashReportTask;
+import com.whiteboxteam.gliese.data.sync.statistic.task.CrashReportSyncTask;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class CrashReportService extends Service {
+public class CrashReportSyncService extends Service {
 
     private static final int  CORE_POOL_SIZE  = 4;
     private static final long KEEP_ALIVE_TIME = 0L;
     private ThreadPoolExecutor executorService;
 
-    public static void startCrashReport(Context context) {
-        Intent intent = new Intent(context, CrashReportService.class);
+    public static void startCrashReportSync(Context context) {
+        Intent intent = new Intent(context, CrashReportSyncService.class);
         context.startService(intent);
     }
 
@@ -33,12 +33,12 @@ public class CrashReportService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        executorService.execute(new CrashReportTask(this));
-        CrashReportService.scheduleNextCrashReport(this);
+        executorService.execute(new CrashReportSyncTask(this));
+        CrashReportSyncService.scheduleNextCrashReportSync(this);
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public static void scheduleNextCrashReport(Context context) {
+    public static void scheduleNextCrashReportSync(Context context) {
         Intent serviceIntent = new Intent(context, StatisticSyncService.class);
         PendingIntent intent = PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -17,10 +17,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.google.common.base.Strings;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import com.whiteboxteam.gliese.R;
+import com.whiteboxteam.gliese.common.StringHelper;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.entity.ValueEntity;
 import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
@@ -33,7 +31,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * Gliese Project.
@@ -162,10 +159,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 @Override
                 public void onClick(View v) {
                     if ((valueEntity != null) && !Strings.isNullOrEmpty(valueEntity.url)) {
-                        int r = new Random(System.currentTimeMillis()).nextInt(Integer.MAX_VALUE);
-                        HashFunction hashFunction = Hashing.md5();
-                        HashCode hash = hashFunction.newHasher().putInt(r).hash();
-                        String subId = hash.toString().substring(0, 16).toUpperCase();
+                        String subId = StringHelper.randomString(16);
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(valueEntity.url + "&sub_id=" +
                                 subId)));
                         FactHelper factHelper = FactHelper.getInstance(context);

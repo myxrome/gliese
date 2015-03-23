@@ -35,7 +35,7 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".data.sync.statistic.CrashReportService"
+            android:name=".data.sync.statistic.CrashReportSyncService"
             android:enabled="true"
             android:exported="false" />
 

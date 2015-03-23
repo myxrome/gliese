@@ -26,11 +26,11 @@ import java.util.TimeZone;
  * Date: 21.03.2015
  * Time: 14:51
  */
-public class CrashReportTask implements Runnable {
+public class CrashReportSyncTask implements Runnable {
 
     private Context context;
 
-    public CrashReportTask(Context context) {
+    public CrashReportSyncTask(Context context) {
         this.context = context;
     }
 
