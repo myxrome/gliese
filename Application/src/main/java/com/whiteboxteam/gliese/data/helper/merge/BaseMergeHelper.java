@@ -109,7 +109,7 @@ public abstract class BaseMergeHelper {
     }
 
     private String getValue(String key, JSONObject remoteEntry) throws JSONException {
-        String value = remoteEntry.getString(nameMapping.get(key)).replaceAll("'", "''");
+        String value = remoteEntry.optString(nameMapping.get(key)).replaceAll("'", "''");
         if (value.equals("true")) return "1";
         if (value.equals("false")) return "0";
         return value;
