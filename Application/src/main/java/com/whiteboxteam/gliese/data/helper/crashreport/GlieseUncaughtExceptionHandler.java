@@ -40,9 +40,8 @@ public class GlieseUncaughtExceptionHandler implements Thread.UncaughtExceptionH
         } catch (PackageManager.NameNotFoundException e) {
         }
         contentValues.put(StatisticContentContract.CrashReport.EXCEPTION, ex.toString());
-        if (ex.getCause() != null) {
-            contentValues.put(StatisticContentContract.CrashReport.CAUSE, ex.getCause().toString());
-        }
+        String cause = ex.getCause() == null ? "" : ex.getCause().toString();
+        contentValues.put(StatisticContentContract.CrashReport.CAUSE, cause);
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         ex.printStackTrace(printWriter);

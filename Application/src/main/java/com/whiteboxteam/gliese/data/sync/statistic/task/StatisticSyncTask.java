@@ -50,7 +50,7 @@ public class StatisticSyncTask implements Runnable {
             if (isContainSession(device)) {
                 JSONObject data = new JSONObject();
                 data.put(StatisticServerContract.StatisticData.DATA, device);
-                ServerHelper.uploadJSONObject(context, StatisticServerContract.Server.getStatisticSyncUrl(), data);
+                ServerHelper.uploadJSONObject(context, StatisticServerContract.Server.getStatisticSyncUrl(context), data);
                 deviceCollectHelper.complete();
             }
         } catch (IOException | RemoteException | JSONException | OperationApplicationException e) {

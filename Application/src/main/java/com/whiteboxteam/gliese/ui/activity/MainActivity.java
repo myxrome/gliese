@@ -138,7 +138,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (sessionHelper.getCurrent() == null) sessionHelper.start();
+        if (sessionHelper.getCurrentId() < 0)
+            sessionHelper.start();
         compareScreenTimer = factHelper.startTimer(FactHelper.VirtualContext.COMPARE_SCREEN_ID, FactHelper
                 .ContextType.VIRTUAL_CONTEXT, FactHelper.EventTag.COMPARE_SCREEN_TIMER_EVENT);
         int orientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? FactHelper.VirtualContext.LANDSCAPE_ORIENTATION_ID : FactHelper.VirtualContext.PORTRAIT_ORIENTATION_ID;

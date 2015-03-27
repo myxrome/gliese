@@ -1,5 +1,8 @@
 package com.whiteboxteam.gliese.data.server;
 
+import android.content.Context;
+import com.whiteboxteam.gliese.R;
+
 /**
  * Gliese Project.
  * User: Aleksey Zolotov
@@ -9,14 +12,13 @@ package com.whiteboxteam.gliese.data.server;
 public final class StatisticServerContract {
 
     public static final class Server {
-        private static final String SYNC_SERVER_URL = "https://st.myankaa.com";
 
-        public static String getStatisticSyncUrl() {
-            return SYNC_SERVER_URL + "/s/";
+        public static String getStatisticSyncUrl(Context context) {
+            return context.getResources().getString(R.string.s) + "/s/";
         }
 
-        public static String getCrashReportUrl() {
-            return SYNC_SERVER_URL + "/c/";
+        public static String getCrashReportUrl(Context context) {
+            return context.getResources().getString(R.string.s) + "/c/";
         }
     }
 

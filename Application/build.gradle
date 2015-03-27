@@ -22,9 +22,15 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+
+        resValue "string", "a", "https://cpuelufq.myankaa.com"
+        resValue "string", "s", "https://g3rfgkzf.myankaa.com"
     }
     buildTypes {
         release {
+            resValue "string", "a", "https://yq8qessg.myankaa.com"
+            resValue "string", "s", "https://wc4zveyp.myankaa.com"
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
