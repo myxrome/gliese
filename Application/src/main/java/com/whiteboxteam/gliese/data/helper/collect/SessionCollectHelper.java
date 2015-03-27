@@ -33,11 +33,10 @@ public class SessionCollectHelper extends JSONArrayCollectHelper {
 
     @Override
     protected Cursor getSourceData(Uri parentUri) {
-        Uri current = SessionHelper.getInstance(context).getCurrent();
         return context.getContentResolver().query(StatisticContentContract.Session.CONTENT_URI, new
                 String[]{StatisticContentContract.Session.ID, StatisticContentContract.Session.STARTED_AT,
-                StatisticContentContract.Session.FINISHED_AT}, StatisticContentContract.Session.ID + " != ?", new
-                String[]{current == null ? "-1" : current.getLastPathSegment()}, null);
+                StatisticContentContract.Session.FINISHED_AT}, StatisticContentContract.Session.ID + " != ?", new String[] {
+                String.valueOf(SessionHelper.getInstance(context).getCurrentId())}, null);
     }
 
     @Override
