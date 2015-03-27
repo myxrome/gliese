@@ -75,7 +75,7 @@ public abstract class BaseUploadTask implements Runnable {
     protected abstract String getRemoteImageKey();
 
     private File uploadImageFile(String remoteUri) throws IOException {
-        String imageUrl = ApplicationServerContract.Server.getImageUrl(remoteUri);
+        String imageUrl = ApplicationServerContract.Server.getImageUrl(context, remoteUri);
         File file = ServerHelper.downloadFile(context, imageUrl);
         File local = new File(context.getFilesDir(), file.getName() + ".jpg");
         file.renameTo(local);

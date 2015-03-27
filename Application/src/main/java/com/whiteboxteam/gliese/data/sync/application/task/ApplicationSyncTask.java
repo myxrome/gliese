@@ -92,17 +92,17 @@ public class ApplicationSyncTask implements Runnable {
     private void mergeApplicationData(JSONObject json) throws OperationApplicationException, RemoteException,
             JSONException {
         merge(new TopicGroupMergeHelper(context, ApplicationContentContract.TopicGroup.CONTENT_URI), json
-                .getJSONArray(ApplicationServerContract.ApplicationData.TOPIC_GROUP_LIST));
-        merge(new TopicMergeHelper(context, ApplicationContentContract.Topic.CONTENT_URI), json.getJSONArray
-                (ApplicationServerContract.ApplicationData.TOPIC_LIST));
-        merge(new CategoryMergeHelper(context, ApplicationContentContract.Category.CONTENT_URI), json.getJSONArray
-                (ApplicationServerContract.ApplicationData.CATEGORY_LIST));
-        merge(new ValueMergeHelper(context, ApplicationContentContract.Value.CONTENT_URI), json.getJSONArray
-                (ApplicationServerContract.ApplicationData.VALUE_LIST));
+                .optJSONArray(ApplicationServerContract.ApplicationData.TOPIC_GROUP_LIST));
+        merge(new TopicMergeHelper(context, ApplicationContentContract.Topic.CONTENT_URI),
+              json.optJSONArray(ApplicationServerContract.ApplicationData.TOPIC_LIST));
+        merge(new CategoryMergeHelper(context, ApplicationContentContract.Category.CONTENT_URI),
+              json.optJSONArray(ApplicationServerContract.ApplicationData.CATEGORY_LIST));
+        merge(new ValueMergeHelper(context, ApplicationContentContract.Value.CONTENT_URI),
+              json.optJSONArray(ApplicationServerContract.ApplicationData.VALUE_LIST));
         merge(new DescriptionMergeHelper(context, ApplicationContentContract.Description.CONTENT_URI), json
-                .getJSONArray(ApplicationServerContract.ApplicationData.DESCRIPTION_LIST));
-        merge(new PromoMergeHelper(context, ApplicationContentContract.Promo.CONTENT_URI), json.getJSONArray
-                (ApplicationServerContract.ApplicationData.PROMO_LIST));
+                .optJSONArray(ApplicationServerContract.ApplicationData.DESCRIPTION_LIST));
+        merge(new PromoMergeHelper(context, ApplicationContentContract.Promo.CONTENT_URI),
+              json.optJSONArray(ApplicationServerContract.ApplicationData.PROMO_LIST));
     }
 
     private void cleanupApplicationData() {
@@ -115,7 +115,9 @@ public class ApplicationSyncTask implements Runnable {
 
     private void merge(BaseMergeHelper mergeHelper, JSONArray jsonArray) throws OperationApplicationException,
             RemoteException, JSONException {
-        mergeHelper.merge(jsonArray);
+        if (jsonArray != null) {
+            mergeHelper.merge(jsonArray);
+        }
     }
 
     private void cleanup(BaseCleanupHelper cleanupHelper) {

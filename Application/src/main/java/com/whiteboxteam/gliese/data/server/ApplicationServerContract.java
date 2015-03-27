@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
 
@@ -21,9 +22,6 @@ public final class ApplicationServerContract {
     }
 
     public static final class Server {
-        private static final String SYNC_SERVER_URL = "https://ct.myankaa.com";
-        private static final String INITIAL_SYNC_URL = SYNC_SERVER_URL + "/i";
-        private static final String DELTA_SYNC_URL = SYNC_SERVER_URL + "/d";
 
         public static String getSyncUrl(Context context) {
             String lastSyncDate = PreferenceManager.getDefaultSharedPreferences(context).getString(StorageContract
@@ -37,14 +35,14 @@ public final class ApplicationServerContract {
 
         private static String getInitialSyncUrl(Context context) {
             Joiner joiner = Joiner.on("&k[]=");
-            return INITIAL_SYNC_URL + "/?k[]=" + joiner.join(ApplicationContentContract.TopicGroup.KeyValues.getKeys
+            return context.getResources().getString(R.string.a) + "/i/?k[]=" + joiner.join(ApplicationContentContract.TopicGroup.KeyValues.getKeys
                     ()) +
                     "&q=" + getDensityValue(context);
         }
 
         private static String getDeltaSyncUrl(Context context, String lastSyncDate) {
             Joiner joiner = Joiner.on("&k[]=");
-            return DELTA_SYNC_URL + "/?k[]=" + joiner.join(ApplicationContentContract.TopicGroup.KeyValues.getKeys()) +
+            return context.getResources().getString(R.string.a) + "/d/?k[]=" + joiner.join(ApplicationContentContract.TopicGroup.KeyValues.getKeys()) +
                     "&q=" + getDensityValue(context) + "&u=" + lastSyncDate;
         }
 
@@ -55,8 +53,8 @@ public final class ApplicationServerContract {
             return "x" + String.valueOf(width);
         }
 
-        public static String getImageUrl(String imagePostfix) {
-            return SYNC_SERVER_URL + imagePostfix;
+        public static String getImageUrl(Context context, String imagePostfix) {
+            return context.getResources().getString(R.string.a) + imagePostfix;
         }
 
     }

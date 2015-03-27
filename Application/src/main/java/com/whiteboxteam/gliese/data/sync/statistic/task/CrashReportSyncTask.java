@@ -26,11 +26,11 @@ import java.util.TimeZone;
  * Date: 21.03.2015
  * Time: 14:51
  */
-public class CrashReportTask implements Runnable {
+public class CrashReportSyncTask implements Runnable {
 
     private Context context;
 
-    public CrashReportTask(Context context) {
+    public CrashReportSyncTask(Context context) {
         this.context = context;
     }
 
@@ -51,7 +51,7 @@ public class CrashReportTask implements Runnable {
             if (isContainCrashReport(device)) {
                 JSONObject data = new JSONObject();
                 data.put(StatisticServerContract.StatisticData.DATA, device);
-                ServerHelper.uploadJSONObject(context, StatisticServerContract.Server.getCrashReportUrl(), data);
+                ServerHelper.uploadJSONObject(context, StatisticServerContract.Server.getCrashReportUrl(context), data);
                 deviceCollectHelper.complete();
             }
         } catch (IOException | RemoteException | JSONException | OperationApplicationException e) {

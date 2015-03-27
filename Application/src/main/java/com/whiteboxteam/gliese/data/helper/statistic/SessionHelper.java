@@ -2,8 +2,9 @@ package com.whiteboxteam.gliese.data.helper.statistic;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
-import com.whiteboxteam.gliese.data.content.StatisticContentContract;
+import android.database.sqlite.SQLiteDatabase;
+import com.whiteboxteam.gliese.data.db.StatisticDatabaseContract;
+import com.whiteboxteam.gliese.data.db.StatisticDatabaseHelper;
 import com.whiteboxteam.gliese.data.sync.statistic.StatisticSyncService;
 
 import java.text.SimpleDateFormat;
@@ -19,30 +20,36 @@ import java.util.TimeZone;
  */
 public final class SessionHelper {
 
-    private static SessionHelper instance;
-    private Context context;
-    private Uri current;
-    private SimpleDateFormat dateFormat;
+    private static SessionHelper    instance;
+    private        Context          context;
+    private        long             current = -1;
+    private        SimpleDateFormat dateFormat;
+    private        SQLiteDatabase   db;
+
 
     private SessionHelper(Context context) {
         this.context = context;
         dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
+
+        StatisticDatabaseHelper dbHelper = new StatisticDatabaseHelper(context);
+        db = dbHelper.getWritableDatabase();
     }
 
     public static SessionHelper getInstance(Context context) {
-        if (instance == null) instance = new SessionHelper(context);
+        if (instance == null)
+            instance = new SessionHelper(context);
         return instance;
     }
 
-    public Uri getCurrent() {
+    public long getCurrentId() {
         return current;
     }
 
     public void start() {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(StatisticContentContract.Session.STARTED_AT, getCurrentDateTimeString());
-        current = context.getContentResolver().insert(StatisticContentContract.Session.CONTENT_URI, contentValues);
+        contentValues.put(StatisticDatabaseContract.SessionEntry.STARTED_AT, getCurrentDateTimeString());
+        current = db.insert(StatisticDatabaseContract.SessionEntry.TABLE_NAME, null, contentValues);
     }
 
     private String getCurrentDateTimeString() {
@@ -50,11 +57,13 @@ public final class SessionHelper {
     }
 
     public void finish() {
-        if (current == null) return;
+        if (current < 0)
+            return;
         ContentValues contentValues = new ContentValues();
-        contentValues.put(StatisticContentContract.Session.FINISHED_AT, getCurrentDateTimeString());
-        context.getContentResolver().update(current, contentValues, null, null);
-        current = null;
+        contentValues.put(StatisticDatabaseContract.SessionEntry.FINISHED_AT, getCurrentDateTimeString());
+        db.update(StatisticDatabaseContract.SessionEntry.TABLE_NAME, contentValues,
+                  StatisticDatabaseContract.SessionEntry.ID + " = ?", new String[] {String.valueOf(current)});
+        current = -1;
         StatisticSyncService.startStatisticSync(context);
     }
 

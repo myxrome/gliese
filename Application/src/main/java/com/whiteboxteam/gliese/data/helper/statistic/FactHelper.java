@@ -1,10 +1,10 @@
 package com.whiteboxteam.gliese.data.helper.statistic;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
-import com.whiteboxteam.gliese.data.content.StatisticContentContract;
+import android.database.sqlite.SQLiteDatabase;
+import com.whiteboxteam.gliese.data.db.StatisticDatabaseContract;
+import com.whiteboxteam.gliese.data.db.StatisticDatabaseHelper;
 import com.whiteboxteam.gliese.data.entity.FactEntity;
 
 import java.text.SimpleDateFormat;
@@ -23,11 +23,15 @@ public final class FactHelper {
     private static FactHelper instance = null;
     private final Context          context;
     private       SimpleDateFormat dateFormat;
+    private       SQLiteDatabase   db;
 
     private FactHelper(Context context) {
         this.context = context;
         dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
+
+        StatisticDatabaseHelper dbHelper = new StatisticDatabaseHelper(context);
+        db = dbHelper.getWritableDatabase();
     }
 
     public static FactHelper getInstance(Context context) {
@@ -36,27 +40,28 @@ public final class FactHelper {
     }
 
     public FactEntity startTimer(long contextId, String contextType, String eventTag) {
-        Uri fact = addFact(contextId, contextType, eventTag, null);
-        addFactDetail(fact, FactDetailOrder.TIMER_START);
-        return FactEntity.newInstance(Long.parseLong(fact.getLastPathSegment()));
+        long factId = addFact(contextId, contextType, eventTag, null);
+        addFactDetail(factId, FactDetailOrder.TIMER_START);
+        return FactEntity.newInstance(factId);
     }
 
-    private Uri addFact(long contextId, String contextType, String eventTag, String externalContext) {
+    private long addFact(long contextId, String contextType, String eventTag, String externalContext) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(StatisticContentContract.Fact.EVENT, eventTag);
-        contentValues.put(StatisticContentContract.Fact.CONTEXT_ID, contextId);
-        contentValues.put(StatisticContentContract.Fact.CONTEXT_TYPE, contextType);
-        contentValues.put(StatisticContentContract.Fact.EXTERNAL_CONTEXT, externalContext);
-        return context.getContentResolver().insert(StatisticContentContract.Fact.getContentUriBySession(SessionHelper
-                .getInstance(context).getCurrent()), contentValues);
+        contentValues.put(StatisticDatabaseContract.FactEntry.SESSION_ID, SessionHelper.getInstance(context).getCurrentId());
+        contentValues.put(StatisticDatabaseContract.FactEntry.EVENT, eventTag);
+        contentValues.put(StatisticDatabaseContract.FactEntry.CONTEXT_ID, contextId);
+        contentValues.put(StatisticDatabaseContract.FactEntry.CONTEXT_TYPE, contextType);
+        contentValues.put(StatisticDatabaseContract.FactEntry.EXTERNAL_CONTEXT, externalContext);
+
+        return db.insert(StatisticDatabaseContract.FactEntry.TABLE_NAME, null, contentValues);
     }
 
-    private void addFactDetail(Uri fact, int order) {
+    private void addFactDetail(long factId, int order) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(StatisticContentContract.FactDetail.ORDER, order);
-        contentValues.put(StatisticContentContract.FactDetail.HAPPENED_AT, getCurrentDateTimeString());
-        context.getContentResolver().insert(StatisticContentContract.FactDetail.getContentUriByFact(fact),
-                contentValues);
+        contentValues.put(StatisticDatabaseContract.FactDetailEntry.FACT_ID, factId);
+        contentValues.put(StatisticDatabaseContract.FactDetailEntry.ORDER, order);
+        contentValues.put(StatisticDatabaseContract.FactDetailEntry.HAPPENED_AT, getCurrentDateTimeString());
+        db.insert(StatisticDatabaseContract.FactDetailEntry.TABLE_NAME, null, contentValues);
     }
 
     private String getCurrentDateTimeString() {
@@ -67,18 +72,17 @@ public final class FactHelper {
         if (fact == null) {
             return;
         }
-        addFactDetail(ContentUris.withAppendedId(StatisticContentContract.Fact.CONTENT_URI, fact.id), FactDetailOrder
-                .TIMER_FINISH);
+        addFactDetail(fact.id, FactDetailOrder.TIMER_FINISH);
     }
 
     public void increaseCounter(long contextId, String contextType, String eventTag) {
-        Uri fact = addFact(contextId, contextType, eventTag, null);
-        addFactDetail(fact, FactDetailOrder.COUNTER);
+        long factId = addFact(contextId, contextType, eventTag, null);
+        addFactDetail(factId, FactDetailOrder.COUNTER);
     }
 
     public void increaseCounter(long contextId, String contextType, String eventTag, String externalContext) {
-        Uri fact = addFact(contextId, contextType, eventTag, externalContext);
-        addFactDetail(fact, FactDetailOrder.COUNTER);
+        long factId = addFact(contextId, contextType, eventTag, externalContext);
+        addFactDetail(factId, FactDetailOrder.COUNTER);
     }
 
     public static abstract class ContextType {

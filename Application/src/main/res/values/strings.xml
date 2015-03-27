@@ -7,5 +7,6 @@
     <string name="retry_button_title">ОК</string>
     <string name="exit_button_title">Выйти</string>
     <string name="application_error_error_message">Повторить попытку подключения?</string>
+    <string name="no_value_caption">К сожалению, на данный момент в выбранной категории нет товаров со скидкой.</string>
 
 </resources>

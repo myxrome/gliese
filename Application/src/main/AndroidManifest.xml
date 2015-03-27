@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <supports-screens android:requiresSmallestWidthDp="320"/>
+
     <application
         android:name=".GlieseApplication"
         android:allowBackup="true"
@@ -35,7 +37,7 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".data.sync.statistic.CrashReportService"
+            android:name=".data.sync.statistic.CrashReportSyncService"
             android:enabled="true"
             android:exported="false" />
 
