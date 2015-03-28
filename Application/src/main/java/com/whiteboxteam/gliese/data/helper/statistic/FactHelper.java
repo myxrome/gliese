@@ -104,6 +104,12 @@ public final class FactHelper {
         public static final int PORTRAIT_ORIENTATION_ID  = 6;
         public static final int BUY_BUTTON_ID            = 7;
         public static final int INFO_BUTTON_ID           = 8;
+
+        public static final int FILTER_3000_ID  = 9;
+        public static final int FILTER_5000_ID  = 10;
+        public static final int FILTER_10000_ID = 11;
+        public static final int FILTER_30000_ID = 12;
+
     }
 
     public static abstract class EventTag {
@@ -120,6 +126,7 @@ public final class FactHelper {
         public static final String VALUE_CLICK_COUNTER_EVENT               = "VALUE_CLICK_COUNTER";
         public static final String BUY_BUTTON_CLICK_COUNTER_EVENT          = "BUY_BUTTON_CLICK_COUNTER_COUNTER";
         public static final String INFO_BUTTON_CLICK_COUNTER_COUNTER_EVENT = "INFO_BUTTON_CLICK_COUNTER_COUNTER";
+        public static final String FILTER_APPLY_COUNTER_EVENT = "FILTER_APPLY_COUNTER";
     }
 
     private static abstract class FactDetailOrder {
