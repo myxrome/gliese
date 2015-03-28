@@ -30,7 +30,7 @@
     <dimen name="md_dialog_frame_margin">24dp</dimen>
     <dimen name="md_title_frame_margin_bottom">16dp</dimen>
     <dimen name="md_title_frame_margin_bottom_list">4dp</dimen>
-    <dimen name="md_button_min_width">42dp</dimen>
+    <dimen name="md_button_min_width">64dp</dimen>
     <!-- Above and below buttons, 36+12=48 for the height of the button frame -->
     <dimen name="md_button_inset_vertical">6dp</dimen>
     <dimen name="md_button_inset_horizontal">4dp</dimen>
@@ -60,7 +60,7 @@
     <dimen name="md_icon_margin">16dp</dimen>
     <dimen name="md_icon_max_size">32dp</dimen>
     <dimen name="md_listitem_margin_left">24dp</dimen>
-    <dimen name="md_action_corner_radius">2dp</dimen>
+    <dimen name="md_action_corner_radius">1dp</dimen>
 
     <dimen name="md_progressdialog_paddingwithtitle">4dp</dimen>
 

@@ -1,15 +1,11 @@
 package com.whiteboxteam.gliese.ui.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import com.whiteboxteam.gliese.R;
@@ -17,10 +13,9 @@ import com.whiteboxteam.gliese.data.entity.FactEntity;
 import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
 import com.whiteboxteam.gliese.data.helper.statistic.SessionHelper;
 import com.whiteboxteam.gliese.data.sync.application.ApplicationSyncService;
-import com.whiteboxteam.gliese.ui.dialog.ConnectionErrorDialogFragment;
-import com.whiteboxteam.gliese.ui.dialog.PositiveNegativeButtonListener;
+import com.whiteboxteam.gliese.ui.custom.materialdialogs.MaterialDialog;
 
-public class StartAppActivity extends ActionBarActivity implements PositiveNegativeButtonListener {
+public class StartAppActivity extends ActionBarActivity {
 
     private FactHelper factHelper;
     private FactEntity uploadScreenTimer;
@@ -98,18 +93,28 @@ public class StartAppActivity extends ActionBarActivity implements PositiveNegat
     }
 
     private void showErrorMessage() {
-        DialogFragment dialog = new ConnectionErrorDialogFragment();
-        dialog.show(getSupportFragmentManager(), "connection-error");
-    }
+        new MaterialDialog.Builder(this).title(R.string.application_error_error_title)
+                                        .content(R.string.application_error_error_message)
+                                        .positiveText(R.string.retry_button_title)
+                                        .negativeText(R.string.exit_button_title)
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                runApplicationSync();
+                                            }
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        runApplicationSync();
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        finish();
+                                            @Override
+                                            public void onNegative(MaterialDialog dialog) {
+                                                SessionHelper.getInstance(StartAppActivity.this).finish();
+                                                finish();
+                                            }
+                                        }).cancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                SessionHelper.getInstance(StartAppActivity.this).finish();
+                finish();
+            }
+        }).show();
     }
 
     private void startMainActivity() {

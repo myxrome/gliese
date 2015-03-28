@@ -28,6 +28,8 @@
                 style="@style/MD_ActionButton.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="64dp"
                 tools:text="Neutral"/>
 
         </FrameLayout>
@@ -40,6 +42,8 @@
                 style="@style/MD_ActionButton.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="64dp"
                 tools:text="Negative"/>
 
         </FrameLayout>
@@ -54,6 +58,8 @@
                 style="@style/MD_ActionButton.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="64dp"
                 tools:text="Positive"/>
 
         </FrameLayout>
@@ -76,6 +82,8 @@
                 style="@style/MD_ActionButton.Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="64dp"
                 tools:text="Positive"/>
 
         </FrameLayout>
@@ -88,6 +96,8 @@
                 style="@style/MD_ActionButton.Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="64dp"
                 tools:text="Negative"/>
 
         </FrameLayout>
@@ -100,6 +110,8 @@
                 style="@style/MD_ActionButton.Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="64dp"
                 tools:text="Neutral"/>
 
         </FrameLayout>
