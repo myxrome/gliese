@@ -48,8 +48,13 @@ public class MainActivity extends ActionBarActivity {
             setTitle(title + " - " + topic.name);
             currentTopic = topic;
             if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                TopicFragment fragment = TopicFragment.createFragment(currentTopic);
-                fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment).commit();
+                TopicFragment fragment = (TopicFragment) fragmentManager
+                        .findFragmentByTag(String.valueOf(currentTopic));
+                if (fragment == null) {
+                    fragment = TopicFragment.createFragment(currentTopic);
+                }
+                fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment, String.valueOf(currentTopic))
+                               .commit();
             } else {
                 topicChanged = true;
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -70,8 +75,13 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onDrawerClosed(View drawerView) {
             if (topicChanged) {
-                TopicFragment fragment = TopicFragment.createFragment(currentTopic);
-                fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment).commit();
+                TopicFragment fragment = (TopicFragment) fragmentManager
+                        .findFragmentByTag(String.valueOf(currentTopic));
+                if (fragment == null) {
+                    fragment = TopicFragment.createFragment(currentTopic);
+                }
+                fragmentManager.beginTransaction().replace(R.id.topic_fragment, fragment, String.valueOf(currentTopic))
+                               .commit();
                 topicChanged = false;
             }
             drawerToggle.onDrawerClosed(drawerView);
@@ -104,14 +114,17 @@ public class MainActivity extends ActionBarActivity {
         drawerLayout.setDrawerListener(drawerListener);
 
         fragmentManager = getSupportFragmentManager();
-        TopicDrawerFragment drawerFragment = (TopicDrawerFragment) fragmentManager.findFragmentById(R.id
-                .navigation_drawer);
+        TopicDrawerFragment drawerFragment = (TopicDrawerFragment) fragmentManager
+                .findFragmentById(R.id.navigation_drawer);
         drawerFragment.setFragmentListener(fragmentListener);
 
         sessionHelper = SessionHelper.getInstance(this);
         factHelper = FactHelper.getInstance(this);
 
-        fragmentManager.beginTransaction().replace(R.id.topic_fragment, EmptyTopicFragment.createFragment()).commit();
+        if (savedInstanceState == null) {
+            fragmentManager.beginTransaction().replace(R.id.topic_fragment, EmptyTopicFragment.createFragment())
+                           .commit();
+        }
     }
 
     private boolean isLastTopicExist() {
