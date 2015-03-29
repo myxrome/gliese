@@ -122,10 +122,6 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 entity.url = valueCursor.getString(valueURLColumnIndex);
                 entity.thumb = BitmapFactory.decodeFile(entity.localThumbUri);
 
-                if (entity.thumb == null) {
-                    ImageUploadService.startForegroundValueThumbUpload(context, entity.id, 1);
-                }
-
                 valueEntities.add(entity);
             }
         }
@@ -184,6 +180,9 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             discount.setText("-" + valueEntity.discount + "%");
 
             thumb.setImageBitmap(valueEntity.thumb);
+            if (valueEntity.thumb == null) {
+                ImageUploadService.startForegroundValueThumbUpload(context, valueEntity.id, 1);
+            }
             int visibility = valueEntity.thumb == null ? View.VISIBLE : View.INVISIBLE;
             if (visibility != progressBar.getVisibility()) {
                 progressBar.setVisibility(visibility);
