@@ -130,7 +130,7 @@ public class TopicFragment extends Fragment {
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(20);
+        viewPager.setOffscreenPageLimit(0);
         PagerSlidingTabStrip slidingTabStrip = (PagerSlidingTabStrip) view.findViewById(R.id.sliding_tabs);
         slidingTabStrip.setViewPager(viewPager);
         slidingTabStrip.setOnPageChangeListener(pageChangeListener);
