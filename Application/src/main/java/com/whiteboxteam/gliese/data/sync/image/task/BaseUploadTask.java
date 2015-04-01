@@ -20,9 +20,9 @@ import java.io.IOException;
  */
 public abstract class BaseUploadTask implements Runnable {
 
-    protected Uri uri;
+    protected Uri     uri;
     protected Context context;
-    private int priority;
+    private   int     priority;
 
     public BaseUploadTask(Context context, Uri uri, int priority) {
         this.context = context;
@@ -38,6 +38,7 @@ public abstract class BaseUploadTask implements Runnable {
     public void run() {
 
         if (UploadTaskLocker.lockTask(uri.toString())) {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             upload();
             UploadTaskLocker.unlockTask(uri.toString());
         }
@@ -45,9 +46,11 @@ public abstract class BaseUploadTask implements Runnable {
     }
 
     private void upload() {
-        Cursor entity = context.getContentResolver().query(uri, new String[]{getLocalImageKey(), getRemoteImageKey()
-        }, null, null, null);
-        if (entity == null) return;
+        Cursor entity = context.getContentResolver()
+                               .query(uri, new String[] {getLocalImageKey(), getRemoteImageKey()}, null, null, null);
+        if (entity == null) {
+            return;
+        }
 
         String localUri = "";
         String remoteUri = "";
@@ -65,7 +68,7 @@ public abstract class BaseUploadTask implements Runnable {
                     updateLocalUri(file.getAbsolutePath());
                 }
 
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
     }

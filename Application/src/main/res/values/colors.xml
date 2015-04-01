@@ -3,6 +3,7 @@
     <color name="primary">#009688</color>
     <color name="primary_dark">#004d40</color>
     <color name="accent">#ff5252</color>
+    <color name="background">#e0f2f1</color>
 
     <color name="drawer_background">#fff</color>
 

@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.*;
 import android.widget.ProgressBar;
@@ -25,8 +24,6 @@ import com.whiteboxteam.gliese.ui.custom.RoubleTypefaceSpan;
 import com.whiteboxteam.gliese.ui.custom.SnappyLinearLayoutManager;
 import com.whiteboxteam.gliese.ui.custom.SnappyRecyclerView;
 import com.whiteboxteam.gliese.ui.custom.materialdialogs.MaterialDialog;
-
-import java.util.*;
 
 /**
  * Gliese Project.
@@ -45,9 +42,6 @@ public class CategoryFragment extends Fragment {
     private TextView                 noValueText;
     private ProgressBar              progressBar;
 
-    private List<RecyclerView> recyclerViews = new ArrayList<>();
-    private Timer              timer         = new Timer();
-    private boolean            scheduled     = false;
     private Typeface roubleSupportedTypeface;
     private int   currentFilterIndex = 0;
     private int[] priceFilters       = new int[] {Integer.MAX_VALUE, 3000, 5000, 10000, 30000};
@@ -86,9 +80,6 @@ public class CategoryFragment extends Fragment {
                 progressBar.setVisibility(View.INVISIBLE);
                 int visibility = data.getCount() > 0 ? View.INVISIBLE : View.VISIBLE;
                 noValueText.setVisibility(visibility);
-                if (getUserVisibleHint()) {
-                    scheduleShuffleTimerTask();
-                }
             }
         }
 
@@ -125,22 +116,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (getUserVisibleHint()) {
-            scheduleShuffleTimerTask();
-        }
         switchCategoryTimer();
-    }
-
-    private void scheduleShuffleTimerTask() {
-        if (!scheduled && (adapter != null) && (adapter.getItemCount() > 0)) {
-            long startTime = 500;
-            List<Integer> indexes = randomArray(recyclerViews.size(), adapter.getItemCount());
-            for (int i = 0; i < recyclerViews.size(); i++) {
-                timer.schedule(new ShuffleRecycleViewsTimerTask(recyclerViews.get(i), indexes.get(i)), startTime);
-                startTime += 200;
-            }
-            scheduled = true;
-        }
     }
 
     private void switchCategoryTimer() {
@@ -149,19 +125,6 @@ public class CategoryFragment extends Fragment {
         } else {
             finishCategoryTimer();
         }
-    }
-
-    private List<Integer> randomArray(int limit, int size) {
-        List<Integer> cache = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            cache.add(i);
-        }
-        Collections.shuffle(cache);
-        List<Integer> result = new ArrayList<>();
-        for (int j = 0; j < limit; j++) {
-            result.add(cache.get(Math.min(j, cache.size() - 1)));
-        }
-        return result;
     }
 
     private void startCategoryTimer() {
@@ -200,7 +163,6 @@ public class CategoryFragment extends Fragment {
 
         adapter = new ValueRecyclerViewAdapter(getActivity());
 
-        recyclerViews.clear();
         initRecycleView(view.findViewById(R.id.recycler_view_1));
         initRecycleView(view.findViewById(R.id.recycler_view_2));
         initRecycleView(view.findViewById(R.id.recycler_view_3));
@@ -216,7 +178,6 @@ public class CategoryFragment extends Fragment {
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity()));
             recyclerView.addItemDecoration(new CenterItemDecoration(getActivity()));
-            recyclerViews.add(recyclerView);
         }
     }
 
@@ -236,12 +197,6 @@ public class CategoryFragment extends Fragment {
     public void onPause() {
         finishCategoryTimer();
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        timer.cancel();
-        super.onDestroyView();
     }
 
     @Override
@@ -278,22 +233,6 @@ public class CategoryFragment extends Fragment {
 
     private static final class Parameters {
         public static final String CATEGORY_ID = "category-id";
-    }
-
-    private class ShuffleRecycleViewsTimerTask extends TimerTask {
-
-        private RecyclerView view;
-        private int position;
-
-        public ShuffleRecycleViewsTimerTask(RecyclerView view, int position) {
-            this.view = view;
-            this.position = position;
-        }
-
-        @Override
-        public void run() {
-            view.smoothScrollToPosition(position);
-        }
     }
 
 }

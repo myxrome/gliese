@@ -26,6 +26,7 @@ public abstract class JSONArrayCollectHelper extends BaseCollectHelper<JSONArray
         while (source.moveToNext()) {
             result.put(getExtractedItem(source));
         }
+        source.close();
         return result;
     }
 
