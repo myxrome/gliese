@@ -221,6 +221,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         public void setValueEntity(ValueEntity entity) {
             valueEntity = entity;
             applyValueEntry();
+            invalidate();
         }
 
         private void applyValueEntry() {
@@ -235,6 +236,13 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             newPrice.setText(buildRoubleString(formatter.format(valueEntity.newPrice)));
             discount.setText("-" + valueEntity.discount + "%");
             thumb.setImageBitmap(valueEntity.thumb);
+        }
+
+        private void invalidate() {
+            name.requestLayout();
+            oldPrice.requestLayout();
+            newPrice.requestLayout();
+            discount.requestLayout();
         }
 
         private SpannableStringBuilder buildRoubleString(String value) {
