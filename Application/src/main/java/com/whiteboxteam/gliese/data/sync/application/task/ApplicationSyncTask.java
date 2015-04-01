@@ -46,7 +46,7 @@ public class ApplicationSyncTask implements Runnable {
         boolean result = performApplicationSync();
         if (result) {
             saveLastSyncDate();
-            startImageUpload();
+//            startImageUpload();
         }
         sendSyncResultBroadcast(result);
         Log.d("[SYNC]", "finish application sync");
@@ -70,10 +70,6 @@ public class ApplicationSyncTask implements Runnable {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(StorageContract
                         .LAST_APPLICATION_SYNC_DATE,
                 value).apply();
-    }
-
-    private void startImageUpload() {
-        ImageUploadService.startBackgroundUpload(context);
     }
 
     private void sendSyncResultBroadcast(boolean result) {
@@ -122,6 +118,10 @@ public class ApplicationSyncTask implements Runnable {
 
     private void cleanup(BaseCleanupHelper cleanupHelper) {
         cleanupHelper.applyInactive();
+    }
+
+    private void startImageUpload() {
+        ImageUploadService.startBackgroundUpload(context);
     }
 
 }
