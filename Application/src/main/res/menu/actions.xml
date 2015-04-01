@@ -5,7 +5,7 @@
     <item
         android:id="@+id/action_price_filter"
         android:icon="@drawable/ic_max_price"
-        android:title="Максимальная цена"
+        android:title="@string/max_price_title"
         app:showAsAction="ifRoom"/>
 
 </menu>

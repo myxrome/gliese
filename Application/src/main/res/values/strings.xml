@@ -8,5 +8,6 @@
     <string name="exit_button_title">Выйти</string>
     <string name="application_error_error_message">Повторить попытку подключения?</string>
     <string name="no_value_caption">К сожалению, на данный момент в выбранной категории нет товаров со скидкой.</string>
+    <string name="max_price_title">Максимальная цена</string>
 
 </resources>
