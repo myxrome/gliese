@@ -14,17 +14,23 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.whiteboxteam.gliese"
+        applicationId "com.whiteboxteam.gliese.ru"
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+
+        resValue "string", "a", "https://cpuelufq.myankaa.com"
+        resValue "string", "s", "https://g3rfgkzf.myankaa.com"
     }
     buildTypes {
         release {
+            resValue "string", "a", "https://yq8qessg.myankaa.com"
+            resValue "string", "s", "https://wc4zveyp.myankaa.com"
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -34,4 +40,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:recyclerview-v7:21.0.2'
+    compile 'com.android.support:cardview-v7:21.0.3'
 }

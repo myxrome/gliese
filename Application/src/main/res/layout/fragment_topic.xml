@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.whiteboxteam.gliese.ui.custom.PagerSlidingTabStrip
+        android:id="@+id/sliding_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sliding_tab_height"
+        android:background="?attr/colorPrimary"
+        android:paddingLeft="@dimen/sliding_tab_horizontal_padding"
+        android:paddingRight="@dimen/sliding_tab_horizontal_padding"
+        app:pstsIndicatorColor="@android:color/white"
+        app:pstsTextColorSelected="@android:color/white"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

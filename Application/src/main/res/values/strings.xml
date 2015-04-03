@@ -2,12 +2,12 @@
 <resources>
 
     <string name="app_name">О! Скидки</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="application_error_error_title">Ошибка подключения к сети Интернет</string>
+    <string name="retry_button_title">ОК</string>
+    <string name="exit_button_title">Выйти</string>
+    <string name="application_error_error_message">Повторить попытку подключения?</string>
+    <string name="no_value_caption">К сожалению, на данный момент в выбранной категории нет товаров со скидкой.</string>
+    <string name="max_price_title">Максимальная цена</string>
 
 </resources>

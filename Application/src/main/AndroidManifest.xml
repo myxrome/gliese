@@ -1,14 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.whiteboxteam.gliese" >
+<manifest package="com.whiteboxteam.gliese"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <supports-screens android:requiresSmallestWidthDp="320"/>
 
     <application
+        android:name=".GlieseApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:theme="@style/AppTheme" >
+        <provider
+            android:name=".data.content.provider.ApplicationContentProvider"
+            android:authorities="com.whiteboxteam.gliese.data.content.provider"
+            android:exported="false" />
+        <provider
+            android:name=".data.content.provider.StatisticsContentProvider"
+            android:authorities="com.whiteboxteam.gliese.statistic.content.provider"
+            android:exported="false" />
+
+        <service
+            android:name=".data.sync.application.ApplicationSyncService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".data.sync.image.ImageUploadService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".data.sync.statistic.StatisticSyncService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".data.sync.statistic.CrashReportSyncService"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.StartAppActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,6 +51,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <receiver
+            android:name=".data.sync.receiver.BootCompleteReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
