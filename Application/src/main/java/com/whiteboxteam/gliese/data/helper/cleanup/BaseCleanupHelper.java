@@ -13,11 +13,10 @@ import com.whiteboxteam.gliese.data.db.ApplicationDatabaseHelper;
  */
 public abstract class BaseCleanupHelper {
 
-    private final SQLiteDatabase db;
+    private final ApplicationDatabaseHelper dbHelper;
 
     public BaseCleanupHelper(Context context) {
-        ApplicationDatabaseHelper dbHelper = new ApplicationDatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        dbHelper = ApplicationDatabaseHelper.getInstance(context);
     }
 
     public void applyInactive() {
@@ -27,7 +26,9 @@ public abstract class BaseCleanupHelper {
                 append(" IN (SELECT ").append(ApplicationDatabaseContract.BaseEntry.ID).append(" FROM ").
                 append(getParentTableName()).append(" WHERE ").
                 append(ApplicationDatabaseContract.BaseEntry.ACTIVE).append(" = 0)");
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL(sql.toString());
+        db.close();
     }
 
     protected abstract String getTableName();

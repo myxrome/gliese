@@ -16,7 +16,7 @@ public class StatisticsContentProvider extends BaseContentProvider {
 
     @Override
     public boolean onCreate() {
-        dbHelper = new StatisticDatabaseHelper(getContext());
+        dbHelper = StatisticDatabaseHelper.getInstance(getContext());
 
         providerHelpers.add(new SessionProviderHelper());
         providerHelpers.add(new FactProviderHelper());

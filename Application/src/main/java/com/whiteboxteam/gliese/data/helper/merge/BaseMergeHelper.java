@@ -3,6 +3,7 @@ package com.whiteboxteam.gliese.data.helper.merge;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.net.Uri;
 import android.os.RemoteException;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
@@ -28,19 +29,17 @@ import java.util.Map;
 public abstract class BaseMergeHelper {
 
     private static final int SQLITE_MAX_COMPOUND_SELECT = 500;
+    private final ApplicationDatabaseHelper dbHelper;
     protected Map<String, String> nameMapping = new HashMap<>();
-    protected List<String> nullColumns = new ArrayList<>();
+    protected List<String>        nullColumns = new ArrayList<>();
     protected Context context;
-    private Uri uri;
-    private SQLiteDatabase db;
+    private   Uri     uri;
 
     public BaseMergeHelper(Context context, Uri uri) {
         this.context = context;
         this.uri = uri;
 
-        ApplicationDatabaseHelper dbHelper = new ApplicationDatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
-        db.execSQL("PRAGMA foreign_keys = OFF");
+        dbHelper = ApplicationDatabaseHelper.getInstance(context);
 
         nameMapping.put(ApplicationContentContract.Base.ID, ApplicationServerContract.BaseRecord.ID);
         nameMapping.put(ApplicationContentContract.Base.ACTIVE, ApplicationServerContract.BaseRecord.ACTIVE);
@@ -48,7 +47,8 @@ public abstract class BaseMergeHelper {
 
     }
 
-    public void merge(JSONArray json) throws JSONException, RemoteException, OperationApplicationException {
+    public void merge(JSONArray json) throws JSONException, RemoteException, OperationApplicationException,
+            SQLiteDatabaseLockedException {
         if (json.length() > 0) {
             int index = 0;
             while (index < json.length()) {
@@ -58,7 +58,7 @@ public abstract class BaseMergeHelper {
         context.getContentResolver().notifyChange(uri, null, false);
     }
 
-    private int applyBatch(JSONArray json, int startIndex) throws JSONException {
+    private int applyBatch(JSONArray json, int startIndex) throws JSONException, SQLiteDatabaseLockedException {
         StringBuilder sql = new StringBuilder("INSERT OR REPLACE INTO ");
         sql.append(getTableName()).append(" (");
 
@@ -76,7 +76,10 @@ public abstract class BaseMergeHelper {
             startIndex++;
             if (startIndex % SQLITE_MAX_COMPOUND_SELECT == 0) break;
         }
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("PRAGMA foreign_keys = OFF");
         db.execSQL(sql.toString());
+        db.close();
 
         return startIndex;
     }

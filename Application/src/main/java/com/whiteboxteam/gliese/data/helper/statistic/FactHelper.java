@@ -22,16 +22,15 @@ public final class FactHelper {
 
     private static FactHelper instance = null;
     private final Context          context;
+    private final StatisticDatabaseHelper dbHelper;
     private       SimpleDateFormat dateFormat;
-    private       SQLiteDatabase   db;
 
     private FactHelper(Context context) {
         this.context = context;
         dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
 
-        StatisticDatabaseHelper dbHelper = new StatisticDatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        dbHelper = StatisticDatabaseHelper.getInstance(context);
     }
 
     public static FactHelper getInstance(Context context) {
@@ -52,8 +51,10 @@ public final class FactHelper {
         contentValues.put(StatisticDatabaseContract.FactEntry.CONTEXT_ID, contextId);
         contentValues.put(StatisticDatabaseContract.FactEntry.CONTEXT_TYPE, contextType);
         contentValues.put(StatisticDatabaseContract.FactEntry.EXTERNAL_CONTEXT, externalContext);
-
-        return db.insert(StatisticDatabaseContract.FactEntry.TABLE_NAME, null, contentValues);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        long result = db.insert(StatisticDatabaseContract.FactEntry.TABLE_NAME, null, contentValues);
+        db.close();
+        return result;
     }
 
     private void addFactDetail(long factId, int order) {
@@ -61,7 +62,9 @@ public final class FactHelper {
         contentValues.put(StatisticDatabaseContract.FactDetailEntry.FACT_ID, factId);
         contentValues.put(StatisticDatabaseContract.FactDetailEntry.ORDER, order);
         contentValues.put(StatisticDatabaseContract.FactDetailEntry.HAPPENED_AT, getCurrentDateTimeString());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.insert(StatisticDatabaseContract.FactDetailEntry.TABLE_NAME, null, contentValues);
+        db.close();
     }
 
     private String getCurrentDateTimeString() {

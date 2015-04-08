@@ -3,6 +3,7 @@ package com.whiteboxteam.gliese.data.sync.application.task;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -57,7 +58,8 @@ public class ApplicationSyncTask implements Runnable {
             JSONObject json = downloadApplicationData();
             mergeApplicationData(json);
             cleanupApplicationData();
-        } catch (IOException | RemoteException | JSONException | OperationApplicationException e) {
+        } catch (IOException | RemoteException | JSONException | OperationApplicationException |
+                SQLiteDatabaseLockedException e) {
             return false;
         }
         return true;
@@ -86,7 +88,7 @@ public class ApplicationSyncTask implements Runnable {
     }
 
     private void mergeApplicationData(JSONObject json) throws OperationApplicationException, RemoteException,
-            JSONException {
+            JSONException, SQLiteDatabaseLockedException {
         merge(new TopicGroupMergeHelper(context, ApplicationContentContract.TopicGroup.CONTENT_URI), json
                 .optJSONArray(ApplicationServerContract.ApplicationData.TOPIC_GROUP_LIST));
         merge(new TopicMergeHelper(context, ApplicationContentContract.Topic.CONTENT_URI),
@@ -110,7 +112,7 @@ public class ApplicationSyncTask implements Runnable {
     }
 
     private void merge(BaseMergeHelper mergeHelper, JSONArray jsonArray) throws OperationApplicationException,
-            RemoteException, JSONException {
+            RemoteException, JSONException, SQLiteDatabaseLockedException {
         if (jsonArray != null) {
             mergeHelper.merge(jsonArray);
         }
