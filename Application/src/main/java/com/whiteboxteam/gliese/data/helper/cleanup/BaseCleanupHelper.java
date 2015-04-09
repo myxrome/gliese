@@ -28,7 +28,6 @@ public abstract class BaseCleanupHelper {
                 append(ApplicationDatabaseContract.BaseEntry.ACTIVE).append(" = 0)");
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL(sql.toString());
-        db.close();
     }
 
     protected abstract String getTableName();

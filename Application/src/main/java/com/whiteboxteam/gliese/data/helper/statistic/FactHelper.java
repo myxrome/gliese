@@ -52,9 +52,7 @@ public final class FactHelper {
         contentValues.put(StatisticDatabaseContract.FactEntry.CONTEXT_TYPE, contextType);
         contentValues.put(StatisticDatabaseContract.FactEntry.EXTERNAL_CONTEXT, externalContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long result = db.insert(StatisticDatabaseContract.FactEntry.TABLE_NAME, null, contentValues);
-        db.close();
-        return result;
+        return db.insert(StatisticDatabaseContract.FactEntry.TABLE_NAME, null, contentValues);
     }
 
     private void addFactDetail(long factId, int order) {
@@ -64,7 +62,6 @@ public final class FactHelper {
         contentValues.put(StatisticDatabaseContract.FactDetailEntry.HAPPENED_AT, getCurrentDateTimeString());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.insert(StatisticDatabaseContract.FactDetailEntry.TABLE_NAME, null, contentValues);
-        db.close();
     }
 
     private String getCurrentDateTimeString() {

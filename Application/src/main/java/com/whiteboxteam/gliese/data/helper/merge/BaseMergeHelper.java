@@ -79,7 +79,6 @@ public abstract class BaseMergeHelper {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL("PRAGMA foreign_keys = OFF");
         db.execSQL(sql.toString());
-        db.close();
 
         return startIndex;
     }

@@ -51,7 +51,6 @@ public final class SessionHelper {
         contentValues.put(StatisticDatabaseContract.SessionEntry.STARTED_AT, getCurrentDateTimeString());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         current = db.insert(StatisticDatabaseContract.SessionEntry.TABLE_NAME, null, contentValues);
-        db.close();
     }
 
     private String getCurrentDateTimeString() {
@@ -67,7 +66,6 @@ public final class SessionHelper {
         db.update(StatisticDatabaseContract.SessionEntry.TABLE_NAME, contentValues,
                   StatisticDatabaseContract.SessionEntry.ID + " = ?", new String[] {String.valueOf(current)});
         current = -1;
-        db.close();
         StatisticSyncService.startStatisticSync(context);
     }
 
