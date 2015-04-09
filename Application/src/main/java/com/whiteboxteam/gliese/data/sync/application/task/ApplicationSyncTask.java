@@ -16,7 +16,6 @@ import com.whiteboxteam.gliese.data.server.ApplicationServerContract;
 import com.whiteboxteam.gliese.data.server.ServerHelper;
 import com.whiteboxteam.gliese.data.storage.StorageContract;
 import com.whiteboxteam.gliese.data.sync.application.ApplicationSyncService;
-import com.whiteboxteam.gliese.data.sync.image.ImageUploadService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +46,6 @@ public class ApplicationSyncTask implements Runnable {
         boolean result = performApplicationSync();
         if (result) {
             saveLastSyncDate();
-//            startImageUpload();
         }
         sendSyncResultBroadcast(result);
         Log.d("[SYNC]", "finish application sync");
@@ -120,10 +118,6 @@ public class ApplicationSyncTask implements Runnable {
 
     private void cleanup(BaseCleanupHelper cleanupHelper) {
         cleanupHelper.applyInactive();
-    }
-
-    private void startImageUpload() {
-        ImageUploadService.startBackgroundUpload(context);
     }
 
 }

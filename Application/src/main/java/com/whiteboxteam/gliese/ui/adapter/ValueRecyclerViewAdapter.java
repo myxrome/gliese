@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -23,7 +21,6 @@ import com.whiteboxteam.gliese.common.StringHelper;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.entity.ValueEntity;
 import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
-import com.whiteboxteam.gliese.data.sync.image.ImageUploadService;
 import com.whiteboxteam.gliese.ui.custom.RoubleTypefaceSpan;
 
 import java.text.DecimalFormat;
@@ -39,7 +36,7 @@ import java.util.Locale;
  * Date: 10.03.2015
  * Time: 16:36
  */
-public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Object lock = new Object();
     private final Context        context;
@@ -111,7 +108,7 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 int valueOldPriceColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.OLD_PRICE);
                 int valueNewPriceColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.NEW_PRICE);
                 int valueThumbColumnIndex = valueCursor
-                        .getColumnIndex(ApplicationContentContract.Value.LOCAL_THUMB_URI);
+                        .getColumnIndex(ApplicationContentContract.Value.REMOTE_THUMB_URI);
                 int valueDiscountColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.DISCOUNT);
                 int valueURLColumnIndex = valueCursor.getColumnIndex(ApplicationContentContract.Value.URL);
 
@@ -125,16 +122,19 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     entity.discount = valueCursor.getInt(valueDiscountColumnIndex);
                     entity.newPrice = valueCursor.getInt(valueNewPriceColumnIndex);
                     entity.url = valueCursor.getString(valueURLColumnIndex);
-                    entity.localThumbUri = valueCursor.getString(valueThumbColumnIndex);
+                    entity.remoteThumbUri = valueCursor.getString(valueThumbColumnIndex);
                     if (position < valueEntities.size()) {
                         ValueEntity current = valueEntities.get(position);
-                        if (Strings.nullToEmpty(current.localThumbUri)
-                                   .equals(entity.localThumbUri) && current.thumb != null) {
+                        if (Strings.nullToEmpty(current.remoteThumbUri)
+                                   .equals(entity.remoteThumbUri) && current.thumb != null) {
                             entity.thumb = current.thumb;
                         }
                         valueEntities.set(position, entity);
                     } else {
                         valueEntities.add(entity);
+                    }
+                    if (entity.thumb == null) {
+                        startBackgroundThumbLoading(entity);
                     }
 
                     position++;
@@ -149,35 +149,21 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         return oldCursor;
     }
 
-    private class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
+    protected abstract void startBackgroundThumbLoading(ValueEntity entity);
 
-        private ValueEntity entity;
+    protected abstract void startForegroundThumbLoading(ValueEntity entity);
 
-        private ImageLoadTask(ValueEntity entity) {
-            this.entity = entity;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Void... params) {
-            return BitmapFactory.decodeFile(entity.localThumbUri);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (bitmap != null) {
-                synchronized (lock) {
-                    int position = valueEntities.indexOf(entity);
-                    if (position > -1) {
-                        ValueEntity current = valueEntities.get(position);
-                        if (current.thumb == null) {
-                            current.thumb = bitmap;
-                            notifyItemChanged(position);
-                        }
-                    }
+    public void setThumb(ValueEntity entity, Bitmap bitmap) {
+        synchronized (lock) {
+            int position = valueEntities.indexOf(entity);
+            if (position > -1) {
+                ValueEntity current = valueEntities.get(position);
+                if (current.thumb == null) {
+                    current.thumb = bitmap;
+                    notifyItemChanged(position);
                 }
             }
         }
-
     }
 
     private class ValueViewHolder extends RecyclerView.ViewHolder {
@@ -225,16 +211,13 @@ public class ValueRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         private void applyValueEntry() {
-            if (Strings.isNullOrEmpty(valueEntity.localThumbUri)) {
-                ImageUploadService.startForegroundValueThumbUpload(context, valueEntity.id, 1);
-            } else if (valueEntity.thumb == null) {
-                ImageLoadTask task = new ImageLoadTask(valueEntity);
-                task.execute();
-            }
             name.setText(valueEntity.name);
             oldPrice.setText(buildRoubleString(formatter.format(valueEntity.oldPrice)));
             newPrice.setText(buildRoubleString(formatter.format(valueEntity.newPrice)));
             discount.setText("-" + valueEntity.discount + "%");
+            if (valueEntity.thumb == null) {
+                startForegroundThumbLoading(valueEntity);
+            }
             thumb.setImageBitmap(valueEntity.thumb);
         }
 

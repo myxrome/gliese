@@ -1,4 +1,4 @@
-package com.whiteboxteam.gliese.data.sync.image.task;
+package com.whiteboxteam.gliese.data.sync.image;
 
 import java.util.HashSet;
 
