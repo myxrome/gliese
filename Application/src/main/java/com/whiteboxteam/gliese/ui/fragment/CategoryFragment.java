@@ -2,7 +2,9 @@ package com.whiteboxteam.gliese.ui.fragment;
 
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,13 +19,19 @@ import android.widget.TextView;
 import com.whiteboxteam.gliese.R;
 import com.whiteboxteam.gliese.data.content.ApplicationContentContract;
 import com.whiteboxteam.gliese.data.entity.FactEntity;
+import com.whiteboxteam.gliese.data.entity.ValueEntity;
 import com.whiteboxteam.gliese.data.helper.statistic.FactHelper;
+import com.whiteboxteam.gliese.data.sync.image.ImageLoadTask;
 import com.whiteboxteam.gliese.ui.adapter.ValueRecyclerViewAdapter;
 import com.whiteboxteam.gliese.ui.custom.CenterItemDecoration;
 import com.whiteboxteam.gliese.ui.custom.RoubleTypefaceSpan;
 import com.whiteboxteam.gliese.ui.custom.SnappyLinearLayoutManager;
 import com.whiteboxteam.gliese.ui.custom.SnappyRecyclerView;
 import com.whiteboxteam.gliese.ui.custom.materialdialogs.MaterialDialog;
+
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Gliese Project.
@@ -41,6 +49,8 @@ public class CategoryFragment extends Fragment {
     private ValueRecyclerViewAdapter adapter;
     private TextView                 noValueText;
     private ProgressBar              progressBar;
+    private ThreadPoolExecutor       thumbBackgroundPool;
+    private ThreadPoolExecutor       thumbForegroundPool;
 
     private Typeface roubleSupportedTypeface;
     private int   currentFilterIndex = 0;
@@ -63,7 +73,7 @@ public class CategoryFragment extends Fragment {
                                                       ApplicationContentContract.Value.OLD_PRICE,
                                                       ApplicationContentContract.Value.DISCOUNT,
                                                       ApplicationContentContract.Value.NEW_PRICE,
-                                                      ApplicationContentContract.Value.LOCAL_THUMB_URI,
+                                                      ApplicationContentContract.Value.REMOTE_THUMB_URI,
                                                       ApplicationContentContract.Value.URL},
                                         ApplicationContentContract.Value.ACTIVE + " = ? AND " +
                                                 ApplicationContentContract.Value.NEW_PRICE + " <= ?",
@@ -155,13 +165,30 @@ public class CategoryFragment extends Fragment {
         Bundle bundle = getArguments();
         categoryId = bundle.getLong(Parameters.CATEGORY_ID);
         loaderId = VALUE_LOADER_ID + (int) categoryId;
+        thumbBackgroundPool = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
+                                                     new LinkedBlockingQueue<Runnable>());
+        thumbForegroundPool = new ThreadPoolExecutor(4, 4, 0, TimeUnit.MILLISECONDS,
+                                                     new LinkedBlockingQueue<Runnable>());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category, null, false);
 
-        adapter = new ValueRecyclerViewAdapter(getActivity());
+        adapter = new ValueRecyclerViewAdapter(getActivity()) {
+
+            @Override
+            protected void startBackgroundThumbLoading(ValueEntity entity) {
+                ValueImageLoadTask task = new ValueImageLoadTask(getActivity(), entity);
+                task.executeOnExecutor(thumbBackgroundPool);
+            }
+
+            @Override
+            protected void startForegroundThumbLoading(ValueEntity entity) {
+                ValueImageLoadTask task = new ValueImageLoadTask(getActivity(), entity);
+                task.executeOnExecutor(thumbForegroundPool);
+            }
+        };
 
         initRecycleView(view.findViewById(R.id.recycler_view_1));
         initRecycleView(view.findViewById(R.id.recycler_view_2));
@@ -200,6 +227,13 @@ public class CategoryFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        thumbBackgroundPool.shutdownNow();
+        thumbForegroundPool.shutdownNow();
+        super.onDestroy();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.actions, menu);
@@ -233,6 +267,24 @@ public class CategoryFragment extends Fragment {
 
     private static final class Parameters {
         public static final String CATEGORY_ID = "category-id";
+    }
+
+    private class ValueImageLoadTask extends ImageLoadTask {
+
+        private ValueEntity entity;
+
+        public ValueImageLoadTask(Context context, ValueEntity entity) {
+            super(context, entity);
+            this.entity = entity;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null) {
+                adapter.setThumb(entity, bitmap);
+            }
+        }
+
     }
 
 }

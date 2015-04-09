@@ -14,7 +14,7 @@ public class ApplicationContentProvider extends BaseContentProvider {
 
     @Override
     public boolean onCreate() {
-        dbHelper = new ApplicationDatabaseHelper(getContext());
+        dbHelper = ApplicationDatabaseHelper.getInstance(getContext());
 
         providerHelpers.add(new TopicGroupProviderHelper());
         providerHelpers.add(new TopicProviderHelper());

@@ -175,7 +175,7 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     public Cursor swapTopicGroupCursor(Cursor cursor) {
         if (topicGroupCursor == cursor) return null;
         if (topicGroupCursor != null) {
-            releaseTopicCursors();
+            topicCursors.clear();
         }
         final Cursor old = topicGroupCursor;
         topicGroupCursor = cursor;
@@ -185,15 +185,6 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         }
         notifyDataSetChanged();
         return old;
-    }
-
-    private void releaseTopicCursors() {
-        for (int i = 0; i < topicCursors.size(); ++i) {
-            int key = topicCursors.keyAt(i);
-            Cursor cursor = topicCursors.get(key);
-            cursor.close();
-        }
-        topicCursors.clear();
     }
 
     private void initTopicCursorLoaders() {
@@ -218,7 +209,6 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         if (topicCursor != null) {
             int count = topicCursor.getCount();
             topicCursors.remove(position);
-            topicCursor.close();
             notifyItemRangeRemoved(position + 1, count);
         }
         if (cursor != null) {
@@ -243,16 +233,16 @@ public abstract class TopicRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
     private class TopicViewHolder extends RecyclerView.ViewHolder {
 
+        public long id;
+        public long topicGroupId;
+        public TextView name;
+        public View icon;
         private final View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onTopicItemClick(TopicViewHolder.this);
             }
         };
-        public long id;
-        public long topicGroupId;
-        public TextView name;
-        public View icon;
 
         public TopicViewHolder(final View itemView) {
             super(itemView);
