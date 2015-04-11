@@ -34,7 +34,8 @@ public class CrashReportCollectHelper extends JSONArrayCollectHelper {
                 String[]{StatisticContentContract.CrashReport.ID, StatisticContentContract.CrashReport.NAME,
                 StatisticContentContract.CrashReport.VERSION, StatisticContentContract.CrashReport.EXCEPTION,
                 StatisticContentContract.CrashReport.CAUSE, StatisticContentContract.CrashReport.STACKTRACE,
-                StatisticContentContract.CrashReport.HAPPENED_AT}, null, null, null);
+                         StatisticContentContract.CrashReport.HAPPENED_AT}, null, null,
+                                                  StatisticContentContract.CrashReport.ID + " LIMIT 1");
     }
 
     @Override

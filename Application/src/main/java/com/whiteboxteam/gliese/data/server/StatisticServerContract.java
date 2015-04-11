@@ -1,7 +1,14 @@
 package com.whiteboxteam.gliese.data.server;
 
 import android.content.Context;
+import android.util.Base64;
 import com.whiteboxteam.gliese.R;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Gliese Project.
@@ -13,8 +20,29 @@ public final class StatisticServerContract {
 
     public static final class Server {
 
+        public static final int POST = 1;
+        public static final int GET = 2;
+
+        public static String getStatisticUploadQueryUrl(Context context, JSONObject object) throws IOException {
+            String value = encodeJSONObject(object);
+            return getStatisticSyncUrl(context) + "?d=" + value;
+        }
+
+        private static String encodeJSONObject(JSONObject object) throws IOException {
+            ByteArrayOutputStream arr = new ByteArrayOutputStream();
+            OutputStream zipper = new GZIPOutputStream(arr);
+            zipper.write(object.toString().getBytes());
+            zipper.close();
+            return Base64.encodeToString(arr.toByteArray(), Base64.URL_SAFE | Base64.NO_WRAP);
+        }
+
         public static String getStatisticSyncUrl(Context context) {
             return context.getResources().getString(R.string.s) + "/s/";
+        }
+
+        public static String getCrashReportUploadQueryUrl(Context context, JSONObject object) throws IOException {
+            String value = encodeJSONObject(object);
+            return getCrashReportUrl(context) + "?d=" + value;
         }
 
         public static String getCrashReportUrl(Context context) {
