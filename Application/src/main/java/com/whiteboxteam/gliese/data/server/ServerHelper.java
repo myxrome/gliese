@@ -99,8 +99,8 @@ public final class ServerHelper {
     private static KeyStore getMyAnkaaKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
             CertificateException {
         KeyStore serverRootCert = KeyStore.getInstance("BKS");
-        serverRootCert.load(new ByteArrayInputStream(MyAnkaaKeyStore.MYANKAA_KEY_STORE), MyAnkaaKeyStore
-                .MYANKAA_KEY_STORE_PASSWORD);
+        serverRootCert.load(new ByteArrayInputStream(MyAnkaaKeyStore.MYANKAA_KEY_STORE),
+                            MyAnkaaKeyStore.MYANKAA_KEY_STORE_PASSWORD);
         return serverRootCert;
     }
 
@@ -148,6 +148,13 @@ public final class ServerHelper {
             request.setHeader("Content-Encoding", "gzip");
         }
         return request;
+    }
+
+    public static void uploadQueryString(String url) throws IOException {
+        HttpResponse response = getHttpGetResponse(url);
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != HttpStatus.SC_OK)
+            throw new IOException("Wrong Status Code returned from server: " + String.valueOf(statusCode));
     }
 
 }
